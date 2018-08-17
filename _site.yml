@@ -1,0 +1,8 @@
+name: "R-User-Group-Spatial-Workshop-2018"
+navbar:
+  title: "R Spatial Workshop"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "About"
+      href: about.html
