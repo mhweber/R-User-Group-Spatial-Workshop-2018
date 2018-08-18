@@ -1,5 +1,9 @@
 ---
+pagetitle: "R User Group Spatial Workshop 2018"
 title: "R Spatial Workshop"
+date: "Updated: `r format(Sys.Date())`"
 ---
 
-Hello, Website!
+### Workshop Description
+
+### Objectives

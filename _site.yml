@@ -1,11 +1,10 @@
 name: "R-User-Group-Spatial-Workshop-2018"
 navbar:
-  title: "R Spatial Workshop"
   left:
     - text: "Home"
       href: index.html
-    - text: "About"
-      href: about.html
+    - text: "Before the Workshop"
+      href: Before.html
     - text: "IntroSpatial"
       href: IntroSpatial.html
     - text: "Interactive Mapping"
