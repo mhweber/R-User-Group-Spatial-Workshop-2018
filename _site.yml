@@ -6,4 +6,21 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
+    - text: "IntroSpatial"
+      href: IntroSpatial.html
+    - text: "Interactive Mapping"
+      href: LeafletPlotly.html
 output_dir: "."
+output:
+  html_document:
+    theme: flatly
+    highlight: pygments
+    code_folding: hide
+    toc: yes
+    toc_float:
+      collapsed: no
+    include:
+      in_header: header.html
+    css: style.css
+    lib_dir: site_libs
+    self_contained: no

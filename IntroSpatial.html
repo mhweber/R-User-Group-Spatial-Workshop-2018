@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Introduction to Spatial Data in R</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link rel="stylesheet" href="site_libs_extra/academicons-1.8.0/css/academicons.css"/>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+div.sourceCode {
+  overflow-x: visible;
+}
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">R Spatial Workshop</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="IntroSpatial.html">IntroSpatial</a>
+</li>
+<li>
+  <a href="LeafletPlotly.html">Interactive Mapping</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Introduction to Spatial Data in R</h1>
+
+</div>
+
+
+<p>So, to begin, what is R and why should we use R for spatial analysis? Let’s break that into two questions - first, what is R and why should we use it?</p>
+<ul>
+<li>A language and environment for statistical computing and graphics</li>
+<li>R is lightweight, free, open-source and cross-platform</li>
+<li>Works with contributed packages - <a href="https://cran.r-project.org/web/packages/">currently</a> 10,462 -extensibility</li>
+<li>Automation and recording of workflow (reproducibility)</li>
+<li>Optimized work flow - data manipulation, analysis and visualization all in one place</li>
+<li>R does not alter underlying data - manipulation and visualization in memory</li>
+<li>R is great for repetative graphics</li>
+</ul>
+<p>Second, why use R for spatial, or GIS, workflows?</p>
+<ul>
+<li>Spatial and statistical analysis in one environment</li>
+<li>Leverage statistical power of R (i.e. modeling spatial data, data visualization, statistical exploration)</li>
+<li>Can handle vector and raster data, as well as work with spatial databases and pretty much any data format spatial data comes in</li>
+<li>R’s GIS capabilities growing rapidly right now - new packages added monthly - currently about 180 spatial packages</li>
+</ul>
+<p>Some drawbacks for using R for GIS work</p>
+<ul>
+<li>R not as good for interactive use as desktop GIS applications like ArcGIS or QGIS (i.e. editing features, panning,zooming)</li>
+<li>Steep learning curve</li>
+<li>Up to you to find packages to do what you need - help not always great</li>
+</ul>
+<p>R runs on contributed packages - it has core functionality, but all the spatial work we would do in R is contained in user-contributed packages. Primary ones you’ll want to familiarize yourself with are `sp’, ‘rgdal’, ‘sf’, ‘rgeos’, ‘raster’ - there are many, many more. A good source to learn about available R spatial packages is:</p>
+<p><a href="https://cran.r-project.org/web/views/Spatial.html">CRAN Task View: Analysis of Spatial Data</a></p>
+<div id="lesson-goals" class="section level2">
+<h2>Lesson Goals</h2>
+<ul>
+<li>Understanding of spatial data in R and <code>sp</code> (spatial) objects in R</li>
+<li>Introduction to R packages for spatial analysis</li>
+<li>Learn to read vector spatial data into R</li>
+<li>Perform some simple exploratory spatial data analysis with vector data in R</li>
+</ul>
+</div>
+<div id="quick-links-to-exercises" class="section level2">
+<h2>Quick Links to Exercises</h2>
+<ul>
+<li><a href="#exercise-1">Exercise 1</a>: Getting to Know of Spatial Objects</li>
+<li><a href="#exercise-2">Exercise 2</a>: Building and Manipulating Spatial Data in R</li>
+<li><a href="#exercise-3">Exercise 3</a>: Reading and writing data and projections</li>
+</ul>
+<p>Download and extract data for exercises to your computer</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">download.file</span>(<span class="st">&quot;https://github.com/mhweber/AWRA_GIS_R_Workshop/blob/gh-pages/files/WorkshopData.zip?raw=true&quot;</span>,
+              <span class="st">&quot;WorkshopData3.zip&quot;</span>,
+              <span class="dt">method=</span><span class="st">&quot;auto&quot;</span>,
+              <span class="dt">mode=</span><span class="st">&quot;wb&quot;</span>)
+<span class="kw">download.file</span>(<span class="st">&quot;https://github.com/mhweber/AWRA_GIS_R_Workshop/blob/gh-pages/files/HUCs.RData?raw=true&quot;</span>,
+              <span class="st">&quot;HUCs.RData&quot;</span>,
+              <span class="dt">method=</span><span class="st">&quot;auto&quot;</span>,
+              <span class="dt">mode=</span><span class="st">&quot;wb&quot;</span>)
+<span class="kw">unzip</span>(<span class="st">&quot;WorkshopData3.zip&quot;</span>, <span class="dt">exdir =</span> <span class="st">&quot;/home/marc&quot;</span>)              </code></pre></div>
+</div>
+<div id="a-little-r-background" class="section level2">
+<h2>A Little R Background</h2>
+<div id="terminology-working-directory" class="section level3">
+<h3>Terminology: Working Directory</h3>
+<p>Working directory in R is the location on your computer R is working from. To determine your working directory, in console type:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getwd</span>()</code></pre></div>
+<p>Which should return something like:</p>
+<p>{% highlight text %} ## [1] “/home/marc/GitProjects/AWRA_GIS_R_Workshop” ```</p>
+<p>To see what is in the directory:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>()</code></pre></div>
+<p>To establish a different directory:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;/home/marc/GitProjects&quot;</span>)</code></pre></div>
+</div>
+<div id="terminology-data-structures" class="section level3">
+<h3>Terminology: data structures</h3>
+<p>R is an interpreted language (access through a command-line interpreter) with a number of data structures (vectors, matrices, arrays, data frames, lists) and extensible objects (regression models, time-series, geospatial coordinates) and supports procedural programming with functions.</p>
+<p>To learn about objects, become friends with the built-in <code>class</code> and <code>str</code> functions. Let’s explore the built-in iris data set to start:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(iris)</code></pre></div>
+<p>{% highlight text %} ## [1] “data.frame” ```</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(iris)</code></pre></div>
+<p>{% highlight text %} ## ‘data.frame’: 150 obs. of 5 variables: ## $ Sepal.Length: num 5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 … ## $ Sepal.Width : num 3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 … ## $ Petal.Length: num 1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 … ## $ Petal.Width : num 0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 … ## $ Species : Factor w/ 3 levels “setosa”,“versicolor”,..: 1 1 1 1 1 1 1 1 1 1 … ```</p>
+<p>As we can see, <code>iris</code> is a data frame and is used extensively for beginning tutorials on learning R. Data frames consist of rows of observations on columns of values for variables of interest - they are one of the fundamental and most important data structures in R.</p>
+</div>
+<div id="overview-of-classes-and-methods" class="section level3">
+<h3>Overview of Classes and Methods</h3>
+<ul>
+<li>Class: object types
+<ul>
+<li><code>class()</code>: gives the class type</li>
+<li><code>typeof()</code>: information on how the object is stored</li>
+<li><code>str()</code>: how the object is structured</li>
+</ul></li>
+<li>Method: generic functions
+<ul>
+<li><code>print()</code></li>
+<li><code>plot()</code></li>
+<li><code>summary()</code></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="exercise-1" class="section level2">
+<h2>Exercise 1</h2>
+<div id="getting-to-know-of-spatial-objects" class="section level3">
+<h3>Getting to Know of Spatial Objects</h3>
+<p>Handling of spatial data in R has been standardized in recent years through the base package <code>sp</code> - uses ‘new-style’ <a href="http://adv-r.had.co.nz/S4.html">S4</a> classes in R that use formal class definitions and are closer to object-oriented systems than standard S3 classes in R.</p>
+<p>The best source to learn about <code>sp</code> and fundamentals of spatial analysis in R is Roger Bivand’s book <a href="http://www.asdar-book.org/">Applied Spatial Data Analysis in R</a></p>
+<p>Although we’ll look at the new simple features object specification this morning as well, numerous packages are currently built using sp object structure so need to learn to navigate current R spatial ecosystem.</p>
+<p><code>sp</code> provides definitions for basic spatial classes (points, lines, polygons, pixels, and grids).</p>
+<p>To start with, it’s good to stop and ask yourself what it takes to define spatial objects. What would we need to define vector (point, line, polygon) spatial objects?</p>
+<ul>
+<li>A coordinate reference system</li>
+<li>A bounding box, or extent</li>
+<li>plot order</li>
+<li>data</li>
+<li>?</li>
+</ul>
+<p><code>sp</code> objects inherit from the basic spatial class, which has two ‘slots’ in R new-style class lingo. From the Bivand book above, here’s what this looks like (Blue at top of each box is the class name, items in white are the slots, arrows show inheritance between classes):</p>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/SpatialClassesFig1.png" alt="SpatialClassesFig1" />
+<p class="caption">SpatialClassesFig1</p>
+</div>
+<ul>
+<li>Let’s explore this in R. We can use the <code>getClass()</code> command to view the subclasses of a spatial object:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sp)
+<span class="kw">getClass</span>(<span class="st">&quot;Spatial&quot;</span>)</code></pre></div>
+<p>{% highlight text %} ## Class “Spatial” [package “sp”] ## ## Slots: ##<br />
+## Name: bbox proj4string ## Class: matrix CRS ## ## Known Subclasses: ## Class “SpatialPoints”, directly ## Class “SpatialGrid”, directly ## Class “SpatialLines”, directly ## Class “SpatialPolygons”, directly ## Class “SpatialPointsDataFrame”, by class “SpatialPoints”, distance 2 ## Class “SpatialPixels”, by class “SpatialPoints”, distance 2 ## Class “SpatialGridDataFrame”, by class “SpatialGrid”, distance 2 ## Class “SpatialLinesDataFrame”, by class “SpatialLines”, distance 2 ## Class “SpatialPixelsDataFrame”, by class “SpatialPoints”, distance 3 ## Class “SpatialPolygonsDataFrame”, by class “SpatialPolygons”, distance 2 ```</p>
+<p>Next we’ll delve a bit deeper into the spatial objects inhereting from the base spatial class and try creating some simple objects. Here’s a schematic of how spatial lines and polygons inherit from the base spatial class - again, from the Bivand book:</p>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/SpatialClassesFig2.png" alt="SpatialClassesFig2" />
+<p class="caption">SpatialClassesFig2</p>
+</div>
+<p>And to explore a bit in R:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getClass</span>(<span class="st">&quot;SpatialPolygons&quot;</span>)</code></pre></div>
+<p>{% highlight text %} ## Class “SpatialPolygons” [package “sp”] ## ## Slots: ##<br />
+## Name: polygons plotOrder bbox proj4string ## Class: list integer matrix CRS ## ## Extends: “Spatial” ## ## Known Subclasses: ## Class “SpatialPolygonsDataFrame”, directly, with explicit coerce ```</p>
+<p>Also, there are a number of spatial methods you can use with classes in <code>sp</code> - here are some useful ones to familarize yourself with:</p>
+<table style="width:46%;">
+<colgroup>
+<col width="26%" />
+<col width="19%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method / Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>bbox()</td>
+<td>Returns the bounding box coordinates</td>
+</tr>
+<tr class="even">
+<td>proj4string()</td>
+<td>Sets or retrieves projection attributes using the CRS object</td>
+</tr>
+<tr class="odd">
+<td>CRS()</td>
+<td>Creates an object of class of coordinate reference system arguments</td>
+</tr>
+<tr class="even">
+<td>spplot()</td>
+<td>Plots a separate map of all the attributes unless specified otherwise</td>
+</tr>
+<tr class="odd">
+<td>coordinates()</td>
+<td>Returns a matrix with the spatial coordinates. For spatial polygons it returns the centroids.</td>
+</tr>
+<tr class="even">
+<td>over(x, y)</td>
+<td>Used for example to retrieve the polygon or grid indexes on a set of points</td>
+</tr>
+<tr class="odd">
+<td>spsample(x)</td>
+<td>Sampling of spatial points within the spatial extent of objects</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>As an example data set to try out some of these methods on some spatial data in <code>sp</code>, we’ll load the <code>nor2k</code> data in the <code>rgdal</code> package which represents Norwegian peaks over 2000 meters:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rgdal)
+<span class="kw">data</span>(nor2k)
+<span class="kw">plot</span>(nor2k,<span class="dt">axes=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>Take a few minutes to examine the nor2k <code>SpatialPointsDataFrame</code> and try using methods we’ve seen such as <code>class()</code>, <code>str()</code>, <code>typeof()</code>, <code>proj4string()</code>, etc. A hint - which we’ll use more - to access slots in a new style S4 object, use the @ symbol.</p>
+</div>
+</div>
+<div id="exercise-2" class="section level2">
+<h2>Exercise 2</h2>
+<div id="building-and-manipulating-spatial-data-in-r" class="section level3">
+<h3>Building and Manipulating Spatial Data in R</h3>
+<p>Let’s take a step back now. Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Ashland&#39;</span>,<span class="st">&#39;Corvallis&#39;</span>,<span class="st">&#39;Bend&#39;</span>,<span class="st">&#39;Portland&#39;</span>,<span class="st">&#39;Newport&#39;</span>)
+longitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">122.699</span>, <span class="op">-</span><span class="fl">123.275</span>, <span class="op">-</span><span class="fl">121.313</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="fl">124.054</span>)
+latitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">42.189</span>, <span class="fl">44.57</span>, <span class="fl">44.061</span>, <span class="fl">45.523</span>, <span class="fl">44.652</span>)
+population &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20062</span>,<span class="dv">50297</span>,<span class="dv">61362</span>,<span class="dv">537557</span>,<span class="dv">9603</span>)
+locs &lt;-<span class="st"> </span><span class="kw">cbind</span>(longitude, latitude) 
+<span class="kw">plot</span>(locs, <span class="dt">cex=</span><span class="kw">sqrt</span>(population<span class="op">*</span>.<span class="dv">0002</span>), <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, 
+  <span class="dt">main=</span><span class="st">&#39;Population&#39;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">124</span>,<span class="op">-</span><span class="fl">120.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">42</span>, <span class="dv">46</span>))
+<span class="kw">text</span>(locs, cities, <span class="dt">pos=</span><span class="dv">4</span>)</code></pre></div>
+<p>Add a legend</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">breaks &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20000</span>, <span class="dv">50000</span>, <span class="dv">60000</span>, <span class="dv">100000</span>)
+<span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">3</span>)
+<span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend=</span>breaks, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">pt.cex=</span><span class="dv">1</span><span class="op">+</span>breaks<span class="op">/</span><span class="dv">20000</span>, 
+  <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">bg=</span><span class="st">&#39;gray&#39;</span>)</code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/BasicMap.png" alt="BasicMap" />
+<p class="caption">BasicMap</p>
+</div>
+<p>Add a polygon to our map…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lon &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">123.5</span>, <span class="op">-</span><span class="fl">123.5</span>, <span class="op">-</span><span class="fl">122.5</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="dv">123</span>)
+lat &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">43</span>, <span class="fl">45.5</span>, <span class="dv">44</span>, <span class="dv">43</span>, <span class="dv">43</span>)
+x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
+<span class="kw">polygon</span>(x, <span class="dt">border=</span><span class="st">&#39;blue&#39;</span>)
+<span class="kw">lines</span>(x, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
+<span class="kw">points</span>(x, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">pch=</span><span class="dv">20</span>)</code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/BasicMap2.png" alt="BasicMap2" />
+<p class="caption">BasicMap2</p>
+</div>
+<p>So, is this sufficient for working with spatial data in R and doing spatial analysis? What are we missing?</p>
+<p>Packages early on in R came at handling spatial data in their own way. The <code>maps</code> package is great example - a database of locational information that is quite handy. The <code>maps</code> package format was developed in S (R is implementation of S) - lines represented as a sequence of points separated by ‘NA’ values - think of as drawing with a pen, raising at NA, then lowering at a value. Bad for associating with data since objects are only distinguished by separation with NA values. Try the following code-</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(maps)
+<span class="kw">map</span>()</code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/globalmap.png" alt="globalmap" />
+<p class="caption">globalmap</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.text</span>(<span class="st">&#39;county&#39;</span>,<span class="st">&#39;oregon&#39;</span>)
+<span class="kw">map.axes</span>()
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Oregon State&quot;</span>)</code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/OregonCounties.png" alt="OregonCounties" />
+<p class="caption">OregonCounties</p>
+</div>
+<p><code>maps</code> package draws on a binary database - see Becker references in help(map) for more details. Creates a list of 4 vectors when you create a <code>maps</code> object in R.</p>
+<p>Explore the structure of map object a bit….</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p &lt;-<span class="st"> </span><span class="kw">map</span>(<span class="st">&#39;county&#39;</span>,<span class="st">&#39;oregon&#39;</span>)
+<span class="kw">str</span>(p)
+p<span class="op">$</span>names[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]
+p<span class="op">$</span>x[<span class="dv">1</span><span class="op">:</span><span class="dv">50</span>]</code></pre></div>
+<p>Spatial classes provided in <code>sp</code> package have mostly standardized spatial data in R and provide a solid way to represent and work with spatial data in R.</p>
+<p>Let’s create a basic <code>sp</code> SpatialLines object from coordinates we were looking at in <code>maps</code> package..</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">L1 &lt;-<span class="kw">Line</span>(<span class="kw">cbind</span>(p<span class="op">$</span>x[<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>],p<span class="op">$</span>y[<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>]))
+Ls1 &lt;-<span class="st"> </span><span class="kw">Lines</span>(<span class="kw">list</span>(L1), <span class="dt">ID=</span><span class="st">&quot;Baker&quot;</span>)
+SL1 &lt;-<span class="st"> </span><span class="kw">SpatialLines</span>(<span class="kw">list</span>(Ls1))
+<span class="kw">str</span>(SL1)
+<span class="kw">plot</span>(SL1) </code></pre></div>
+<p>Bottom line segment of Baker county…compare with earlier map and see if you understand why…</p>
+<p>The <code>maptools</code> package provides convenience function for making spatial objects from map objects. Try the following code and see if you can follow each step…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(maptools)
+counties &lt;-<span class="st"> </span><span class="kw">map</span>(<span class="st">&#39;county&#39;</span>,<span class="st">&#39;oregon&#39;</span>, <span class="dt">plot=</span>F, <span class="dt">col=</span><span class="st">&#39;transparent&#39;</span>,<span class="dt">fill=</span><span class="ot">TRUE</span>)
+counties<span class="op">$</span>names
+<span class="co">#strip out just the county names from items in the names vector of counties</span>
+IDs &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">strsplit</span>(counties<span class="op">$</span>names, <span class="st">&quot;,&quot;</span>), <span class="cf">function</span>(x) x[<span class="dv">2</span>])
+counties_sp &lt;-<span class="st"> </span><span class="kw">map2SpatialPolygons</span>(counties, <span class="dt">IDs=</span>IDs,
+    <span class="dt">proj4string=</span><span class="kw">CRS</span>(<span class="st">&quot;+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs&quot;</span>))
+<span class="kw">summary</span>(counties_sp)
+<span class="kw">plot</span>(counties_sp, <span class="dt">col=</span><span class="st">&quot;grey&quot;</span>, <span class="dt">axes=</span><span class="ot">TRUE</span>)</code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/OregonCounties2.png" alt="OregonCounties2" />
+<p class="caption">OregonCounties2</p>
+</div>
+</div>
+</div>
+<div id="exercise-3" class="section level2">
+<h2>Exercise 3</h2>
+<div id="reading-and-writing-data-and-projections" class="section level3">
+<h3>Reading and writing data and projections</h3>
+<p>Now let’s look at how to construct a spatial object in R from a data frame with coordinate information.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">StreamGages &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;StreamGages.csv&#39;</span>)
+<span class="kw">class</span>(StreamGages)
+<span class="kw">head</span>(StreamGages)</code></pre></div>
+<p>A very common task you might do in R in taking a spreadsheet of data with coordinate information and turning it into a spatial object to do further GIS operations on. Here, we’ve read a speadsheet in an R data frame. Data frames, as we saw earlier, consist of rows of observations on columns of values for variables of interest</p>
+<p>As with anything in R, there are several ways to go about this, but the basics are we need to pull the coordinate columns of the data frame into a matrix which becomes the coordinates slot of a spatial object, and then give the <code>SpatialPointsDataFrame</code> we create a coordinate reference system.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coordinates</span>(StreamGages) &lt;-<span class="st"> </span><span class="er">~</span>LON_SITE <span class="op">+</span><span class="st"> </span>LAT_SITE
+llCRS &lt;-<span class="st"> </span><span class="kw">CRS</span>(<span class="st">&quot;+proj=longlat +datum=NAD83&quot;</span>)
+<span class="kw">proj4string</span>(StreamGages) &lt;-<span class="st"> </span>llCRS</code></pre></div>
+<p>See how it looks</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(StreamGages)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Object of class SpatialPointsDataFrame
+## Coordinates:
+##                 min        max
+## LON_SITE -124.66912 -110.44111
+## LAT_SITE   41.42768   49.00075
+## Is projected: FALSE
+## proj4string :
+## [+proj=longlat +datum=NAD83 +ellps=GRS80 +towgs84=0,0,0]
+## Number of points: 2771
+## Data attributes:
+##   SOURCE_FEA              EVENTTYPE                                           STATION_NM  
+##  Min.   :  10361700   StreamGage:2771   ABERDEEN-SPRINGFIELD CANAL NR SPRINGFIELD ID:   1 ##  
+##  1st Qu.:  12331050                     ABERDEEN WASTE NR ABERDEEN ID               :   1 ##  
+##  Median :  13069000                     ABERNATHY CREEK NEAR LONGVIEW, WA           :   1 ##  
+##  Mean   :  14573679                     AENEAS LAKE NEAR TONASKET, WA               :   1 ##  
+##  3rd Qu.:  13349362                     AGENCY CREEK NEAR JOCKO, MT                 :   1 ##  
+##  Max.   :1315377299                     Agency Creek near Jocko MT (2)              :   1 ##  
+##                                         (Other)                                     :2765 ##  
+##      STATE     
+##  WA     :1054  
+##  ID     : 800  
+##  OR     : 622  
+##  MT     : 220  
+##  WY     :  52  
+##  NV     :  19  
+##  (Other):   4  </code></pre></div>
+<p>Summary method gives a description of the spatial object in R. Summary works on pretty much all objects in R - for spatial data, gives us basic information about the projection, coordinates, and data for an <code>sp</code> object if it’s a spatial data frame object.</p>
+<p>We can see the coordinate reference system information for our <code>SpatialPointsDataFrame</code> as part of output of summary, and we can also use the <code>proj4string</code> method to extract just this piece of information, or get the bounding box as well with <code>bbox</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bbox</span>(StreamGages)
+<span class="kw">proj4string</span>(StreamGages)</code></pre></div>
+<p>Coordinate reference system, or CRS, information in <code>sp</code> uses the <code>proj4string</code> format. A very handy site to use to lookup any projection and get it’s <code>proj4string</code> format is <a href="http://spatialreference.org/">spatialreference.org</a>. A very handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: <a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf">Overview of Coordinate Reference Systems (CRS) in R</a>.</p>
+</div>
+<div id="a-brief-digression-on-crs-and-projections-in-r" class="section level3">
+<h3>A brief digression on CRS and projections in R</h3>
+<p>Dealing with coordinate reference systems and projections is a big part of working with spatial data in R, and it’s really relatively straightforward once you get the hang of it. Here are some of the fundamentals:</p>
+<ul>
+<li>CRS can be geographic (lat/lon), projected, or NA in R</li>
+<li>Data with different CRS MUST be transformed to common CRS in R</li>
+<li>Projections in <code>sp</code> are provided in PROJ4 strings in the proj4string slot of an object</li>
+<li><a href="http://www.spatialreference.org/" class="uri">http://www.spatialreference.org/</a></li>
+<li>Useful <code>rgdal</code> package functions:
+<ul>
+<li>projInfo(type=‘datum’)</li>
+<li>projInfo(type=‘ellps’)</li>
+<li>projInfo(type=‘proj’)</li>
+</ul></li>
+<li>For <code>sp</code> class objects:
+<ul>
+<li>To get the CRS: proj4string(x)</li>
+<li>To assign the CRS:
+<ul>
+<li>Use either EPSG code or PROJ.4:
+<ul>
+<li>proj4string(x) &lt;- CRS(“+init=epsg:4269”)</li>
+<li>proj4string(x) &lt;- CRS(“+proj=utm +zone=10 +datum=WGS84”)</li>
+</ul></li>
+</ul></li>
+<li>To transform CRS
+<ul>
+<li>x &lt;- spTransform(x, CRS(“+init=epsg:4238”))</li>
+<li>x &lt;- spTransform(x, proj4string(y))</li>
+</ul></li>
+<li>For rasters (we’ll focus on rasters later, but mention projections here):
+<ul>
+<li>To get the CRS: projection(x)</li>
+<li>To transform CRS: projectRaster(x)</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>We can use the generic plot function in R to produce a quick plot add axes as well-axes option puts box around region</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(StreamGages, <span class="dt">axes=</span><span class="ot">TRUE</span>, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>) </code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/StreamGageMap.png" alt="StreamGageMap" />
+<p class="caption">StreamGageMap</p>
+</div>
+<p>And we can combine and use state borders from maps package in our map</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map</span>(<span class="st">&#39;state&#39;</span>,<span class="dt">regions=</span><span class="kw">c</span>(<span class="st">&#39;oregon&#39;</span>,<span class="st">&#39;washington&#39;</span>,<span class="st">&#39;idaho&#39;</span>),<span class="dt">fill=</span><span class="ot">FALSE</span>, <span class="dt">add=</span>T)</code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/StreamGageMap2.png" alt="StreamGageMap2" />
+<p class="caption">StreamGageMap2</p>
+</div>
+<p>We can also use subsetting with plotting with this stream gage data to symbolize our gages by state for instance - try the following lines, try different colors or border states</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(StreamGages[StreamGages<span class="op">$</span>STATE<span class="op">==</span><span class="st">&#39;OR&#39;</span>,],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="st">&quot;Yellow&quot;</span>) <span class="co">#plot just the Oregon sites in blue on top of other sites</span>
+<span class="kw">plot</span>(StreamGages[StreamGages<span class="op">$</span>STATE<span class="op">==</span><span class="st">&#39;WA&#39;</span>,],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="st">&quot;Red&quot;</span>)
+<span class="kw">plot</span>(StreamGages[StreamGages<span class="op">$</span>STATE<span class="op">==</span><span class="st">&#39;ID&#39;</span>,],<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">col=</span><span class="st">&quot;Green&quot;</span>)</code></pre></div>
+<div class="figure">
+<img src="/AWRA_GIS_R_Workshop/figure/StreamGageMap3.png" alt="StreamGageMap3" />
+<p class="caption">StreamGageMap3</p>
+</div>
+<p>Now let’s load the Rdata object we downloaded at beginning of this session - Rdata files are just a handy way of saving and reloading your workspace - remember, R works with objects in memory, you can save them out in this format or share with others this way.</p>
+<p>Let’s look at a <code>SptialPolygonsDataframe</code> of HUCs and dig into slot structure for polygon data in <code>sp</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;/home/marc/GitProjects/gis_in_action_r_spatial/files/HUCs.RData&quot;</span>)
+<span class="kw">class</span>(HUCs)
+<span class="kw">getClass</span>(<span class="st">&quot;SpatialPolygonsDataFrame&quot;</span>)
+<span class="kw">summary</span>(HUCs)
+<span class="kw">slotNames</span>(HUCs) <span class="co">#get slots using method</span>
+<span class="kw">str</span>(HUCs, <span class="dv">2</span>)
+<span class="kw">head</span>(HUCS<span class="op">@</span>data) <span class="co">#the data frame slot </span>
+HUCs<span class="op">@</span>bbox <span class="co">#call on slot to get bbox</span></code></pre></div>
+<p>What are the following lines of code doing? - welcome to the wonderful world of slots in R</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HUCs<span class="op">@</span>polygons[[<span class="dv">1</span>]]
+<span class="kw">slotNames</span>(HUCs<span class="op">@</span>polygons[[<span class="dv">1</span>]])
+HUCs<span class="op">@</span>polygons[[<span class="dv">1</span>]]<span class="op">@</span>labpt
+HUCs<span class="op">@</span>polygons[[<span class="dv">1</span>]]<span class="op">@</span>Polygons[[<span class="dv">1</span>]]<span class="op">@</span>area</code></pre></div>
+<p>What are the slots within each element of the HUCs SpatialPolygonDataFrame object polygons slot?</p>
+<p>What method do you use to list them?</p>
+<p>How would we code a way to extract the HUCs polygon with the smallest area? Hint - apply family of functions and slots - try on your own and then take a look at the function that I included as part of HUCs.RData file.</p>
+<p>Using the <code>over</code> function, we can find out what HUC every stream gage is in quite easily:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">StreamGages &lt;-<span class="st"> </span><span class="kw">spTransform</span>(StreamGages, <span class="kw">CRS</span>(<span class="kw">proj4string</span>(HUCs)))
+gage_HUC &lt;-<span class="st"> </span><span class="kw">over</span>(StreamGages,HUCs, <span class="dt">df=</span><span class="ot">TRUE</span>)
+StreamGages<span class="op">$</span>HUC &lt;-<span class="st"> </span>gage_HUC<span class="op">$</span>HUC_<span class="dv">8</span>[<span class="kw">match</span>(<span class="kw">row.names</span>(StreamGages),<span class="kw">row.names</span>(gage_HUC))]
+<span class="kw">head</span>(StreamGages<span class="op">@</span>data)</code></pre></div>
+<p>There’s a fair bit to unpack there, so ask questions!</p>
+<p>A method for getting total area of our HUCs might use the <code>rgeos</code> package and the <code>getArea</code> function. Below we load the <code>rgeos</code> function, and in order to get area we have to have HUCs in a planar CRS. Let’s transform to Oregon Lambert, but let’ use the epsg code (which we can look up on <a href="http://spatialreference.org/">spatialreference.org</a>) rather than passing a projection string to <code>spTransform</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rgeos)
+HUCs &lt;-<span class="st"> </span><span class="kw">spTransform</span>(HUCs,<span class="kw">CRS</span>(<span class="st">&quot;+init=epsg:2991&quot;</span>))
+<span class="kw">gArea</span>(HUCs)</code></pre></div>
+<ul>
+<li><p>Good Intro to R Spatial Resources:</p>
+<ul>
+<li><p><a href="http://www.asdar-book.org/">Bivand, R. S., Pebesma, E. J., &amp; Gómez-Rubio, V. (2008). Applied spatial data analysis with R. New York: Springer.</a></p></li>
+<li><p><a href="http://rspatial.org/spatial/">R Spatial</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/sp/vignettes/intro_sp.pdf">Classes and Methods for Spatial Data: the <code>sp</code> package</a></p></li>
+<li><p><a href="https://www.dropbox.com/s/vv1ndtjrze0g8f2/RSpatialObjectsCheatSheet.ppt?dl=0">R spatial objects cheat sheet</a></p></li>
+<li><p><a href="http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/introductionTalk.html">Geospatial Data in R</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/views/Spatial.html">CRAN Task View: Analysis of Spatial Data</a></p></li>
+<li><p><a href="https://science.nature.nps.gov/im/datamgmt/statistics/r/advanced/spatial.cfm">National Park Service Spatial Data in R</a></p></li>
+<li><p><a href="https://github.com/Pakillo/R-GIS-tutorial/blob/master/R-GIS_tutorial.md">Using R as a GIS Tutorial</a></p></li>
+<li><p><a href="http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html_">The R Spatial Cheat Sheet</a></p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
