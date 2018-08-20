@@ -7,6 +7,8 @@ navbar:
       href: Before.html
     - text: "Interactive Mapping"
       href: LeafletPlotly.html
+    - text: "Resources"
+      href: Resources.html
 output_dir: "."
 output:
   html_document:
