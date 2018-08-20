@@ -5,8 +5,6 @@ navbar:
       href: index.html
     - text: "Before the Workshop"
       href: Before.html
-    - text: "IntroSpatial"
-      href: IntroSpatial.html
     - text: "Interactive Mapping"
       href: LeafletPlotly.html
 output_dir: "."
