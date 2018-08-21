@@ -9,8 +9,18 @@ title: Spatial Objects
 * Understand spatial file types supported by R spatial packages
 * Learn to pull spatial data from online sources into R
 
-### Representing Spatial Data and spatial Data Types
+### Spatial Data Types
+Simple Representation of Spatial Data and Supported Data Types
 
-### Getting Data (Downloading Open Data and Geographic Data Packages)
 
-### Geographic Data I/O and File Types
+
+### Vector Data with sp
+
+### Vector Data with sf
+
+### Raster Data
+
+### Getting Data 
+Downloading Open Data and Geographic Data Packages
+
+### Geographic Data I/O

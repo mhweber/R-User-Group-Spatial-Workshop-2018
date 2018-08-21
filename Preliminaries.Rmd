@@ -1,5 +1,38 @@
 ---
-title: "Setup and necessary packages"
+title: "Background and necessary packages"
 ---
+
+So, to begin, what is R and why should we use R for spatial analysis?  Let's break that into two questions - first, what is R and why should we use it?
+
+- A language and environment for statistical computing and graphics
+- R is lightweight, free, open-source and cross-platform
+- Works with contributed packages - [currently](https://cran.r-project.org/web/packages/) 12,938 -extensibility
+- Automation and recording of workflow (reproducibility)
+- Optimized work flow - data manipulation, analysis and visualization all in one place
+- R does not alter underlying data - manipulation and visualization in memory
+- R is great for repetetive graphics
+
+![History of R](/R-User-Group-Spatial-Workshop-2018/img/History of R.png)
+
+Second, why use R for spatial, or GIS, workflows?
+
+- Spatial and statistical analysis in one environment
+- Leverage statistical power of R (i.e.  modeling spatial data, data visualization, statistical exploration)
+- Can handle vector and raster data, as well as work with spatial databases and pretty much any data format spatial data comes in
+- R's GIS capabilities growing rapidly right now - new packages added monthly - currently about 180 spatial packages
+
+Some drawbacks to using R for GIS work
+
+- R not as good for interactive use as desktop GIS applications like ArcGIS or QGIS (i.e. editing features, panning, zooming, and analysis on selected subsets of features)
+- Explicit coordinate system handling by the user, no on-the-fly projection support
+- In memory analysis does not scale well with large GIS vector and tabular data
+- Steep learning curve
+- Up to you to find packages to do what you need - help not always great
+
+An ideal solution for many tasks is using R in conjunction with traditional GIS software.
+
+R runs on contributed packages - it has core functionality, but all the spatial work we would do in R is contained in user-contributed packages.  Primary ones you'll want to familiarize yourself with are `sf`, `rgdal`, `sp`, `rgeos`, `raster` - there are many, many more. A good source to learn about available R spatial packages is:
+
+[CRAN Task View: Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)
 
 

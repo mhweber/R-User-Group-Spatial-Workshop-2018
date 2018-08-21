@@ -11,7 +11,7 @@
 
 
 
-<title>Setup and necessary packages</title>
+<title>Background and necessary packages</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -319,12 +319,43 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Setup and necessary packages</h1>
+<h1 class="title toc-ignore">Background and necessary packages</h1>
 
 </div>
 
 
-
+<p>So, to begin, what is R and why should we use R for spatial analysis? Let’s break that into two questions - first, what is R and why should we use it?</p>
+<ul>
+<li>A language and environment for statistical computing and graphics</li>
+<li>R is lightweight, free, open-source and cross-platform</li>
+<li>Works with contributed packages - <a href="https://cran.r-project.org/web/packages/">currently</a> 12,938 -extensibility</li>
+<li>Automation and recording of workflow (reproducibility)</li>
+<li>Optimized work flow - data manipulation, analysis and visualization all in one place</li>
+<li>R does not alter underlying data - manipulation and visualization in memory</li>
+<li>R is great for repetetive graphics</li>
+</ul>
+<div class="figure">
+<img src="/R-User-Group-Spatial-Workshop-2018/img/History%20of%20R.png" alt="History of R" />
+<p class="caption">History of R</p>
+</div>
+<p>Second, why use R for spatial, or GIS, workflows?</p>
+<ul>
+<li>Spatial and statistical analysis in one environment</li>
+<li>Leverage statistical power of R (i.e. modeling spatial data, data visualization, statistical exploration)</li>
+<li>Can handle vector and raster data, as well as work with spatial databases and pretty much any data format spatial data comes in</li>
+<li>R’s GIS capabilities growing rapidly right now - new packages added monthly - currently about 180 spatial packages</li>
+</ul>
+<p>Some drawbacks to using R for GIS work</p>
+<ul>
+<li>R not as good for interactive use as desktop GIS applications like ArcGIS or QGIS (i.e. editing features, panning, zooming, and analysis on selected subsets of features)</li>
+<li>Explicit coordinate system handling by the user, no on-the-fly projection support</li>
+<li>In memory analysis does not scale well with large GIS vector and tabular data</li>
+<li>Steep learning curve</li>
+<li>Up to you to find packages to do what you need - help not always great</li>
+</ul>
+<p>An ideal solution for many tasks is using R in conjunction with traditional GIS software.</p>
+<p>R runs on contributed packages - it has core functionality, but all the spatial work we would do in R is contained in user-contributed packages. Primary ones you’ll want to familiarize yourself with are <code>sf</code>, <code>rgdal</code>, <code>sp</code>, <code>rgeos</code>, <code>raster</code> - there are many, many more. A good source to learn about available R spatial packages is:</p>
+<p><a href="https://cran.r-project.org/web/views/Spatial.html">CRAN Task View: Analysis of Spatial Data</a></p>
 
 
 
