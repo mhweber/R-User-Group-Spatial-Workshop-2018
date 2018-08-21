@@ -84,7 +84,7 @@ For Linux users, to install simple features for R (`sf`), you need GDAL >= 2.0.0
 
 You basically want to add [ubuntugis-unstable](http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu/) to the package repositories and then get those three dependencies:
 
-```{r}
+```r
 sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 sudo apt-get install libgdal-dev libgeos-dev libproj-dev
 ```
@@ -108,15 +108,21 @@ Working directory in R is the location on your computer R is working from.  To d
 getwd()
 ```
 
+Which should return something like:
+```r
+[1] "/home/marc/GitProjects/AWRA_GIS_R_Workshop"
+```
+
 To see what is in the directory:
 ```{r}
 dir()
 ```
 
 To establish a different directory:
-```{r}
+```r
 setwd("/home/marc/GitProjects")
 ```
+
 
 #### Terminology: data structures
 R is an interpreted language (access through a command-line interpreter) with a number of data structures (vectors, matrices, arrays, data frames, lists) and extensible objects (regression models, time-series, geospatial coordinates) and supports procedural programming with functions. 
