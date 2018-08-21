@@ -3,8 +3,10 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Before the Workshop"
-      href: Before.html
+    - text: "Preliminaries"
+      href: Preliminaries.html
+    - text: "SpatialObjects"
+      href: SpatialObjects.html  
     - text: "Interactive Mapping"
       href: LeafletPlotly.html
     - text: "Resources"
