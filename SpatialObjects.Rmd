@@ -15,9 +15,8 @@ title: Spatial Objects
 We can represent spatial data as discrete locations (points, lines or polygons) or as continuous phenomena without natural boundaries. We typiclaly represent the former type of dta as *vector* data, with an associated geometry or shape, and some attributes with information about the locations.  Examples are things like state boundaries with state name and population, rivers with their flow volume and names, polygons of watersheds with their names and associated landscape information.  We represent the latter type of data (continuous spatial fields) with *rasters* - these would be things such as elevation, precipitation, and atmospheric deposition for instance.
 
 
-Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information
+Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information - below we generate cites with population and make a map with a legend:
 
-Generate cites with population and make a map with a legend
 ```{r cities}
 cities <- c('Ashland','Corvallis','Bend','Portland','Newport')
 longitude <- c(-122.699, -123.275, -121.313, -122.670, -124.054)
@@ -33,6 +32,16 @@ breaks <- c(20000, 50000, 60000, 100000)
 options(scipen=3)
 legend("topright", legend=breaks, pch=20, pt.cex=1+breaks/20000, 
   col='red', bg='gray')
+```
+
+We can add a random polygon and map this as well:
+```{r}
+lon <- c(-123.5, -123.5, -122.5, -122.670, -123)
+lat <- c(43, 45.5, 44, 43, 43)
+x <- cbind(lon, lat)
+polygon(x, border='blue')
+lines(x, lwd=3, col='red')
+points(x, cex=2, pch=20)
 ```
 
 ### Vector Data with sp
