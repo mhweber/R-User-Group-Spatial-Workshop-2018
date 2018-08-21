@@ -1,5 +1,5 @@
 ---
-title: Interactive Maps
+title: Visualization and Interactive Mapping
 ---
 
 Make a leaflet map

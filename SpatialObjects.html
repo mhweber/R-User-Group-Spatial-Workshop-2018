@@ -340,7 +340,7 @@ div.tocify {
   <a href="SpatialOperations2.html">Spatial Operations2</a>
 </li>
 <li>
-  <a href="LeafletPlotly.html">Interactive Mapping</a>
+  <a href="Mapping.html">Visualization and Interactive Mapping</a>
 </li>
 <li>
   <a href="Resources.html">Resources</a>
@@ -384,6 +384,7 @@ div.tocify {
 <h4>Simple Representation of Spatial Data and Supported Data Types</h4>
 <p>We can represent spatial data as discrete locations (points, lines or polygons) or as continuous phenomena without natural boundaries. We typiclaly represent the former type of dta as <em>vector</em> data, with an associated geometry or shape, and some attributes with information about the locations. Examples are things like state boundaries with state name and population, rivers with their flow volume and names, polygons of watersheds with their names and associated landscape information. We represent the latter type of data (continuous spatial fields) with <em>rasters</em> - these would be things such as elevation, precipitation, and atmospheric deposition for instance.</p>
 <p>Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information</p>
+<p>Generate cites with population and make a map with a legend</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Ashland&#39;</span>,<span class="st">&#39;Corvallis&#39;</span>,<span class="st">&#39;Bend&#39;</span>,<span class="st">&#39;Portland&#39;</span>,<span class="st">&#39;Newport&#39;</span>)
 longitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">122.699</span>, <span class="op">-</span><span class="fl">123.275</span>, <span class="op">-</span><span class="fl">121.313</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="fl">124.054</span>)
 latitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">42.189</span>, <span class="fl">44.57</span>, <span class="fl">44.061</span>, <span class="fl">45.523</span>, <span class="fl">44.652</span>)
@@ -391,12 +392,14 @@ population &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="
 locs &lt;-<span class="st"> </span><span class="kw">cbind</span>(longitude, latitude) 
 <span class="kw">plot</span>(locs, <span class="dt">cex=</span><span class="kw">sqrt</span>(population<span class="op">*</span>.<span class="dv">0002</span>), <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, 
   <span class="dt">main=</span><span class="st">&#39;Population&#39;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">124</span>,<span class="op">-</span><span class="fl">120.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">42</span>, <span class="dv">46</span>))
-<span class="kw">text</span>(locs, cities, <span class="dt">pos=</span><span class="dv">4</span>)</code></pre></div>
-<p>Add a legend</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">breaks &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20000</span>, <span class="dv">50000</span>, <span class="dv">60000</span>, <span class="dv">100000</span>)
+<span class="kw">text</span>(locs, cities, <span class="dt">pos=</span><span class="dv">4</span>)
+
+<span class="co"># Add a legend</span>
+breaks &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20000</span>, <span class="dv">50000</span>, <span class="dv">60000</span>, <span class="dv">100000</span>)
 <span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">3</span>)
 <span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend=</span>breaks, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">pt.cex=</span><span class="dv">1</span><span class="op">+</span>breaks<span class="op">/</span><span class="dv">20000</span>, 
   <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">bg=</span><span class="st">&#39;gray&#39;</span>)</code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/cities-1.png" width="672" /></p>
 </div>
 </div>
 <div id="vector-data-with-sp" class="section level3">

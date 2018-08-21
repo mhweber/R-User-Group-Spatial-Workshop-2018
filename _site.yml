@@ -11,8 +11,8 @@ navbar:
       href: SpatialOperations1.html
     - text: "Spatial Operations2"
       href: SpatialOperations2.html
-    - text: "Interactive Mapping"
-      href: LeafletPlotly.html
+    - text: "Visualization and Interactive Mapping"
+      href: Mapping.html
     - text: "Resources"
       href: Resources.html
 output_dir: "."
