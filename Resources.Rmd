@@ -2,20 +2,20 @@
 title: "Resources"
 ---
 
-## General R Spatial Resources
+### General R Spatial Resources
 
 * [**R Spatial**](http://rspatial.org/spatial/)
 * [**Geocomputation with R**](https://geocompr.robinlovelace.net/)
 * [**R Spatial Task View**](https://cran.r-project.org/web/views/Spatial.html)
 * [**Introduction to Mapping and Spatial Analysis with R**](https://cengel.github.io/rspatial/)
 
-## R sp Resources
+### R sp Resources
 
 * [Bivand, R. S., Pebesma, E. J., & Gómez-Rubio, V. (2008). **Applied spatial data analysis with R. New York: Springer.**](https://www.springer.com/us/book/9781461476177)
 * [**Classes and Methods for Spatial Data: the sp package**](https://cran.r-project.org/web/packages/sp/vignettes/intro_sp.pdf)
 * [**Classes and Methods for Spatial Data: the sp package**](https://cran.r-project.org/web/packages/sp/vignettes/intro_sp.pdf)
 
-## R Simple Features Resources
+### R Simple Features Resources
 
 * [**Simple Features for R**](https://r-spatial.github.io/sf/index.html)
 * [**Spatial Data in R: New Directions**](https://edzer.github.io/UseR2017/)
@@ -24,14 +24,14 @@ title: "Resources"
 * [**Simple Features: Building Spatial Data Pipelines in R**](https://www.azavea.com/blog/2017/08/30/spatial-analysis-pipelines-in-r-with-simple-features/)
 * [**Tidy spatial data in R: using dplyr, tidyr, and ggplot2 with sf**](http://strimas.com/r/tidy-sf/)
 
-## R Raster Resources
+### R Raster Resources
 
 * [Wageningen University **Intro to Raster**](http://geoscripting-wur.github.io/IntroToRaster/)
 * [Wageningen University **Advanced Raster Analysis**](https://geoscripting-wur.github.io/AdvancedRasterAnalysis/)
 * [**The Visual Raster Cheat Sheet GitHub Repo**](https://github.com/etiennebr/visualraster)
 * [**Rastervis**](https://oscarperpinan.github.io/rastervis/)
 
-## R Mapping Resources
+### R Mapping Resources
 
 * [**mapview**](https://r-spatial.github.io/mapview/)
 * [**Leaflet for R**](https://rstudio.github.io/leaflet/)

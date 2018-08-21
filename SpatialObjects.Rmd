@@ -2,3 +2,15 @@
 title: Spatial Objects
 ---
 
+## Lesson Goals
+
+* Understand R representation of vector and raster spatial data
+* Familiarity with R packages for reading, writing, and dealing with vector and raster data
+* Understand spatial file types supported by R spatial packages
+* Learn to pull spatial data from online sources into R
+
+### Representing Spatial Data and spatial Data Types
+
+### Getting Data (Downloading Open Data and Geographic Data Packages)
+
+### Geographic Data I/O and File Types

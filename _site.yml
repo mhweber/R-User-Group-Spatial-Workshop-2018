@@ -6,7 +6,11 @@ navbar:
     - text: "Preliminaries"
       href: Preliminaries.html
     - text: "SpatialObjects"
-      href: SpatialObjects.html  
+      href: SpatialObjects.html 
+    - text: "SpatialOperations1"
+      href: SpatialOperations1.html
+    - text: "SpatialOperations2"
+      href: SpatialOperations2.html
     - text: "Interactive Mapping"
       href: LeafletPlotly.html
     - text: "Resources"
