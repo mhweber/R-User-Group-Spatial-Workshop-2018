@@ -11,7 +11,7 @@
 
 
 
-<title>Background and necessary packages</title>
+<title>Preliminaries</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,6 +27,52 @@
 <link rel="stylesheet" href="site_libs_extra/academicons-1.8.0/css/academicons.css"/>
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+div.sourceCode {
+  overflow-x: visible;
+}
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
 
 
 <style type="text/css">
@@ -319,11 +365,13 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Background and necessary packages</h1>
+<h1 class="title toc-ignore">Preliminaries</h1>
 
 </div>
 
 
+<div id="background" class="section level3">
+<h3>Background</h3>
 <p>So, to begin, what is R and why should we use R for spatial analysis? Let’s break that into two questions - first, what is R and why should we use it?</p>
 <ul>
 <li>A language and environment for statistical computing and graphics</li>
@@ -356,6 +404,54 @@ div.tocify {
 <p>An ideal solution for many tasks is using R in conjunction with traditional GIS software.</p>
 <p>R runs on contributed packages - it has core functionality, but all the spatial work we would do in R is contained in user-contributed packages. Primary ones you’ll want to familiarize yourself with are <code>sf</code>, <code>rgdal</code>, <code>sp</code>, <code>rgeos</code>, <code>raster</code> - there are many, many more. A good source to learn about available R spatial packages is:</p>
 <p><a href="https://cran.r-project.org/web/views/Spatial.html">CRAN Task View: Analysis of Spatial Data</a></p>
+</div>
+<div id="necessary-r-packages" class="section level3">
+<h3>Necessary R packages</h3>
+<p>First we need to install several R packages. Note the use of the terms <code>package</code> and <code>library</code> in R - you encounter both, and if you want to delve into semantics of which to use see <a href="https://www.r-bloggers.com/packages-v-libraries-in-r/">this post on R-bloggers</a>. R operates on user-contributed packages, and we’ll be jumping into use of several of these spatial packages in this workshop. Several packages we’ll be making use of are <code>sp</code>, <code>rgdal</code>, <code>rgeos</code>, <code>raster</code>, and the new <code>sf</code> simple features package by Edzer Pebesma. You should be able to use the packages tab in RStudio (see below) to install packages in a straightforward way. Mac and Linux users may have certain pre-requisites to fill, I’ll assume you can navigate these on your own or can assist as needed.</p>
+<div class="figure">
+<img src="/R-User-Group-Spatial-Workshop-2018/img/figure/packages.png" alt="RStudio Console" />
+<p class="caption">RStudio Console</p>
+</div>
+<p>Install all of the following packages in R: Install all of the following packages in R - note that for both <code>sf</code> and <code>tidyverse</code> - and specificallly <code>ggplot2</code> in <code>tidyverse</code>, I’ve indicated the alternative install from GitHub rather than CRAN. This is optional, as is installing devtools, and you will be fine with the CRAN version of packages, except that you will not be able to reproduce one of the example plots in the <code>sf</code> section that uses <code>sf_geom</code> funtion from the development version of <code>ggplot2</code>. Note that <code>tidyverse</code> is a ‘meta-package’ that includes several specific packages such as <code>ggplot2</code>, <code>dplyr</code>, and <code>tidyr</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>) <span class="co"># optional but needed for using install_github</span>
+<span class="kw">install.packages</span>(<span class="st">&quot;rgdal&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;rgeos&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;raster&quot;</span>)
+<span class="co"># From CRAN:</span>
+<span class="co"># install.packages(&quot;sf&quot;)</span>
+<span class="co"># From GitHub:</span>
+<span class="kw">library</span>(devtools)
+<span class="kw">install_github</span>(<span class="st">&quot;edzer/sfr&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;gstat&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;spdep&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;maptools&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;stringr&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;reshape&quot;</span>)
+<span class="co"># From CRAN:</span>
+<span class="co"># install.packages(&quot;tidyverse&quot;)</span>
+<span class="co"># From GitHub:</span>
+devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;hadley/tidyverse&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;micromap&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;tmap&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;RCurl&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;dataRetrieval&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;maps&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;USAboundaries&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;rasterVis&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;landsat&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;plotly&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;leaflet&quot;</span>)</code></pre></div>
+<p>Installing <code>rgdal</code> will install the foundation spatial package, <code>sp</code>, as a dependency, and installing <code>tidyverse</code> will install both <code>ggplot2</code> and <code>dplyr</code>.</p>
+<p>For Linux users, to install simple features for R (<code>sf</code>), you need GDAL &gt;= 2.0.0, GEOS &gt;= 3.3.0, and Proj.4 &gt;= 4.8.0. Edzer Pebesma’s Simple Features for R GitHub repo has a good explanation:</p>
+<p><a href="https://github.com/edzer/sfr">Simple Features for R</a></p>
+<p>You basically want to add <a href="http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu/">ubuntugis-unstable</a> to the package repositories and then get those three dependencies:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sudo add<span class="op">-</span>apt<span class="op">-</span>repository ppa<span class="op">:</span>ubuntugis<span class="op">/</span>ubuntugis<span class="op">-</span>unstable
+sudo apt<span class="op">-</span>get install libgdal<span class="op">-</span>dev libgeos<span class="op">-</span>dev libproj<span class="op">-</span>dev</code></pre></div>
+<p>The Simple features for R package , <code>sf</code>, also needs udunits and udunits2 which may need coercing in linux:</p>
+<p><a href="https://github.com/edzer/units/issues/1">Units Issues in sf GitHub repo</a></p>
+<p>The following should resolve:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sudo apt<span class="op">-</span>get install libudunits2<span class="op">-</span>dev</code></pre></div>
+</div>
 
 
 
