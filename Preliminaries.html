@@ -331,13 +331,13 @@ div.tocify {
   <a href="Preliminaries.html">Preliminaries</a>
 </li>
 <li>
-  <a href="SpatialObjects.html">SpatialObjects</a>
+  <a href="SpatialObjects.html">Spatial Objects</a>
 </li>
 <li>
-  <a href="SpatialOperations1.html">SpatialOperations1</a>
+  <a href="SpatialOperations1.html">Spatial Operations1</a>
 </li>
 <li>
-  <a href="SpatialOperations2.html">SpatialOperations2</a>
+  <a href="SpatialOperations2.html">Spatial Operations2</a>
 </li>
 <li>
   <a href="LeafletPlotly.html">Interactive Mapping</a>
@@ -409,7 +409,7 @@ div.tocify {
 <h3>Necessary R packages</h3>
 <p>First we need to install several R packages. Note the use of the terms <code>package</code> and <code>library</code> in R - you encounter both, and if you want to delve into semantics of which to use see <a href="https://www.r-bloggers.com/packages-v-libraries-in-r/">this post on R-bloggers</a>. R operates on user-contributed packages, and we’ll be jumping into use of several of these spatial packages in this workshop. Several packages we’ll be making use of are <code>sp</code>, <code>rgdal</code>, <code>rgeos</code>, <code>raster</code>, and the new <code>sf</code> simple features package by Edzer Pebesma. You should be able to use the packages tab in RStudio (see below) to install packages in a straightforward way. Mac and Linux users may have certain pre-requisites to fill, I’ll assume you can navigate these on your own or can assist as needed.</p>
 <div class="figure">
-<img src="/R-User-Group-Spatial-Workshop-2018/img/figure/packages.png" alt="RStudio Console" />
+<img src="/R-User-Group-Spatial-Workshop-2018/img/packages.png" alt="RStudio Console" />
 <p class="caption">RStudio Console</p>
 </div>
 <p>Install all of the following packages in R: Install all of the following packages in R - note that for both <code>sf</code> and <code>tidyverse</code> - and specificallly <code>ggplot2</code> in <code>tidyverse</code>, I’ve indicated the alternative install from GitHub rather than CRAN. This is optional, as is installing devtools, and you will be fine with the CRAN version of packages, except that you will not be able to reproduce one of the example plots in the <code>sf</code> section that uses <code>sf_geom</code> funtion from the development version of <code>ggplot2</code>. Note that <code>tidyverse</code> is a ‘meta-package’ that includes several specific packages such as <code>ggplot2</code>, <code>dplyr</code>, and <code>tidyr</code>.</p>
@@ -451,6 +451,96 @@ sudo apt<span class="op">-</span>get install libgdal<span class="op">-</span>dev
 <p><a href="https://github.com/edzer/units/issues/1">Units Issues in sf GitHub repo</a></p>
 <p>The following should resolve:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sudo apt<span class="op">-</span>get install libudunits2<span class="op">-</span>dev</code></pre></div>
+</div>
+<div id="basic-r-background" class="section level3">
+<h3>Basic R Background</h3>
+<div id="terminology-working-directory" class="section level4">
+<h4>Terminology: Working Directory</h4>
+<p>Working directory in R is the location on your computer R is working from. To determine your working directory, in console type:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getwd</span>()</code></pre></div>
+<p>Which should return something like:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;/home/marc/GitProjects/AWRA_GIS_R_Workshop&quot;</span></code></pre></div>
+<p>To see what is in the directory:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>()</code></pre></div>
+<p>To establish a different directory:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;/home/marc/GitProjects&quot;</span>)</code></pre></div>
+</div>
+<div id="terminology-data-structures" class="section level4">
+<h4>Terminology: data structures</h4>
+<p>R is an interpreted language (access through a command-line interpreter) with a number of data structures (vectors, matrices, arrays, data frames, lists) and extensible objects (regression models, time-series, geospatial coordinates) and supports procedural programming with functions.</p>
+<p>To learn about objects, become friends with the built-in <code>class</code> and <code>str</code> functions. Let’s explore the built-in iris data set to start:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(iris)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;data.frame&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(iris)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="st">&#39;data.frame&#39;</span><span class="op">:</span><span class="st">   </span><span class="dv">150</span> obs. of  <span class="dv">5</span> variables<span class="op">:</span>
+<span class="er">$</span><span class="st"> </span>Sepal.Length<span class="op">:</span><span class="st"> </span>num  <span class="fl">5.1</span> <span class="fl">4.9</span> <span class="fl">4.7</span> <span class="fl">4.6</span> <span class="dv">5</span> <span class="fl">5.4</span> <span class="fl">4.6</span> <span class="dv">5</span> <span class="fl">4.4</span> <span class="fl">4.9</span> ...
+<span class="op">$</span><span class="st"> </span>Sepal.Width <span class="op">:</span><span class="st"> </span>num  <span class="fl">3.5</span> <span class="dv">3</span> <span class="fl">3.2</span> <span class="fl">3.1</span> <span class="fl">3.6</span> <span class="fl">3.9</span> <span class="fl">3.4</span> <span class="fl">3.4</span> <span class="fl">2.9</span> <span class="fl">3.1</span> ...
+<span class="op">$</span><span class="st"> </span>Petal.Length<span class="op">:</span><span class="st"> </span>num  <span class="fl">1.4</span> <span class="fl">1.4</span> <span class="fl">1.3</span> <span class="fl">1.5</span> <span class="fl">1.4</span> <span class="fl">1.7</span> <span class="fl">1.4</span> <span class="fl">1.5</span> <span class="fl">1.4</span> <span class="fl">1.5</span> ...
+<span class="op">$</span><span class="st"> </span>Petal.Width <span class="op">:</span><span class="st"> </span>num  <span class="fl">0.2</span> <span class="fl">0.2</span> <span class="fl">0.2</span> <span class="fl">0.2</span> <span class="fl">0.2</span> <span class="fl">0.4</span> <span class="fl">0.3</span> <span class="fl">0.2</span> <span class="fl">0.2</span> <span class="fl">0.1</span> ...
+<span class="op">$</span><span class="st"> </span>Species     <span class="op">:</span><span class="st"> </span>Factor w<span class="op">/</span><span class="st"> </span><span class="dv">3</span> levels <span class="st">&quot;setosa&quot;</span>,<span class="st">&quot;versicolor&quot;</span>,..<span class="op">:</span><span class="st"> </span><span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> ...</code></pre></div>
+<p>As we can see, <code>iris</code> is a data frame and is used extensively for beginning tutorials on learning R. Data frames consist of rows of observations on columns of values for variables of interest - they are one of the fundamental and most important data structures in R.</p>
+<p>But as we see in the result of str(iris) above, following the information that iris is a data frame with 150 observations of 5 variables, we get information on each of the variables, in this case that 4 are numeric and one is a factor with three levels.</p>
+<p>First off, R has several main data types:</p>
+<ul>
+<li>logical</li>
+<li>integer</li>
+<li>double</li>
+<li>complex</li>
+<li>character</li>
+<li>raw</li>
+<li>list</li>
+<li>NULL</li>
+<li>closure (function)</li>
+<li>special</li>
+<li>builtin (basic functions and operators)</li>
+<li>environment</li>
+<li>S4 (some S4 objects)</li>
+<li>others you won’t run into at user level</li>
+</ul>
+<p>We can ask what data type something is using <code>typeof</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;list&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris<span class="op">$</span>Sepal.Length)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;double&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris<span class="op">$</span>Specis)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></code></pre></div>
+<p>We see a couple interesting things here - <code>iris</code>, which we just said is a data frame, is a data type of <code>list</code>. <code>Sepal.Length</code> is data type <code>double</code>, and in <code>str(iris)</code> we saw it was numeric - that makes sense - but we see that <code>Species</code> is data type <code>integer</code>, and in <code>str(iris)</code> we were told this variable was a factor with three levels. What’s going on here?</p>
+<p>First off, <code>class</code> refers to the abstract type of an object in R, whereas <code>typeof</code> or <code>mode</code> refer to how an object is stored in memory. So iris is an object of class <code>data.frame</code>, but it is stored in memory as a list (i.e. each column is an item in a list). Note that this allows data frames to have columns of different classes, whereas a matrix needs to be all of the same mode.</p>
+<p>For our <code>Species</code> column, We see it’s <code>mode</code> is numeric, it’s <code>typeof</code> is <code>integer</code>, and it’s class is <code>factor</code>. Nominal variables in R are treated as a vector of integers 1:k, where k is the number of unique values of that nominal variable and a mapping of the character strings to these integer values.</p>
+<p>This allows us to quickly see see all the unique values of a particular nominal variable or quickly re-asign a level of a nominal variable to a new value - remember, everything in R is in memory, so don’t worry about tweaking the data!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(iris<span class="op">$</span>Species)
+<span class="kw">levels</span>(iris<span class="op">$</span>Species)[<span class="dv">1</span>] &lt;-<span class="st"> &#39;sibirica&#39;</span></code></pre></div>
+<p>See if you can explain how that re-asignment we just did worked.</p>
+<p>To access particular columns in a data frame, as we saw above, we use the <code>$</code> operator - we can see the value for <code>Species</code> for each observation in `iris by doing:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris<span class="op">$</span>Species</code></pre></div>
+<p>To access particular columns or rows of a data frame, we use indexing:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris[<span class="dv">1</span>,<span class="dv">3</span>] <span class="co"># the 1st row and the 3rd column</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="fl">1.4</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris[<span class="dv">4</span>,<span class="dv">5</span>] <span class="co"># the 4th row and the 5th column</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] sibirica
+Levels<span class="op">:</span><span class="st"> </span>sibirica versicolor virginica</code></pre></div>
+<p>A handy function is <code>names</code>, which you can use to get or to set data frame variable names:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iris)
+<span class="kw">names</span>(iris)[<span class="dv">1</span>] &lt;-<span class="st"> &#39;Length of Sepal&#39;</span></code></pre></div>
+<p>Explain what this last line did</p>
+</div>
+<div id="overview-of-classes-and-methods" class="section level4">
+<h4>Overview of Classes and Methods</h4>
+<ul>
+<li>Class: object types
+<ul>
+<li><code>class()</code>: gives the class type</li>
+<li><code>typeof()</code>: information on how the object is stored</li>
+<li><code>str()</code>: how the object is structured</li>
+</ul></li>
+<li>Method: generic functions
+<ul>
+<li><code>print()</code></li>
+<li><code>plot()</code></li>
+<li>`summary()</li>
+</ul></li>
+</ul>
+</div>
 </div>
 
 

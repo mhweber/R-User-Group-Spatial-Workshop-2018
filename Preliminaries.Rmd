@@ -41,7 +41,7 @@ R runs on contributed packages - it has core functionality, but all the spatial 
 
 First we need to install several R packages.  Note the use of the terms `package` and `library` in R - you encounter both, and if you want to delve into semantics of which to use see [this post on R-bloggers](https://www.r-bloggers.com/packages-v-libraries-in-r/).  R operates on user-contributed packages, and we'll be jumping into use of several of these spatial packages in this workshop.  Several packages we'll be making use of are `sp`, `rgdal`, `rgeos`, `raster`, and the new `sf` simple features package by Edzer Pebesma.  You should be able to use the packages tab in RStudio (see below) to install packages in a straightforward way.  Mac and Linux users may have certain pre-requisites to fill, I'll assume you can navigate these on your own or can assist as needed.
 
-![RStudio Console](/R-User-Group-Spatial-Workshop-2018/img/figure/packages.png)
+![RStudio Console](/R-User-Group-Spatial-Workshop-2018/img/packages.png)
 
 Install all of the following packages in R:
 Install all of the following packages in R - note that for both `sf` and `tidyverse` - and specificallly `ggplot2` in `tidyverse`, I've indicated the alternative install from GitHub rather than CRAN.  This is optional, as is installing devtools, and you will be fine with the CRAN version of packages, except that you will not be able to reproduce one of the example plots in the `sf` section that uses `sf_geom` funtion from the development version of `ggplot2`. Note that `tidyverse` is a 'meta-package' that includes several specific packages such as `ggplot2`, `dplyr`, and `tidyr`.
@@ -98,4 +98,148 @@ The following should resolve:
 ```r
 sudo apt-get install libudunits2-dev
 ```
+
+### Basic R Background
+#### Terminology: Working Directory
+
+Working directory in R is the location on your computer R is working from.  To determine your working directory, in console type:
+
+```r
+getwd()
+```
+
+Which should return something like:
+
+```r
+[1] "/home/marc/GitProjects/AWRA_GIS_R_Workshop"
+```
+
+To see what is in the directory:
+```r
+dir()
+```
+
+To establish a different directory:
+```r
+setwd("/home/marc/GitProjects")
+```
+
+#### Terminology: data structures
+R is an interpreted language (access through a command-line interpreter) with a number of data structures (vectors, matrices, arrays, data frames, lists) and extensible objects (regression models, time-series, geospatial coordinates) and supports procedural programming with functions. 
+
+To learn about objects, become friends with the built-in `class` and `str` functions. Let's explore the built-in iris data set to start:
+
+```r
+class(iris)
+```
+
+```r
+[1] "data.frame"
+```
+
+```r
+str(iris)
+```
+
+```r
+'data.frame':	150 obs. of  5 variables:
+$ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+$ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+$ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+$ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+$ Species     : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...
+```
+As we can see, `iris` is a data frame and is used extensively for beginning tutorials on learning R. Data frames consist of rows of observations  on columns of values for variables of interest - they are one of the fundamental and most important data structures in R. 
+
+But as we see in the result of str(iris) above, following the information that iris is a data frame with 150 observations of 5 variables, we get information on each of the variables, in this case that 4 are numeric and one is a factor with three levels.
+
+First off, R has several main data types:
+
+* logical
+* integer
+* double
+* complex
+* character
+* raw
+* list
+* NULL
+* closure (function)
+* special
+* builtin (basic functions and operators)
+* environment
+* S4 (some S4 objects)
+* others you won't run into at user level
+
+We can ask what data type something is using `typeof`:
+```r
+typeof(iris)
+```
+```r
+[1] "list"
+```
+```r
+typeof(iris$Sepal.Length)
+```
+```r
+[1] "double"
+```
+```r
+typeof(iris$Specis)
+```
+```r
+[1] "integer"
+```
+
+We see a couple interesting things here - `iris`, which we just said is a data frame, is a data type of `list`.  `Sepal.Length` is data type `double`, and in `str(iris)` we saw it was numeric - that makes sense - but we see that `Species` is data type `integer`, and in `str(iris)` we were told this variable was a factor with three levels.  What's going on here?
+
+First off, `class` refers to the abstract type of an object in R, whereas `typeof` or `mode` refer to how an object is stored in memory. So iris is an object of class `data.frame`, but it is stored in memory as a list (i.e. each column is an item in a list).  Note that this allows data frames to have columns of different classes, whereas a matrix needs to be all of the same mode.
+
+For our `Species` column, We see it's `mode` is numeric, it's `typeof` is `integer`, and it's class is `factor`.  Nominal variables in R are treated as a vector of integers 1:k,  where k is the number of unique values of that nominal variable and a mapping of the character strings to these integer values.  
+
+This allows us to quickly see see all the unique values of a particular nominal variable or quickly re-asign a level of a nominal variable to a new value - remember, everything in R is in memory, so don't worry about tweaking the data!
+```r
+levels(iris$Species)
+levels(iris$Species)[1] <- 'sibirica'
+```
+
+See if you can explain how that re-asignment we just did worked.
+
+To access particular columns in a data frame, as we saw above, we use the `$` operator - we can see the value for `Species` for each observation in `iris by doing:
+```r
+iris$Species
+```
+
+To access particular columns or rows of a data frame, we use indexing:
+```r
+iris[1,3] # the 1st row and the 3rd column
+```
+```r
+[1] 1.4
+```
+```r
+iris[4,5] # the 4th row and the 5th column
+```
+```r
+[1] sibirica
+Levels: sibirica versicolor virginica
+```
+
+A handy function is `names`, which you can use to get or to set data frame variable names:
+```r
+names(iris)
+names(iris)[1] <- 'Length of Sepal'
+```
+
+Explain what this last line did
+
+#### Overview of Classes and Methods
+
+- Class: object types
+    - `class()`: gives the class type 
+    - `typeof()`: information on how the object is stored
+    - `str()`: how the object is structured
+- Method: generic functions
+    - `print()`
+    - `plot()`
+    - `summary()
 
