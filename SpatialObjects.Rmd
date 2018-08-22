@@ -60,7 +60,35 @@ lines(x, lwd=3, col='red')
 points(x, cex=2, pch=20)
 ```
 
+We can see in this toy example that numeric vectors can represent locations in R for simple mapping.  Points just need to be a pair of numbers in cartesian space, lines and polygons are just a number of these points (note that polygons are closed by having their first point coincide with last point which the `polygon` function in base R graphics takes care of). 
+
+You can do simple things with this spatial representation using basic R structures, but it breaks down quickly if you want to ask any spatial questions - for instance using the example above, how would we figure out the nearest city to Corvallis? Or imagine the polygon is a county and we wanted to know what cities are within the county?
+
+So what information do we need to properly define spatial vector data and perform spatial operations?
+
+* A coordinate reference system
+* A bounding box or extent
+* ?
+
 ### Vector Data with sp
+we're going to quickly review how spatial data was standardized in recent years using the base package `sp`.  It's informative to understand the structure of `sp` objects, and a number of packages still depend on `sp`, but this is changing rapidly and the R spatial vector world is rapdily moving toward adaptation of the newer `sf` package, so the bulk of our vector work will be using `sf`.
+
+One reason it's worth still going over `sp`, even though you'll soon find `sf` is far superior in a number of ways, is that numerous packages are currently built using `sp` object structure, so there's a need to learn it to navigate current R spatial ecosystem - image below from [Colin Gillespie's Tweet](https://twitter.com/csgillespie/status/854438264538845184):
+
+![CRANdependencies](/R-User-Group-Spatial-Workshop-2018/img/CRANdependencies.jpg)
+
+```{r packages}
+devtools::install_github("metacran/cranlogs")
+library(cranlogs)
+library(ggplot2)
+library(lubridate)
+stats <- cran_downloads(from = "2013-01-01", to = "2018-08-22",packages = c("sp", "sf", "raster", "ggmap", "mapview"))
+
+monthly_stats <- stats %>% 
+  group_by(month=floor_date(date, "month"), package) %>%
+  summarize(amount=sum(count))
+ggplot(monthly_stats, aes(x=month, y=amount, group = package, colour = package)) + geom_line() 
+```
 
 ### Vector Data with sf
 

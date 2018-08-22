@@ -423,10 +423,37 @@ x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
 <span class="kw">lines</span>(x, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
 <span class="kw">points</span>(x, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">pch=</span><span class="dv">20</span>)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>We can see in this toy example that numeric vectors can represent locations in R for simple mapping. Points just need to be a pair of numbers in cartesian space, lines and polygons are just a number of these points (note that polygons are closed by having their first point coincide with last point which the <code>polygon</code> function in base R graphics takes care of).</p>
+<p>You can do simple things with this spatial representation using basic R structures, but it breaks down quickly if you want to ask any spatial questions - for instance using the example above, how would we figure out the nearest city to Corvallis? Or imagine the polygon is a county and we wanted to know what cities are within the county?</p>
+<p>So what information do we need to properly define spatial vector data and perform spatial operations?</p>
+<ul>
+<li>A coordinate reference system</li>
+<li>A bounding box or extent</li>
+<li>?</li>
+</ul>
 </div>
 </div>
 <div id="vector-data-with-sp" class="section level3">
 <h3>Vector Data with sp</h3>
+<p>we’re going to quickly review how spatial data was standardized in recent years using the base package <code>sp</code>. It’s informative to understand the structure of <code>sp</code> objects, and a number of packages still depend on <code>sp</code>, but this is changing rapidly and the R spatial vector world is rapdily moving toward adaptation of the newer <code>sf</code> package, so the bulk of our vector work will be using <code>sf</code>.</p>
+<p>One reason it’s worth still going over <code>sp</code>, even though you’ll soon find <code>sf</code> is far superior in a number of ways, is that numerous packages are currently built using <code>sp</code> object structure, so there’s a need to learn it to navigate current R spatial ecosystem - image below from <a href="https://twitter.com/csgillespie/status/854438264538845184">Colin Gillespie’s Tweet</a>:</p>
+<div class="figure">
+<img src="/R-User-Group-Spatial-Workshop-2018/img/CRANdependencies.jpg" alt="CRANdependencies" />
+<p class="caption">CRANdependencies</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;metacran/cranlogs&quot;</span>)</code></pre></div>
+<pre><code>## Skipping install of &#39;cranlogs&#39; from a github remote, the SHA1 (554a99ef) has not changed since last install.
+##   Use `force = TRUE` to force installation</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cranlogs)
+<span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(lubridate)
+stats &lt;-<span class="st"> </span><span class="kw">cran_downloads</span>(<span class="dt">from =</span> <span class="st">&quot;2013-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2018-08-22&quot;</span>,<span class="dt">packages =</span> <span class="kw">c</span>(<span class="st">&quot;sp&quot;</span>, <span class="st">&quot;sf&quot;</span>, <span class="st">&quot;raster&quot;</span>, <span class="st">&quot;ggmap&quot;</span>, <span class="st">&quot;mapview&quot;</span>))
+
+monthly_stats &lt;-<span class="st"> </span>stats <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(<span class="dt">month=</span><span class="kw">floor_date</span>(date, <span class="st">&quot;month&quot;</span>), package) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">amount=</span><span class="kw">sum</span>(count))
+<span class="kw">ggplot</span>(monthly_stats, <span class="kw">aes</span>(<span class="dt">x=</span>month, <span class="dt">y=</span>amount, <span class="dt">group =</span> package, <span class="dt">colour =</span> package)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() </code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/packages-1.png" width="672" /></p>
 </div>
 <div id="vector-data-with-sf" class="section level3">
 <h3>Vector Data with sf</h3>
