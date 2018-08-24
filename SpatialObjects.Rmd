@@ -174,7 +174,7 @@ method/class | and what it does
 `over(x, y)` | used for example to retrieve the polygon or grid indexes on a set of points - we'll come back to that one later
 `spsample(x)` | sampling of spatial points within the spatial extent of objects
 
-#### A quick foray into coordinate reference systems and projections
+#### *A quick foray into coordinate reference systems and projections*
 Coordinate reference system, or CRS, information in `sp` uses the `proj4string` format.  A very handy site to use to lookup any projection and get it's `proj4string` format is [spatialreference.org](http://spatialreference.org/).  A very handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: [Overview of Coordinate Reference Systems (CRS) in R](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf).
 
 Dealing with coordinate reference systems and projections is a big part of working with spatial data in R, and it's relatively straightforward once you get the hang of it.  Here are some of the fundamentals:
@@ -200,6 +200,46 @@ Dealing with coordinate reference systems and projections is a big part of worki
         * To get the CRS: projection(x)
         * To transform CRS: projectRaster(x)
 
+To get back to our `SpatialPointsDataFrame` we created, hopefully everyone realizes the issue with our oddly-shaped map is that our data was unprojected, and actually lacking any coordinate reference system information whatsoever.  We have to supply this to our CRS slot for our pts `SpatialPointsDataFrame`.  We know we're using latitude and longitude values, and usually it's safe to assume those are either NAD83 Datum or WGS84 - we don't need to worry about delving into the details here.  We can lookup the correct `proj4string` either using [http://www.spatialreference.org/](http://www.spatialreference.org/) or the `projInfo` method in the `rgdal` package.
+
+Try one of these methods to get the CRS information we need to supply for our points.
+
+Solution:
+
+```{r CRS, message=FALSE}
+pts@proj4string <- CRS('+proj=longlat +ellps=GRS80 
+                        +datum=NAD83 +no_defs')
+summary(pts)
+```
+
+And let's plot again 
+```{r map, message=FALSE}
+plot(pts, axes=T)
+pointLabel(coordinates(pts),labels=pts$cities)
+```
+
+Better - but what did you notice from summary(pts) above in the `proj4string` information?
+
+We should not just use a geographic CRS, but project to a planar CRS for a better looking map - NAD83 / Oregon Lambert is a good choice - see if you can find the `proj4string` for this(hint: EPSG code is 2991) and take a minute to look through help for `sp` package and see if anyone knows how we'd get our pts to this projection.
+
+```{r CRS2, message=FALSE}
+pts <- spTransform(pts, CRS('+proj=lcc +lat_1=43 +lat_2=45.5 +lat_0=41.75 +lon_0=-120.5 +x_0=400000 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'))
+# NOTE# You can also simply use the EPSG code if projection has
+pts <- spTransform(pts, CRS('+init=epsg:2991'))
+summary(pts)
+```
+
+And now how does it look when we map it? We're adding a step below using the `getData` function in the `raster` package to bring in a counties background - we'll look at `raster` more in a bit:
+```{r map2, message=FALSE}
+library(raster)
+US <- getData("GADM",country="USA",level=2)
+OR <-US[US$NAME_1=='Oregon',]
+proj4string(pts) == proj4string(OR)
+OR <- spTransform(OR, CRS(proj4string(pts)))
+plot(OR, axes=T)
+plot(pts, add=T)
+pointLabel(coordinates(pts),labels=pts$cities)
+```
 
 ### Vector Data with sf
 
@@ -207,5 +247,6 @@ Dealing with coordinate reference systems and projections is a big part of worki
 
 ### Getting Data 
 #### Downloading Open Data and Geographic Data Packages
+[this](https://pakillo.github.io/R-GIS-tutorial/)
 
 ### Geographic Data I/O
