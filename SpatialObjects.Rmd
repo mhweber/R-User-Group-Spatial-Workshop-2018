@@ -22,7 +22,7 @@ We represent the latter type of data (continuous spatial fields) with *rasters* 
 
 Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information - below we generate cites with population and make a map with a legend:
 
-```{r cities}
+```{r cities, message=FALSE, warning=FALSE}
 cities <- c('Ashland','Corvallis','Bend','Portland','Newport')
 longitude <- c(-122.699, -123.275, -121.313, -122.670, -124.054)
 latitude <- c(42.189, 44.57, 44.061, 45.523, 44.652)
@@ -40,7 +40,7 @@ legend("topright", legend=breaks, pch=20, pt.cex=1+breaks/20000,
 ```
 
 We can add a random polygon and map this as well:
-```{r}
+```{r cities2, message=FALSE, warning=FALSE}
 cities <- c('Ashland','Corvallis','Bend','Portland','Newport')
 longitude <- c(-122.699, -123.275, -121.313, -122.670, -124.054)
 latitude <- c(42.189, 44.57, 44.061, 45.523, 44.652)
@@ -85,7 +85,7 @@ One reason it's worth still going over `sp`, even though you'll soon find `sf` i
 And below is a figure (with corresponding code you can run) that I put together based on a figure in [Geocomputation with R](https://geocompr.robinlovelace.net/) - the take home is that sp is still the most-used spatial package in R despite the growth of `sf`.
 
 
-```{r packages, message=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 # devtools::install_github("metacran/cranlogs")
 library(cranlogs)
 library(ggplot2)
@@ -108,14 +108,14 @@ The best source to learn about `sp` and fundamentals of spatial analysis in R is
 ![SpatialClassesFig1](/R-User-Group-Spatial-Workshop-2018/img/SpatialClassesFig1.png)
 
 Let's take a look at this in R - run the following R code in your R console (or from source):
-```{r spatial class, message=FALSE}
+```{r spatial class, message=FALSE, warning=FALSE}
 library(sp)
 getClass("Spatial")
 ```
 
 We can see from this that a basic `sp` spatial object has to have two 'slots' - a bounding box and a 'proj4string' - this is the prefered format in R for a coordinate reference system (CRS) - either projected or unprojected.  We can also see, from the figure above, that building off of the `Spatial` class, to have a `SpatialPoints`object we also need the actual matrix of coordinates that define those points.  From there, we can build up to a `SpatialPointsDataFrame` by simply adding a data frame of attributes to associate with those points.  Let's step through creating an `sp` `SpatialPointsDataFrame` using our hypothetical cities data we created earlier.
 
-```{r example spatial, message=FALSE}
+```{r example spatial, message=FALSE, warning=FALSE}
 cities <- c('Ashland','Corvallis','Bend','Portland','Newport')
 longitude <- c(-122.699, -123.275, -121.313, -122.670, -124.054)
 latitude <- c(42.189, 44.57, 44.061, 45.523, 44.652)
@@ -131,7 +131,7 @@ We first created vectors of city names, latitude, longitude, and population. The
 
 Conveniently, our base R `plot` method works with our newly created `SpatialPointsDataFrame`, and we can add labels as well one way using the `maptools` package:
 
-```{r plot spatial, message=FALSE}
+```{r plot spatial, message=FALSE, warning=FALSE}
 library(maptools)
 plot(pts, axes=T)
 pointLabel(coordinates(pts),labels=pts$cities)
@@ -140,25 +140,25 @@ pointLabel(coordinates(pts),labels=pts$cities)
 Pop quiz - why doesn't this initial map look quite right?
 
 Hint - run summary on pts:
-```{r summary, message=FALSE}
+```{r summary, message=FALSE, warning=FALSE}
 summary(pts)
 ```
 
 The summary method on our `SpatialPointsDataFrame` gives us a nice quick synopsis of the 'slots' that make up our `sp` object - `str` shows the full detail:
 
-```{r st, message=FALSE}
+```{r st, message=FALSE, warning=FALSE}
 str(pts)
 ```
 
 Meet your new friend the `@` symbol - this is how you access slots in an `S4` object in R - you can think of as similar to `$` in accessing columns in a data frame.
 
 So to get the bounding box of our `SpatialPointsDataFrame`, we simply do:
-```{r bbox, message=FALSE}
+```{r bbox, message=FALSE, warning=FALSE}
 pts@bbox
 ```
 
 Or you can use the method directly:
-```{r bbox2, message=FALSE}
+```{r bbox2, message=FALSE, warning=FALSE}
 bbox(pts)
 ```
 
@@ -206,14 +206,14 @@ Try one of these methods to get the CRS information we need to supply for our po
 
 Solution:
 
-```{r CRS, message=FALSE}
+```{r CRS, message=FALSE, warning=FALSE}
 pts@proj4string <- CRS('+proj=longlat +ellps=GRS80 
                         +datum=NAD83 +no_defs')
 summary(pts)
 ```
 
 And let's plot again 
-```{r map, message=FALSE}
+```{r map, message=FALSE, warning=FALSE}
 plot(pts, axes=T)
 pointLabel(coordinates(pts),labels=pts$cities)
 ```
@@ -222,7 +222,7 @@ Better - but what did you notice from summary(pts) above in the `proj4string` in
 
 We should not just use a geographic CRS, but project to a planar CRS for a better looking map - NAD83 / Oregon Lambert is a good choice - see if you can find the `proj4string` for this(hint: EPSG code is 2991) and take a minute to look through help for `sp` package and see if anyone knows how we'd get our pts to this projection.
 
-```{r CRS2, message=FALSE}
+```{r CRS2, message=FALSE, warning=FALSE}
 pts <- spTransform(pts, CRS('+proj=lcc +lat_1=43 +lat_2=45.5 +lat_0=41.75 +lon_0=-120.5 +x_0=400000 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'))
 # NOTE# You can also simply use the EPSG code if projection has
 pts <- spTransform(pts, CRS('+init=epsg:2991'))
@@ -230,7 +230,7 @@ summary(pts)
 ```
 
 And now how does it look when we map it? We're adding a step below using the `getData` function in the `raster` package to bring in a counties background - we'll look at `raster` more in a bit:
-```{r map2, message=FALSE}
+```{r map2, message=FALSE, warning=FALSE}
 library(raster)
 US <- getData("GADM",country="USA",level=2)
 OR <-US[US$NAME_1=='Oregon',]
