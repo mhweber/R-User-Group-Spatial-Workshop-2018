@@ -603,8 +603,8 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 </tbody>
 </table>
 <div id="a-quick-foray-into-coordinate-reference-systems-and-projections" class="section level4">
-<h4><em>A quick foray into coordinate reference systems and projections</em></h4>
-<p>Coordinate reference system, or CRS, information in <code>sp</code> uses the <code>proj4string</code> format. A very handy site to use to lookup any projection and get it’s <code>proj4string</code> format is <a href="http://spatialreference.org/">spatialreference.org</a>. A very handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: <a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf">Overview of Coordinate Reference Systems (CRS) in R</a>.</p>
+<h4><strong>A quick foray into coordinate reference systems and projections</strong></h4>
+<p>Coordinate reference system, or CRS, information in <code>sp</code> uses the <code>proj4string</code> format. A very handy site to use to lookup any projection and get it’s <code>proj4string</code> format is <a href="http://spatialreference.org/">spatialreference.org</a>. A handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: <a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf">Overview of Coordinate Reference Systems (CRS) in R</a>.</p>
 <p>Dealing with coordinate reference systems and projections is a big part of working with spatial data in R, and it’s relatively straightforward once you get the hang of it. Here are some of the fundamentals:</p>
 <ul>
 <li>CRS can be geographic (lat/lon), projected, or NA in R</li>
@@ -640,7 +640,7 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 </ul></li>
 </ul></li>
 </ul>
-<p>To get back to our <code>SpatialPointsDataFrame</code> we created, hopefully everyone realizes the issue with our oddly-shaped map is that our data was unprojected, and actually lacking any coordinate reference system information whatsoever. We have to supply this to our CRS slot for our pts <code>SpatialPointsDataFrame</code>. We know we’re using latitude and longitude values, and usually it’s safe to assume those are either NAD83 Datum or WGS84 - we don’t need to worry about delving into the details here. We can lookup the correct <code>proj4string</code> either using <a href="http://www.spatialreference.org/" class="uri">http://www.spatialreference.org/</a> or the <code>projInfo</code> method in the <code>rgdal</code> package.</p>
+<p>To get back to our <code>SpatialPointsDataFrame</code> we created, hopefully everyone realizes the issue with our original map shape was that our data was unprojected, and actually lacking any coordinate reference system information whatsoever. We have to supply this to our CRS slot for our pts <code>SpatialPointsDataFrame</code>. We know we’re using latitude and longitude values, and usually it’s safe to assume those are either NAD83 Datum or WGS84 - we don’t need to worry about delving into the details here. We can lookup the correct <code>proj4string</code> either using <a href="http://www.spatialreference.org/" class="uri">http://www.spatialreference.org/</a> or the <code>projInfo</code> method in the <code>rgdal</code> package.</p>
 <p>Try one of these methods to get the CRS information we need to supply for our points.</p>
 <p>Solution:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pts@proj4string &lt;-<span class="st"> </span><span class="kw">CRS</span>(<span class="st">&#39;+proj=longlat +ellps=GRS80 </span>
@@ -717,15 +717,13 @@ OR &lt;-US[US$NAME_1==<span class="st">&#39;Oregon&#39;</span>,]
 <div id="raster-data" class="section level3">
 <h3>Raster Data</h3>
 </div>
-<div id="getting-data" class="section level3">
-<h3>Getting Data</h3>
+<div id="geographic-data-io" class="section level3">
+<h3>Geographic Data I/O</h3>
+<p>For reading and writing vector and raster data in R, the three primary packages you’ll use are: * <code>rgdal</code> or <code>sf</code> for vector formats such as <a href="https://en.wikipedia.org/wiki/Shapefile">ESRI Shapefiles</a>, <a href="https://en.wikipedia.org/wiki/GeoJSON">GeoJSON</a>, and <a href="https://en.wikipedia.org/wiki/GPS_Exchange_Format">GPX</a> - both packages use <strong>OGR</strong>, which is a library under the <a href="https://en.wikipedia.org/wiki/GDAL">GDAL</a> source tree,under the hood * <code>raster</code> for raster formats such as <a href="https://en.wikipedia.org/wiki/GeoTIFF">GeoTIFF</a> or <a href="https://en.wikipedia.org/wiki/Esri_grid">ESRI or ASCII grid</a> using <a href="https://en.wikipedia.org/wiki/GDAL">GDAL</a> under the hood</p>
 <div id="downloading-open-data-and-geographic-data-packages" class="section level4">
 <h4>Downloading Open Data and Geographic Data Packages</h4>
 <p><a href="https://pakillo.github.io/R-GIS-tutorial/">this</a></p>
 </div>
-</div>
-<div id="geographic-data-io" class="section level3">
-<h3>Geographic Data I/O</h3>
 </div>
 </div>
 

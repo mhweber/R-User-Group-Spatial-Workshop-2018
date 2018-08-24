@@ -174,8 +174,8 @@ method/class | and what it does
 `over(x, y)` | used for example to retrieve the polygon or grid indexes on a set of points - we'll come back to that one later
 `spsample(x)` | sampling of spatial points within the spatial extent of objects
 
-#### *A quick foray into coordinate reference systems and projections*
-Coordinate reference system, or CRS, information in `sp` uses the `proj4string` format.  A very handy site to use to lookup any projection and get it's `proj4string` format is [spatialreference.org](http://spatialreference.org/).  A very handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: [Overview of Coordinate Reference Systems (CRS) in R](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf).
+#### **A quick foray into coordinate reference systems and projections**
+Coordinate reference system, or CRS, information in `sp` uses the `proj4string` format.  A very handy site to use to lookup any projection and get it's `proj4string` format is [spatialreference.org](http://spatialreference.org/).  A handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: [Overview of Coordinate Reference Systems (CRS) in R](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf).
 
 Dealing with coordinate reference systems and projections is a big part of working with spatial data in R, and it's relatively straightforward once you get the hang of it.  Here are some of the fundamentals:
 
@@ -200,7 +200,7 @@ Dealing with coordinate reference systems and projections is a big part of worki
         * To get the CRS: projection(x)
         * To transform CRS: projectRaster(x)
 
-To get back to our `SpatialPointsDataFrame` we created, hopefully everyone realizes the issue with our oddly-shaped map is that our data was unprojected, and actually lacking any coordinate reference system information whatsoever.  We have to supply this to our CRS slot for our pts `SpatialPointsDataFrame`.  We know we're using latitude and longitude values, and usually it's safe to assume those are either NAD83 Datum or WGS84 - we don't need to worry about delving into the details here.  We can lookup the correct `proj4string` either using [http://www.spatialreference.org/](http://www.spatialreference.org/) or the `projInfo` method in the `rgdal` package.
+To get back to our `SpatialPointsDataFrame` we created, hopefully everyone realizes the issue with our original map shape was that our data was unprojected, and actually lacking any coordinate reference system information whatsoever.  We have to supply this to our CRS slot for our pts `SpatialPointsDataFrame`.  We know we're using latitude and longitude values, and usually it's safe to assume those are either NAD83 Datum or WGS84 - we don't need to worry about delving into the details here.  We can lookup the correct `proj4string` either using [http://www.spatialreference.org/](http://www.spatialreference.org/) or the `projInfo` method in the `rgdal` package.
 
 Try one of these methods to get the CRS information we need to supply for our points.
 
@@ -250,8 +250,11 @@ Now let's take a quick look at lines and polygons in `sp`.
 
 ### Raster Data
 
-### Getting Data 
+### Geographic Data I/O
+For reading and writing vector and raster data in R, the three primary packages you'll use are:
+ * `rgdal` or `sf` for vector formats such as [ESRI Shapefiles](https://en.wikipedia.org/wiki/Shapefile),  [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), and [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) - both packages use **OGR**, which is a library under the [GDAL](https://en.wikipedia.org/wiki/GDAL) source tree,under the hood
+ * `raster` for raster formats such as [GeoTIFF](https://en.wikipedia.org/wiki/GeoTIFF) or [ESRI or ASCII grid](https://en.wikipedia.org/wiki/Esri_grid) using [GDAL](https://en.wikipedia.org/wiki/GDAL) under the hood
+ 
 #### Downloading Open Data and Geographic Data Packages
 [this](https://pakillo.github.io/R-GIS-tutorial/)
 
-### Geographic Data I/O
