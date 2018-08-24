@@ -378,11 +378,15 @@ div.tocify {
 <li>Understand spatial file types supported by R spatial packages</li>
 <li>Learn to pull spatial data from online sources into R</li>
 </ul>
-<div id="spatial-data-types" class="section level3">
-<h3>Spatial Data Types</h3>
-<div id="simple-representation-of-spatial-data-and-supported-data-types" class="section level4">
-<h4>Simple Representation of Spatial Data and Supported Data Types</h4>
-<p>We can represent spatial data as discrete locations (points, lines or polygons) or as continuous phenomena without natural boundaries. We typiclaly represent the former type of dta as <em>vector</em> data, with an associated geometry or shape, and some attributes with information about the locations. Examples are things like state boundaries with state name and population, rivers with their flow volume and names, polygons of watersheds with their names and associated landscape information. We represent the latter type of data (continuous spatial fields) with <em>rasters</em> - these would be things such as elevation, precipitation, and atmospheric deposition for instance.</p>
+<div id="spatial-data" class="section level3">
+<h3>Spatial Data</h3>
+<p>We can represent spatial data as discrete locations (points, lines or polygons) or as continuous phenomena without natural boundaries. We typically represent the former type of data (discrete locations) as <em>vector</em> data, with an associated geometry or shape, and some attributes with information about the locations. Examples are:</p>
+<ul>
+<li>state boundaries with state name and population</li>
+<li>rivers with their flow volume and names</li>
+<li>polygons of watersheds with their names and associated landscape information</li>
+</ul>
+<p>We represent the latter type of data (continuous spatial fields) with <em>rasters</em> - these would be things such as elevation, precipitation, and atmospheric deposition for instance.</p>
 <p>Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information - below we generate cites with population and make a map with a legend:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Ashland&#39;</span>,<span class="st">&#39;Corvallis&#39;</span>,<span class="st">&#39;Bend&#39;</span>,<span class="st">&#39;Portland&#39;</span>,<span class="st">&#39;Newport&#39;</span>)
 longitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">122.699</span>, <span class="op">-</span><span class="fl">123.275</span>, <span class="op">-</span><span class="fl">121.313</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="fl">124.054</span>)
@@ -423,7 +427,7 @@ x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
 <span class="kw">lines</span>(x, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
 <span class="kw">points</span>(x, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">pch=</span><span class="dv">20</span>)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>We can see in this toy example that numeric vectors can represent locations in R for simple mapping. Points just need to be a pair of numbers in cartesian space, lines and polygons are just a number of these points (note that polygons are closed by having their first point coincide with last point which the <code>polygon</code> function in base R graphics takes care of).</p>
+<p>We can see in this toy example that numeric vectors can represent locations in R for simple mapping. Points just need to be a pair of numbers in cartesian space, and lines and polygons are just a number of these points (note that polygons are closed by having their first point coincide with last point which the <code>polygon</code> function in base R graphics takes care of).</p>
 <p>You can do simple things with this spatial representation using basic R structures, but it breaks down quickly if you want to ask any spatial questions - for instance using the example above, how would we figure out the nearest city to Corvallis? Or imagine the polygon is a county and we wanted to know what cities are within the county?</p>
 <p>So what information do we need to properly define spatial vector data and perform spatial operations?</p>
 <ul>
@@ -432,28 +436,218 @@ x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
 <li>?</li>
 </ul>
 </div>
-</div>
 <div id="vector-data-with-sp" class="section level3">
 <h3>Vector Data with sp</h3>
-<p>we’re going to quickly review how spatial data was standardized in recent years using the base package <code>sp</code>. It’s informative to understand the structure of <code>sp</code> objects, and a number of packages still depend on <code>sp</code>, but this is changing rapidly and the R spatial vector world is rapdily moving toward adaptation of the newer <code>sf</code> package, so the bulk of our vector work will be using <code>sf</code>.</p>
-<p>One reason it’s worth still going over <code>sp</code>, even though you’ll soon find <code>sf</code> is far superior in a number of ways, is that numerous packages are currently built using <code>sp</code> object structure, so there’s a need to learn it to navigate current R spatial ecosystem - image below from <a href="https://twitter.com/csgillespie/status/854438264538845184">Colin Gillespie’s Tweet</a>:</p>
+<p>We’re going to quickly review how spatial data was standardized in recent years using the base package <code>sp</code>. It’s informative to understand the structure of <code>sp</code> objects, and a number of packages still depend on <code>sp</code>, but this is changing rapidly and the R spatial vector world is rapdily moving toward adaptation of the newer <code>sf</code> package, so the bulk of our vector work will be using <code>sf</code>.</p>
+<p>One reason it’s worth still going over <code>sp</code>, even though you’ll soon find <code>sf</code> is far superior in a number of ways, is that numerous packages are currently built using the <code>sp</code> object structure, so there’s a need to learn it to navigate current R spatial ecosystem. The image below is from <a href="https://twitter.com/csgillespie/status/854438264538845184">Colin Gillespie’s recent tweet</a> showing major packages and dependies in R:</p>
 <div class="figure">
 <img src="/R-User-Group-Spatial-Workshop-2018/img/CRANdependencies.jpg" alt="CRANdependencies" />
 <p class="caption">CRANdependencies</p>
 </div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;metacran/cranlogs&quot;</span>)</code></pre></div>
-<pre><code>## Skipping install of &#39;cranlogs&#39; from a github remote, the SHA1 (554a99ef) has not changed since last install.
-##   Use `force = TRUE` to force installation</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cranlogs)
+<p>And below is a figure (with corresponding code you can run) that I put together based on a figure in <a href="https://geocompr.robinlovelace.net/">Geocomputation with R</a> - the take home is that sp is still the most-used spatial package in R despite the growth of <code>sf</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># devtools::install_github(&quot;metacran/cranlogs&quot;)</span>
+<span class="kw">library</span>(cranlogs)
 <span class="kw">library</span>(ggplot2)
-<span class="kw">library</span>(lubridate)
-stats &lt;-<span class="st"> </span><span class="kw">cran_downloads</span>(<span class="dt">from =</span> <span class="st">&quot;2013-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2018-08-22&quot;</span>,<span class="dt">packages =</span> <span class="kw">c</span>(<span class="st">&quot;sp&quot;</span>, <span class="st">&quot;sf&quot;</span>, <span class="st">&quot;raster&quot;</span>, <span class="st">&quot;ggmap&quot;</span>, <span class="st">&quot;mapview&quot;</span>))
+<span class="kw">library</span>(lubridate)</code></pre></div>
+<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 3.4.3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)</code></pre></div>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stats &lt;-<span class="st"> </span><span class="kw">cran_downloads</span>(<span class="dt">from =</span> <span class="st">&quot;2013-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2018-08-22&quot;</span>,<span class="dt">packages =</span> <span class="kw">c</span>(<span class="st">&quot;sp&quot;</span>, <span class="st">&quot;sf&quot;</span>, <span class="st">&quot;raster&quot;</span>, <span class="st">&quot;ggmap&quot;</span>, <span class="st">&quot;mapview&quot;</span>))
 
 monthly_stats &lt;-<span class="st"> </span>stats <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(<span class="dt">month=</span><span class="kw">floor_date</span>(date, <span class="st">&quot;month&quot;</span>), package) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">amount=</span><span class="kw">sum</span>(count))
-<span class="kw">ggplot</span>(monthly_stats, <span class="kw">aes</span>(<span class="dt">x=</span>month, <span class="dt">y=</span>amount, <span class="dt">group =</span> package, <span class="dt">colour =</span> package)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() </code></pre></div>
+<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">amount=</span><span class="kw">sum</span>(count))</code></pre></div>
+<pre><code>## Warning: package &#39;bindrcpp&#39; was built under R version 3.4.1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(monthly_stats, <span class="kw">aes</span>(<span class="dt">x=</span>month, <span class="dt">y=</span>amount, <span class="dt">group =</span> package, <span class="dt">colour =</span> package)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() </code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/packages-1.png" width="672" /></p>
+<p>Handling of spatial data in R was standardized in recent years through the base package <code>sp</code>, which uses ‘new-style’ <a href="http://adv-r.had.co.nz/S4.html">S4</a> classes in R that use formal class definitions and are closer to object-oriented systems than standard S3 classes in R.</p>
+<p>The best source to learn about <code>sp</code> and fundamentals of spatial analysis in R is Roger Bivand’s book <a href="http://www.asdar-book.org/">Applied Spatial Data Analysis in R</a></p>
+<p><code>sp</code> objects inherit from the basic spatial class, which has two ‘slots’ in R new-style class lingo. From the Bivand book above, here’s what this looks like (Blue at top of each box is the class name, items in white are the slots, arrows show inheritance between classes):</p>
+<div class="figure">
+<img src="/R-User-Group-Spatial-Workshop-2018/img/SpatialClassesFig1.png" alt="SpatialClassesFig1" />
+<p class="caption">SpatialClassesFig1</p>
+</div>
+<p>Let’s take a look at this in R - run the following R code in your R console (or from source):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sp)</code></pre></div>
+<pre><code>## Warning: package &#39;sp&#39; was built under R version 3.4.3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getClass</span>(<span class="st">&quot;Spatial&quot;</span>)</code></pre></div>
+<pre><code>## Class &quot;Spatial&quot; [package &quot;sp&quot;]
+## 
+## Slots:
+##                               
+## Name:         bbox proj4string
+## Class:      matrix         CRS
+## 
+## Known Subclasses: 
+## Class &quot;SpatialPoints&quot;, directly
+## Class &quot;SpatialMultiPoints&quot;, directly
+## Class &quot;SpatialGrid&quot;, directly
+## Class &quot;SpatialLines&quot;, directly
+## Class &quot;SpatialPolygons&quot;, directly
+## Class &quot;SpatialPointsDataFrame&quot;, by class &quot;SpatialPoints&quot;, distance 2
+## Class &quot;SpatialPixels&quot;, by class &quot;SpatialPoints&quot;, distance 2
+## Class &quot;SpatialMultiPointsDataFrame&quot;, by class &quot;SpatialMultiPoints&quot;, distance 2
+## Class &quot;SpatialGridDataFrame&quot;, by class &quot;SpatialGrid&quot;, distance 2
+## Class &quot;SpatialLinesDataFrame&quot;, by class &quot;SpatialLines&quot;, distance 2
+## Class &quot;SpatialPixelsDataFrame&quot;, by class &quot;SpatialPoints&quot;, distance 3
+## Class &quot;SpatialPolygonsDataFrame&quot;, by class &quot;SpatialPolygons&quot;, distance 2</code></pre>
+<p>We can see from this that a basic <code>sp</code> spatial object has to have two ‘slots’ - a bounding box and a ‘proj4string’ - this is the prefered format in R for a coordinate reference system (CRS) - either projected or unprojected. We can also see, from the figure above, that building off of the <code>Spatial</code> class, to have a <code>SpatialPoints</code>object we also need the actual matrix of coordinates that define those points. From there, we can build up to a <code>SpatialPointsDataFrame</code> by simply adding a data frame of attributes to associate with those points. Let’s step through creating an <code>sp</code> <code>SpatialPointsDataFrame</code> using our hypothetical cities data we created earlier.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Ashland&#39;</span>,<span class="st">&#39;Corvallis&#39;</span>,<span class="st">&#39;Bend&#39;</span>,<span class="st">&#39;Portland&#39;</span>,<span class="st">&#39;Newport&#39;</span>)
+longitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">122.699</span>, <span class="op">-</span><span class="fl">123.275</span>, <span class="op">-</span><span class="fl">121.313</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="fl">124.054</span>)
+latitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">42.189</span>, <span class="fl">44.57</span>, <span class="fl">44.061</span>, <span class="fl">45.523</span>, <span class="fl">44.652</span>)
+population &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20062</span>,<span class="dv">50297</span>,<span class="dv">61362</span>,<span class="dv">537557</span>,<span class="dv">9603</span>)
+coords &lt;-<span class="st"> </span><span class="kw">data.frame</span>(longitude, latitude)
+dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(cities, population)
+pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>(coords, dat)
+<span class="kw">print</span>(dat)</code></pre></div>
+<pre><code>##      cities population
+## 1   Ashland      20062
+## 2 Corvallis      50297
+## 3      Bend      61362
+## 4  Portland     537557
+## 5   Newport       9603</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(pts)</code></pre></div>
+<pre><code>##          coordinates    cities population
+## 1 (-122.699, 42.189)   Ashland      20062
+## 2  (-123.275, 44.57) Corvallis      50297
+## 3 (-121.313, 44.061)      Bend      61362
+## 4  (-122.67, 45.523)  Portland     537557
+## 5 (-124.054, 44.652)   Newport       9603</code></pre>
+<p>We first created vectors of city names, latitude, longitude, and population. Then we made a matix of the longitude and latitude vectors (note that convention is always longitude first!). Then we construct a data frame of our city names and population. Finally, we use <code>SpatialPointsDataFrame</code> as a method call on our matrix of coordinates and data frame to generate a <code>SpatialPointsDataFrame</code> object.</p>
+<p>Conveniently, our base R <code>plot</code> method works with our newly created <code>SpatialPointsDataFrame</code>, and we can add labels as well one way using the <code>maptools</code> package:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(maptools)
+<span class="kw">plot</span>(pts, <span class="dt">axes=</span>T)
+<span class="kw">pointLabel</span>(<span class="kw">coordinates</span>(pts),<span class="dt">labels=</span>pts<span class="op">$</span>cities)</code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/plot%20spatial-1.png" width="672" /></p>
+<p>Pop quiz - why doesn’t this initial map look quite right?</p>
+<p>Hint - run summary on pts:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(pts)</code></pre></div>
+<pre><code>## Object of class SpatialPointsDataFrame
+## Coordinates:
+##                min      max
+## longitude -124.054 -121.313
+## latitude    42.189   45.523
+## Is projected: NA 
+## proj4string : [NA]
+## Number of points: 5
+## Data attributes:
+##        cities    population    
+##  Ashland  :1   Min.   :  9603  
+##  Bend     :1   1st Qu.: 20062  
+##  Corvallis:1   Median : 50297  
+##  Newport  :1   Mean   :135776  
+##  Portland :1   3rd Qu.: 61362  
+##                Max.   :537557</code></pre>
+<p>The summary method on our <code>SpatialPointsDataFrame</code> gives us a nice quick synopsis of the ‘slots’ that make up our <code>sp</code> object - <code>str</code> shows the full detail:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(pts)</code></pre></div>
+<pre><code>## Formal class &#39;SpatialPointsDataFrame&#39; [package &quot;sp&quot;] with 5 slots
+##   ..@ data       :&#39;data.frame&#39;:  5 obs. of  2 variables:
+##   .. ..$ cities    : Factor w/ 5 levels &quot;Ashland&quot;,&quot;Bend&quot;,..: 1 3 2 5 4
+##   .. ..$ population: num [1:5] 20062 50297 61362 537557 9603
+##   ..@ coords.nrs : num(0) 
+##   ..@ coords     : num [1:5, 1:2] -123 -123 -121 -123 -124 ...
+##   .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. .. ..$ : NULL
+##   .. .. ..$ : chr [1:2] &quot;longitude&quot; &quot;latitude&quot;
+##   ..@ bbox       : num [1:2, 1:2] -124.1 42.2 -121.3 45.5
+##   .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. .. ..$ : chr [1:2] &quot;longitude&quot; &quot;latitude&quot;
+##   .. .. ..$ : chr [1:2] &quot;min&quot; &quot;max&quot;
+##   ..@ proj4string:Formal class &#39;CRS&#39; [package &quot;sp&quot;] with 1 slot
+##   .. .. ..@ projargs: chr NA</code></pre>
+<p>Meet your new friend the <code>@</code> symbol - this is how you access slots in an <code>S4</code> object in R - you can think of as similar to <code>$</code> in accessing columns in a data frame.</p>
+<p>So to get the bounding box of our <code>SpatialPointsDataFrame</code>, we simply do:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pts<span class="op">@</span>bbox</code></pre></div>
+<pre><code>##                min      max
+## longitude -124.054 -121.313
+## latitude    42.189   45.523</code></pre>
+<p>Or you can use the method directly:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bbox</span>(pts)</code></pre></div>
+<pre><code>##                min      max
+## longitude -124.054 -121.313
+## latitude    42.189   45.523</code></pre>
+<p>Here’s an example list of some of the available methods in <code>sp</code> and what they do - see package help for comprehensive list:</p>
+<table style="width:42%;">
+<colgroup>
+<col width="18%" />
+<col width="23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>method/class</th>
+<th>and what it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>bbox(x)</code></td>
+<td>returns the bounding box coordinates</td>
+</tr>
+<tr class="even">
+<td><code>proj4string(x)</code></td>
+<td>sets or retrieves projection attributes using the CRS object.</td>
+</tr>
+<tr class="odd">
+<td><code>CRS()</code></td>
+<td>creates an object of class of coordinate reference system arguments</td>
+</tr>
+<tr class="even">
+<td><code>spplot(x)</code></td>
+<td>plots a separate map of all the attributes unless specified otherwise</td>
+</tr>
+<tr class="odd">
+<td><code>coordinates(x)</code></td>
+<td>returns a matrix with the spatial coordinates. For spatial polygons it returns the centroids.</td>
+</tr>
+<tr class="even">
+<td><code>over(x, y)</code></td>
+<td>used for example to retrieve the polygon or grid indexes on a set of points - we’ll come back to that one later</td>
+</tr>
+<tr class="odd">
+<td><code>spsample(x)</code></td>
+<td>sampling of spatial points within the spatial extent of objects</td>
+</tr>
+</tbody>
+</table>
+<div id="a-quick-foray-into-coordinate-reference-systems-and-projections" class="section level4">
+<h4>A quick foray into coordinate reference systems and projections</h4>
+<p>Coordinate reference system, or CRS, information in <code>sp</code> uses the <code>proj4string</code> format. A very handy site to use to lookup any projection and get it’s <code>proj4string</code> format is <a href="http://spatialreference.org/">spatialreference.org</a>. A very handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: <a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf">Overview of Coordinate Reference Systems (CRS) in R</a>.</p>
+<p>Dealing with coordinate reference systems and projections is a big part of working with spatial data in R, and it’s relatively straightforward once you get the hang of it. Here are some of the fundamentals:</p>
+<ul>
+<li>CRS can be geographic (lat/lon), projected, or NA in R</li>
+<li>Data with different CRS MUST be transformed to common CRS in R</li>
+<li>Projections in <code>sp</code> are provided in PROJ4 strings in the proj4string slot of an object</li>
+<li><a href="http://www.spatialreference.org/" class="uri">http://www.spatialreference.org/</a></li>
+<li>Useful <code>rgdal</code> package functions:
+<ul>
+<li>projInfo(type=‘datum’)</li>
+<li>projInfo(type=‘ellps’)</li>
+<li>projInfo(type=‘proj’)</li>
+</ul></li>
+<li>For <code>sp</code> class objects:
+<ul>
+<li>To get the CRS: proj4string(x)</li>
+<li>To assign the CRS:
+<ul>
+<li>Use either EPSG code or PROJ.4:
+<ul>
+<li>proj4string(x) &lt;- CRS(“+init=epsg:4269”)</li>
+<li>proj4string(x) &lt;- CRS(“+proj=utm +zone=10 +datum=WGS84”)</li>
+</ul></li>
+</ul></li>
+<li>To transform CRS
+<ul>
+<li>x &lt;- spTransform(x, CRS(“+init=epsg:4238”))</li>
+<li>x &lt;- spTransform(x, proj4string(y))</li>
+</ul></li>
+<li>For rasters (we’ll focus on rasters later, but mention projections here):
+<ul>
+<li>To get the CRS: projection(x)</li>
+<li>To transform CRS: projectRaster(x)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 </div>
 <div id="vector-data-with-sf" class="section level3">
 <h3>Vector Data with sf</h3>

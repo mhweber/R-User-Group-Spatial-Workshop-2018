@@ -9,10 +9,15 @@ title: Spatial Objects
 * Understand spatial file types supported by R spatial packages
 * Learn to pull spatial data from online sources into R
 
-### Spatial Data Types
-#### Simple Representation of Spatial Data and Supported Data Types
+### Spatial Data
 
-We can represent spatial data as discrete locations (points, lines or polygons) or as continuous phenomena without natural boundaries. We typiclaly represent the former type of dta as *vector* data, with an associated geometry or shape, and some attributes with information about the locations.  Examples are things like state boundaries with state name and population, rivers with their flow volume and names, polygons of watersheds with their names and associated landscape information.  We represent the latter type of data (continuous spatial fields) with *rasters* - these would be things such as elevation, precipitation, and atmospheric deposition for instance.
+We can represent spatial data as discrete locations (points, lines or polygons) or as continuous phenomena without natural boundaries. We typically represent the former type of data (discrete locations) as *vector* data, with an associated geometry or shape, and some attributes with information about the locations.  Examples are: 
+
+* state boundaries with state name and population
+* rivers with their flow volume and names
+* polygons of watersheds with their names and associated landscape information  
+
+We represent the latter type of data (continuous spatial fields) with *rasters* - these would be things such as elevation, precipitation, and atmospheric deposition for instance.
 
 
 Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information - below we generate cites with population and make a map with a legend:
@@ -60,7 +65,7 @@ lines(x, lwd=3, col='red')
 points(x, cex=2, pch=20)
 ```
 
-We can see in this toy example that numeric vectors can represent locations in R for simple mapping.  Points just need to be a pair of numbers in cartesian space, lines and polygons are just a number of these points (note that polygons are closed by having their first point coincide with last point which the `polygon` function in base R graphics takes care of). 
+We can see in this toy example that numeric vectors can represent locations in R for simple mapping.  Points just need to be a pair of numbers in cartesian space, and lines and polygons are just a number of these points (note that polygons are closed by having their first point coincide with last point which the `polygon` function in base R graphics takes care of). 
 
 You can do simple things with this spatial representation using basic R structures, but it breaks down quickly if you want to ask any spatial questions - for instance using the example above, how would we figure out the nearest city to Corvallis? Or imagine the polygon is a county and we wanted to know what cities are within the county?
 
@@ -71,17 +76,21 @@ So what information do we need to properly define spatial vector data and perfor
 * ?
 
 ### Vector Data with sp
-we're going to quickly review how spatial data was standardized in recent years using the base package `sp`.  It's informative to understand the structure of `sp` objects, and a number of packages still depend on `sp`, but this is changing rapidly and the R spatial vector world is rapdily moving toward adaptation of the newer `sf` package, so the bulk of our vector work will be using `sf`.
+We're going to quickly review how spatial data was standardized in recent years using the base package `sp`.  It's informative to understand the structure of `sp` objects, and a number of packages still depend on `sp`, but this is changing rapidly and the R spatial vector world is rapdily moving toward adaptation of the newer `sf` package, so the bulk of our vector work will be using `sf`.
 
-One reason it's worth still going over `sp`, even though you'll soon find `sf` is far superior in a number of ways, is that numerous packages are currently built using `sp` object structure, so there's a need to learn it to navigate current R spatial ecosystem - image below from [Colin Gillespie's Tweet](https://twitter.com/csgillespie/status/854438264538845184):
+One reason it's worth still going over `sp`, even though you'll soon find `sf` is far superior in a number of ways, is that numerous packages are currently built using the `sp` object structure, so there's a need to learn it to navigate current R spatial ecosystem. The image below is from [Colin Gillespie's recent tweet](https://twitter.com/csgillespie/status/854438264538845184) showing major packages and dependies in R:
 
 ![CRANdependencies](/R-User-Group-Spatial-Workshop-2018/img/CRANdependencies.jpg)
 
-```{r packages}
-devtools::install_github("metacran/cranlogs")
+And below is a figure (with corresponding code you can run) that I put together based on a figure in [Geocomputation with R](https://geocompr.robinlovelace.net/) - the take home is that sp is still the most-used spatial package in R despite the growth of `sf`.
+
+
+```{r packages, message=FALSE}
+# devtools::install_github("metacran/cranlogs")
 library(cranlogs)
 library(ggplot2)
 library(lubridate)
+library(dplyr)
 stats <- cran_downloads(from = "2013-01-01", to = "2018-08-22",packages = c("sp", "sf", "raster", "ggmap", "mapview"))
 
 monthly_stats <- stats %>% 
@@ -89,6 +98,108 @@ monthly_stats <- stats %>%
   summarize(amount=sum(count))
 ggplot(monthly_stats, aes(x=month, y=amount, group = package, colour = package)) + geom_line() 
 ```
+
+Handling of spatial data in R was standardized in recent years through the base package `sp`, which uses 'new-style' [S4](http://adv-r.had.co.nz/S4.html) classes in R that use formal class definitions and are closer to object-oriented systems than standard S3 classes in R.  
+
+The best source to learn about `sp` and fundamentals of spatial analysis in R is Roger Bivand's book [Applied Spatial Data Analysis in R](http://www.asdar-book.org/)
+
+`sp` objects inherit from the basic spatial class, which has two 'slots' in R new-style class lingo.  From the Bivand book above, here's what this looks like (Blue at top of each box is the class name, items in white are the slots, arrows show inheritance between classes):
+
+![SpatialClassesFig1](/R-User-Group-Spatial-Workshop-2018/img/SpatialClassesFig1.png)
+
+Let's take a look at this in R - run the following R code in your R console (or from source):
+```{r spatial class, message=FALSE}
+library(sp)
+getClass("Spatial")
+```
+
+We can see from this that a basic `sp` spatial object has to have two 'slots' - a bounding box and a 'proj4string' - this is the prefered format in R for a coordinate reference system (CRS) - either projected or unprojected.  We can also see, from the figure above, that building off of the `Spatial` class, to have a `SpatialPoints`object we also need the actual matrix of coordinates that define those points.  From there, we can build up to a `SpatialPointsDataFrame` by simply adding a data frame of attributes to associate with those points.  Let's step through creating an `sp` `SpatialPointsDataFrame` using our hypothetical cities data we created earlier.
+
+```{r example spatial, message=FALSE}
+cities <- c('Ashland','Corvallis','Bend','Portland','Newport')
+longitude <- c(-122.699, -123.275, -121.313, -122.670, -124.054)
+latitude <- c(42.189, 44.57, 44.061, 45.523, 44.652)
+population <- c(20062,50297,61362,537557,9603)
+coords <- data.frame(longitude, latitude)
+dat <- data.frame(cities, population)
+pts <- SpatialPointsDataFrame(coords, dat)
+print(dat)
+print(pts)
+```
+
+We first created vectors of city names, latitude, longitude, and population. Then we made a matix of the longitude and latitude vectors (note that convention is always longitude first!). Then we construct a data frame of our city names and population.  Finally, we use `SpatialPointsDataFrame` as a method call on our matrix of coordinates and data frame to generate a `SpatialPointsDataFrame` object. 
+
+Conveniently, our base R `plot` method works with our newly created `SpatialPointsDataFrame`, and we can add labels as well one way using the `maptools` package:
+
+```{r plot spatial, message=FALSE}
+library(maptools)
+plot(pts, axes=T)
+pointLabel(coordinates(pts),labels=pts$cities)
+```
+
+Pop quiz - why doesn't this initial map look quite right?
+
+Hint - run summary on pts:
+```{r summary, message=FALSE}
+summary(pts)
+```
+
+The summary method on our `SpatialPointsDataFrame` gives us a nice quick synopsis of the 'slots' that make up our `sp` object - `str` shows the full detail:
+
+```{r st, message=FALSE}
+str(pts)
+```
+
+Meet your new friend the `@` symbol - this is how you access slots in an `S4` object in R - you can think of as similar to `$` in accessing columns in a data frame.
+
+So to get the bounding box of our `SpatialPointsDataFrame`, we simply do:
+```{r bbox, message=FALSE}
+pts@bbox
+```
+
+Or you can use the method directly:
+```{r bbox2, message=FALSE}
+bbox(pts)
+```
+
+Here's an example list of some of the available methods in `sp` and what they do - see package help for comprehensive list:
+
+method/class | and what it does
+------------ | ----------------
+`bbox(x)` | returns the bounding box coordinates
+`proj4string(x)` | sets or retrieves projection attributes using the CRS object.
+`CRS()` | creates an object of class of coordinate reference system arguments
+`spplot(x)` | plots a separate map of all the attributes unless specified otherwise
+`coordinates(x)` | returns a matrix with the spatial coordinates. For spatial polygons it returns the centroids.
+`over(x, y)` | used for example to retrieve the polygon or grid indexes on a set of points - we'll come back to that one later
+`spsample(x)` | sampling of spatial points within the spatial extent of objects
+
+#### A quick foray into coordinate reference systems and projections
+Coordinate reference system, or CRS, information in `sp` uses the `proj4string` format.  A very handy site to use to lookup any projection and get it's `proj4string` format is [spatialreference.org](http://spatialreference.org/).  A very handy resource put together by Melanie Frazier for an R spatial workshop we did several years ago, is here: [Overview of Coordinate Reference Systems (CRS) in R](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf).
+
+Dealing with coordinate reference systems and projections is a big part of working with spatial data in R, and it's relatively straightforward once you get the hang of it.  Here are some of the fundamentals:
+
+* CRS can be geographic (lat/lon), projected, or NA in R
+* Data with different CRS MUST be transformed to common CRS in R
+* Projections in `sp` are provided in PROJ4 strings in the proj4string slot of an object
+* [http://www.spatialreference.org/](http://www.spatialreference.org/)
+* Useful `rgdal` package functions:
+    * projInfo(type='datum')
+    * projInfo(type='ellps')
+    * projInfo(type='proj')
+* For `sp` class objects:
+    * To get the CRS: proj4string(x)
+    * To assign the CRS:
+        * Use either EPSG code or PROJ.4:
+            * proj4string(x) <- CRS("+init=epsg:4269")
+            * proj4string(x) <- CRS("+proj=utm +zone=10 +datum=WGS84")
+    * To transform CRS
+        * x <- spTransform(x, CRS("+init=epsg:4238"))
+        * x <- spTransform(x, proj4string(y))
+    * For rasters (we'll focus on rasters later, but mention projections here):
+        * To get the CRS: projection(x)
+        * To transform CRS: projectRaster(x)
+
 
 ### Vector Data with sf
 
