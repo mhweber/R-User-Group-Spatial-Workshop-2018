@@ -223,6 +223,7 @@ Better - but what did you notice from summary(pts) above in the `proj4string` in
 We should not just use a geographic CRS, but project to a planar CRS for a better looking map - NAD83 / Oregon Lambert is a good choice - see if you can find the `proj4string` for this(hint: EPSG code is 2991) and take a minute to look through help for `sp` package and see if anyone knows how we'd get our pts to this projection.
 
 ```{r CRS2, message=FALSE, warning=FALSE, error=FALSE}
+library(rgdal)
 pts <- spTransform(pts, CRS('+proj=lcc +lat_1=43 +lat_2=45.5 +lat_0=41.75 +lon_0=-120.5 +x_0=400000 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'))
 # NOTE# You can also simply use the EPSG code if projection has
 pts <- spTransform(pts, CRS('+init=epsg:2991'))

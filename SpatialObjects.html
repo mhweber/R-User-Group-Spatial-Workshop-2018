@@ -125,9 +125,6 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
-.html-widget {
-  margin-bottom: 20px;
-}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -389,38 +386,38 @@ div.tocify {
 <p>We represent the latter type of data (continuous spatial fields) with <em>rasters</em> - these would be things such as elevation, precipitation, and atmospheric deposition for instance.</p>
 <p>Basic data structures in R can represent spatial data - all we need is some vectors with location and attribute information - below we generate cites with population and make a map with a legend:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Ashland&#39;</span>,<span class="st">&#39;Corvallis&#39;</span>,<span class="st">&#39;Bend&#39;</span>,<span class="st">&#39;Portland&#39;</span>,<span class="st">&#39;Newport&#39;</span>)
-longitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">122.699</span>, <span class="op">-</span><span class="fl">123.275</span>, <span class="op">-</span><span class="fl">121.313</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="fl">124.054</span>)
+longitude &lt;-<span class="st"> </span><span class="kw">c</span>(-<span class="fl">122.699</span>, -<span class="fl">123.275</span>, -<span class="fl">121.313</span>, -<span class="fl">122.670</span>, -<span class="fl">124.054</span>)
 latitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">42.189</span>, <span class="fl">44.57</span>, <span class="fl">44.061</span>, <span class="fl">45.523</span>, <span class="fl">44.652</span>)
 population &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20062</span>,<span class="dv">50297</span>,<span class="dv">61362</span>,<span class="dv">537557</span>,<span class="dv">9603</span>)
 locs &lt;-<span class="st"> </span><span class="kw">cbind</span>(longitude, latitude) 
-<span class="kw">plot</span>(locs, <span class="dt">cex=</span><span class="kw">sqrt</span>(population<span class="op">*</span>.<span class="dv">0002</span>), <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, 
-  <span class="dt">main=</span><span class="st">&#39;Population&#39;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">124</span>,<span class="op">-</span><span class="fl">120.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">42</span>, <span class="dv">46</span>))
+<span class="kw">plot</span>(locs, <span class="dt">cex=</span><span class="kw">sqrt</span>(population*.<span class="dv">0002</span>), <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, 
+  <span class="dt">main=</span><span class="st">&#39;Population&#39;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(-<span class="dv">124</span>,-<span class="fl">120.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">42</span>, <span class="dv">46</span>))
 <span class="kw">text</span>(locs, cities, <span class="dt">pos=</span><span class="dv">4</span>)
 
 <span class="co"># Add a legend</span>
 breaks &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20000</span>, <span class="dv">50000</span>, <span class="dv">60000</span>, <span class="dv">100000</span>)
 <span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">3</span>)
-<span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend=</span>breaks, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">pt.cex=</span><span class="dv">1</span><span class="op">+</span>breaks<span class="op">/</span><span class="dv">20000</span>, 
+<span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend=</span>breaks, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">pt.cex=</span><span class="dv">1</span>+breaks/<span class="dv">20000</span>, 
   <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">bg=</span><span class="st">&#39;gray&#39;</span>)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/cities-1.png" width="672" /></p>
 <p>We can add a random polygon and map this as well:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Ashland&#39;</span>,<span class="st">&#39;Corvallis&#39;</span>,<span class="st">&#39;Bend&#39;</span>,<span class="st">&#39;Portland&#39;</span>,<span class="st">&#39;Newport&#39;</span>)
-longitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">122.699</span>, <span class="op">-</span><span class="fl">123.275</span>, <span class="op">-</span><span class="fl">121.313</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="fl">124.054</span>)
+longitude &lt;-<span class="st"> </span><span class="kw">c</span>(-<span class="fl">122.699</span>, -<span class="fl">123.275</span>, -<span class="fl">121.313</span>, -<span class="fl">122.670</span>, -<span class="fl">124.054</span>)
 latitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">42.189</span>, <span class="fl">44.57</span>, <span class="fl">44.061</span>, <span class="fl">45.523</span>, <span class="fl">44.652</span>)
 population &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20062</span>,<span class="dv">50297</span>,<span class="dv">61362</span>,<span class="dv">537557</span>,<span class="dv">9603</span>)
 locs &lt;-<span class="st"> </span><span class="kw">cbind</span>(longitude, latitude) 
-<span class="kw">plot</span>(locs, <span class="dt">cex=</span><span class="kw">sqrt</span>(population<span class="op">*</span>.<span class="dv">0002</span>), <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, 
-  <span class="dt">main=</span><span class="st">&#39;Population&#39;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">124</span>,<span class="op">-</span><span class="fl">120.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">42</span>, <span class="dv">46</span>))
+<span class="kw">plot</span>(locs, <span class="dt">cex=</span><span class="kw">sqrt</span>(population*.<span class="dv">0002</span>), <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, 
+  <span class="dt">main=</span><span class="st">&#39;Population&#39;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(-<span class="dv">124</span>,-<span class="fl">120.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">42</span>, <span class="dv">46</span>))
 <span class="kw">text</span>(locs, cities, <span class="dt">pos=</span><span class="dv">4</span>)
 
 <span class="co"># Add a legend</span>
 breaks &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20000</span>, <span class="dv">50000</span>, <span class="dv">60000</span>, <span class="dv">100000</span>)
 <span class="kw">options</span>(<span class="dt">scipen=</span><span class="dv">3</span>)
-<span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend=</span>breaks, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">pt.cex=</span><span class="dv">1</span><span class="op">+</span>breaks<span class="op">/</span><span class="dv">20000</span>, 
+<span class="kw">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="dt">legend=</span>breaks, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">pt.cex=</span><span class="dv">1</span>+breaks/<span class="dv">20000</span>, 
   <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">bg=</span><span class="st">&#39;gray&#39;</span>)
 
 <span class="co"># Add polygon</span>
-lon &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">123.5</span>, <span class="op">-</span><span class="fl">123.5</span>, <span class="op">-</span><span class="fl">122.5</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="dv">123</span>)
+lon &lt;-<span class="st"> </span><span class="kw">c</span>(-<span class="fl">123.5</span>, -<span class="fl">123.5</span>, -<span class="fl">122.5</span>, -<span class="fl">122.670</span>, -<span class="dv">123</span>)
 lat &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">43</span>, <span class="fl">45.5</span>, <span class="dv">44</span>, <span class="dv">43</span>, <span class="dv">43</span>)
 x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
 <span class="kw">polygon</span>(x, <span class="dt">border=</span><span class="st">&#39;blue&#39;</span>)
@@ -452,10 +449,10 @@ x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
 <span class="kw">library</span>(dplyr)
 stats &lt;-<span class="st"> </span><span class="kw">cran_downloads</span>(<span class="dt">from =</span> <span class="st">&quot;2013-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2018-08-22&quot;</span>,<span class="dt">packages =</span> <span class="kw">c</span>(<span class="st">&quot;sp&quot;</span>, <span class="st">&quot;sf&quot;</span>, <span class="st">&quot;raster&quot;</span>, <span class="st">&quot;ggmap&quot;</span>, <span class="st">&quot;mapview&quot;</span>))
 
-monthly_stats &lt;-<span class="st"> </span>stats <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(<span class="dt">month=</span><span class="kw">floor_date</span>(date, <span class="st">&quot;month&quot;</span>), package) <span class="op">%&gt;%</span>
+monthly_stats &lt;-<span class="st"> </span>stats %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(<span class="dt">month=</span><span class="kw">floor_date</span>(date, <span class="st">&quot;month&quot;</span>), package) %&gt;%
 <span class="st">  </span><span class="kw">summarize</span>(<span class="dt">amount=</span><span class="kw">sum</span>(count))
-<span class="kw">ggplot</span>(monthly_stats, <span class="kw">aes</span>(<span class="dt">x=</span>month, <span class="dt">y=</span>amount, <span class="dt">group =</span> package, <span class="dt">colour =</span> package)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() </code></pre></div>
+<span class="kw">ggplot</span>(monthly_stats, <span class="kw">aes</span>(<span class="dt">x=</span>month, <span class="dt">y=</span>amount, <span class="dt">group =</span> package, <span class="dt">colour =</span> package)) +<span class="st"> </span><span class="kw">geom_line</span>() </code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/packages-1.png" width="672" /></p>
 <p>Handling of spatial data in R was standardized in recent years through the base package <code>sp</code>, which uses ‘new-style’ <a href="http://adv-r.had.co.nz/S4.html">S4</a> classes in R that use formal class definitions and are closer to object-oriented systems than standard S3 classes in R.</p>
 <p>The best source to learn about <code>sp</code> and fundamentals of spatial analysis in R is Roger Bivand’s book <a href="http://www.asdar-book.org/">Applied Spatial Data Analysis in R</a></p>
@@ -489,7 +486,7 @@ monthly_stats &lt;-<span class="st"> </span>stats <span class="op">%&gt;%</span>
 ## Class &quot;SpatialPolygonsDataFrame&quot;, by class &quot;SpatialPolygons&quot;, distance 2</code></pre>
 <p>We can see from this that a basic <code>sp</code> spatial object has to have two ‘slots’ - a bounding box and a ‘proj4string’ - this is the prefered format in R for a coordinate reference system (CRS) - either projected or unprojected. We can also see, from the figure above, that building off of the <code>Spatial</code> class, to have a <code>SpatialPoints</code>object we also need the actual matrix of coordinates that define those points. From there, we can build up to a <code>SpatialPointsDataFrame</code> by simply adding a data frame of attributes to associate with those points. Let’s step through creating an <code>sp</code> <code>SpatialPointsDataFrame</code> using our hypothetical cities data we created earlier.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cities &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Ashland&#39;</span>,<span class="st">&#39;Corvallis&#39;</span>,<span class="st">&#39;Bend&#39;</span>,<span class="st">&#39;Portland&#39;</span>,<span class="st">&#39;Newport&#39;</span>)
-longitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">122.699</span>, <span class="op">-</span><span class="fl">123.275</span>, <span class="op">-</span><span class="fl">121.313</span>, <span class="op">-</span><span class="fl">122.670</span>, <span class="op">-</span><span class="fl">124.054</span>)
+longitude &lt;-<span class="st"> </span><span class="kw">c</span>(-<span class="fl">122.699</span>, -<span class="fl">123.275</span>, -<span class="fl">121.313</span>, -<span class="fl">122.670</span>, -<span class="fl">124.054</span>)
 latitude &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">42.189</span>, <span class="fl">44.57</span>, <span class="fl">44.061</span>, <span class="fl">45.523</span>, <span class="fl">44.652</span>)
 population &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">20062</span>,<span class="dv">50297</span>,<span class="dv">61362</span>,<span class="dv">537557</span>,<span class="dv">9603</span>)
 coords &lt;-<span class="st"> </span><span class="kw">data.frame</span>(longitude, latitude)
@@ -513,7 +510,7 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 <p>Conveniently, our base R <code>plot</code> method works with our newly created <code>SpatialPointsDataFrame</code>, and we can add labels as well one way using the <code>maptools</code> package:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(maptools)
 <span class="kw">plot</span>(pts, <span class="dt">axes=</span>T)
-<span class="kw">pointLabel</span>(<span class="kw">coordinates</span>(pts),<span class="dt">labels=</span>pts<span class="op">$</span>cities)</code></pre></div>
+<span class="kw">pointLabel</span>(<span class="kw">coordinates</span>(pts),<span class="dt">labels=</span>pts$cities)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/plot%20spatial-1.png" width="672" /></p>
 <p>Pop quiz - why doesn’t this initial map look quite right?</p>
 <p>Hint - run summary on pts:</p>
@@ -553,7 +550,7 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 ##   .. .. ..@ projargs: chr NA</code></pre>
 <p>Meet your new friend the <code>@</code> symbol - this is how you access slots in an <code>S4</code> object in R - you can think of as similar to <code>$</code> in accessing columns in a data frame.</p>
 <p>So to get the bounding box of our <code>SpatialPointsDataFrame</code>, we simply do:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pts<span class="op">@</span>bbox</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pts@bbox</code></pre></div>
 <pre><code>##                min      max
 ## longitude -124.054 -121.313
 ## latitude    42.189   45.523</code></pre>
@@ -646,7 +643,7 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 <p>To get back to our <code>SpatialPointsDataFrame</code> we created, hopefully everyone realizes the issue with our oddly-shaped map is that our data was unprojected, and actually lacking any coordinate reference system information whatsoever. We have to supply this to our CRS slot for our pts <code>SpatialPointsDataFrame</code>. We know we’re using latitude and longitude values, and usually it’s safe to assume those are either NAD83 Datum or WGS84 - we don’t need to worry about delving into the details here. We can lookup the correct <code>proj4string</code> either using <a href="http://www.spatialreference.org/" class="uri">http://www.spatialreference.org/</a> or the <code>projInfo</code> method in the <code>rgdal</code> package.</p>
 <p>Try one of these methods to get the CRS information we need to supply for our points.</p>
 <p>Solution:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pts<span class="op">@</span>proj4string &lt;-<span class="st"> </span><span class="kw">CRS</span>(<span class="st">&#39;+proj=longlat +ellps=GRS80 </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pts@proj4string &lt;-<span class="st"> </span><span class="kw">CRS</span>(<span class="st">&#39;+proj=longlat +ellps=GRS80 </span>
 <span class="st">                        +datum=NAD83 +no_defs&#39;</span>)
 <span class="kw">summary</span>(pts)</code></pre></div>
 <pre><code>## Object of class SpatialPointsDataFrame
@@ -668,11 +665,12 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 ##                Max.   :537557</code></pre>
 <p>And let’s plot again</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(pts, <span class="dt">axes=</span>T)
-<span class="kw">pointLabel</span>(<span class="kw">coordinates</span>(pts),<span class="dt">labels=</span>pts<span class="op">$</span>cities)</code></pre></div>
+<span class="kw">pointLabel</span>(<span class="kw">coordinates</span>(pts),<span class="dt">labels=</span>pts$cities)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/map-1.png" width="672" /></p>
 <p>Better - but what did you notice from summary(pts) above in the <code>proj4string</code> information?</p>
 <p>We should not just use a geographic CRS, but project to a planar CRS for a better looking map - NAD83 / Oregon Lambert is a good choice - see if you can find the <code>proj4string</code> for this(hint: EPSG code is 2991) and take a minute to look through help for <code>sp</code> package and see if anyone knows how we’d get our pts to this projection.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pts &lt;-<span class="st"> </span><span class="kw">spTransform</span>(pts, <span class="kw">CRS</span>(<span class="st">&#39;+proj=lcc +lat_1=43 +lat_2=45.5 +lat_0=41.75 +lon_0=-120.5 +x_0=400000 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&#39;</span>))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rgdal)
+pts &lt;-<span class="st"> </span><span class="kw">spTransform</span>(pts, <span class="kw">CRS</span>(<span class="st">&#39;+proj=lcc +lat_1=43 +lat_2=45.5 +lat_0=41.75 +lon_0=-120.5 +x_0=400000 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs&#39;</span>))
 <span class="co"># NOTE# You can also simply use the EPSG code if projection has</span>
 pts &lt;-<span class="st"> </span><span class="kw">spTransform</span>(pts, <span class="kw">CRS</span>(<span class="st">&#39;+init=epsg:2991&#39;</span>))
 <span class="kw">summary</span>(pts)</code></pre></div>
@@ -698,14 +696,19 @@ pts &lt;-<span class="st"> </span><span class="kw">spTransform</span>(pts, <span
 <p>And now how does it look when we map it? We’re adding a step below using the <code>getData</code> function in the <code>raster</code> package to bring in a counties background - we’ll look at <code>raster</code> more in a bit:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(raster)
 US &lt;-<span class="st"> </span><span class="kw">getData</span>(<span class="st">&quot;GADM&quot;</span>,<span class="dt">country=</span><span class="st">&quot;USA&quot;</span>,<span class="dt">level=</span><span class="dv">2</span>)
-OR &lt;-US[US<span class="op">$</span>NAME_<span class="dv">1</span><span class="op">==</span><span class="st">&#39;Oregon&#39;</span>,]
-<span class="kw">proj4string</span>(pts) <span class="op">==</span><span class="st"> </span><span class="kw">proj4string</span>(OR)</code></pre></div>
+OR &lt;-US[US$NAME_1==<span class="st">&#39;Oregon&#39;</span>,]
+<span class="kw">proj4string</span>(pts) ==<span class="st"> </span><span class="kw">proj4string</span>(OR)</code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OR &lt;-<span class="st"> </span><span class="kw">spTransform</span>(OR, <span class="kw">CRS</span>(<span class="kw">proj4string</span>(pts)))
 <span class="kw">plot</span>(OR, <span class="dt">axes=</span>T)
 <span class="kw">plot</span>(pts, <span class="dt">add=</span>T)
-<span class="kw">pointLabel</span>(<span class="kw">coordinates</span>(pts),<span class="dt">labels=</span>pts<span class="op">$</span>cities)</code></pre></div>
+<span class="kw">pointLabel</span>(<span class="kw">coordinates</span>(pts),<span class="dt">labels=</span>pts$cities)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/map2-1.png" width="672" /></p>
+<p>Now let’s take a quick look at lines and polygons in <code>sp</code>.</p>
+<div class="figure">
+<img src="/R-User-Group-Spatial-Workshop-2018/img/SpatialClassesFig1.png" alt="SpatialClassesFig1" />
+<p class="caption">SpatialClassesFig1</p>
+</div>
 </div>
 </div>
 <div id="vector-data-with-sf" class="section level3">
