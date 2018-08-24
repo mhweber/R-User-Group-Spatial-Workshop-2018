@@ -426,7 +426,7 @@ x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
 <span class="kw">polygon</span>(x, <span class="dt">border=</span><span class="st">&#39;blue&#39;</span>)
 <span class="kw">lines</span>(x, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
 <span class="kw">points</span>(x, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">pch=</span><span class="dv">20</span>)</code></pre></div>
-<p><img src="SpatialObjects_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="SpatialObjects_files/figure-html/cities2-1.png" width="672" /></p>
 <p>We can see in this toy example that numeric vectors can represent locations in R for simple mapping. Points just need to be a pair of numbers in cartesian space, and lines and polygons are just a number of these points (note that polygons are closed by having their first point coincide with last point which the <code>polygon</code> function in base R graphics takes care of).</p>
 <p>You can do simple things with this spatial representation using basic R structures, but it breaks down quickly if you want to ask any spatial questions - for instance using the example above, how would we figure out the nearest city to Corvallis? Or imagine the polygon is a county and we wanted to know what cities are within the county?</p>
 <p>So what information do we need to properly define spatial vector data and perform spatial operations?</p>
@@ -448,17 +448,14 @@ x &lt;-<span class="st"> </span><span class="kw">cbind</span>(lon, lat)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># devtools::install_github(&quot;metacran/cranlogs&quot;)</span>
 <span class="kw">library</span>(cranlogs)
 <span class="kw">library</span>(ggplot2)
-<span class="kw">library</span>(lubridate)</code></pre></div>
-<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 3.4.3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)</code></pre></div>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stats &lt;-<span class="st"> </span><span class="kw">cran_downloads</span>(<span class="dt">from =</span> <span class="st">&quot;2013-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2018-08-22&quot;</span>,<span class="dt">packages =</span> <span class="kw">c</span>(<span class="st">&quot;sp&quot;</span>, <span class="st">&quot;sf&quot;</span>, <span class="st">&quot;raster&quot;</span>, <span class="st">&quot;ggmap&quot;</span>, <span class="st">&quot;mapview&quot;</span>))
+<span class="kw">library</span>(lubridate)
+<span class="kw">library</span>(dplyr)
+stats &lt;-<span class="st"> </span><span class="kw">cran_downloads</span>(<span class="dt">from =</span> <span class="st">&quot;2013-01-01&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;2018-08-22&quot;</span>,<span class="dt">packages =</span> <span class="kw">c</span>(<span class="st">&quot;sp&quot;</span>, <span class="st">&quot;sf&quot;</span>, <span class="st">&quot;raster&quot;</span>, <span class="st">&quot;ggmap&quot;</span>, <span class="st">&quot;mapview&quot;</span>))
 
 monthly_stats &lt;-<span class="st"> </span>stats <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(<span class="dt">month=</span><span class="kw">floor_date</span>(date, <span class="st">&quot;month&quot;</span>), package) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">amount=</span><span class="kw">sum</span>(count))</code></pre></div>
-<pre><code>## Warning: package &#39;bindrcpp&#39; was built under R version 3.4.1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(monthly_stats, <span class="kw">aes</span>(<span class="dt">x=</span>month, <span class="dt">y=</span>amount, <span class="dt">group =</span> package, <span class="dt">colour =</span> package)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() </code></pre></div>
+<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">amount=</span><span class="kw">sum</span>(count))
+<span class="kw">ggplot</span>(monthly_stats, <span class="kw">aes</span>(<span class="dt">x=</span>month, <span class="dt">y=</span>amount, <span class="dt">group =</span> package, <span class="dt">colour =</span> package)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>() </code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/packages-1.png" width="672" /></p>
 <p>Handling of spatial data in R was standardized in recent years through the base package <code>sp</code>, which uses ‘new-style’ <a href="http://adv-r.had.co.nz/S4.html">S4</a> classes in R that use formal class definitions and are closer to object-oriented systems than standard S3 classes in R.</p>
 <p>The best source to learn about <code>sp</code> and fundamentals of spatial analysis in R is Roger Bivand’s book <a href="http://www.asdar-book.org/">Applied Spatial Data Analysis in R</a></p>
@@ -468,9 +465,8 @@ monthly_stats &lt;-<span class="st"> </span>stats <span class="op">%&gt;%</span>
 <p class="caption">SpatialClassesFig1</p>
 </div>
 <p>Let’s take a look at this in R - run the following R code in your R console (or from source):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sp)</code></pre></div>
-<pre><code>## Warning: package &#39;sp&#39; was built under R version 3.4.3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getClass</span>(<span class="st">&quot;Spatial&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sp)
+<span class="kw">getClass</span>(<span class="st">&quot;Spatial&quot;</span>)</code></pre></div>
 <pre><code>## Class &quot;Spatial&quot; [package &quot;sp&quot;]
 ## 
 ## Slots:
@@ -700,9 +696,8 @@ pts &lt;-<span class="st"> </span><span class="kw">spTransform</span>(pts, <span
 ##  Portland :1   3rd Qu.: 61362  
 ##                Max.   :537557</code></pre>
 <p>And now how does it look when we map it? We’re adding a step below using the <code>getData</code> function in the <code>raster</code> package to bring in a counties background - we’ll look at <code>raster</code> more in a bit:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(raster)</code></pre></div>
-<pre><code>## Warning: package &#39;raster&#39; was built under R version 3.4.3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">US &lt;-<span class="st"> </span><span class="kw">getData</span>(<span class="st">&quot;GADM&quot;</span>,<span class="dt">country=</span><span class="st">&quot;USA&quot;</span>,<span class="dt">level=</span><span class="dv">2</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(raster)
+US &lt;-<span class="st"> </span><span class="kw">getData</span>(<span class="st">&quot;GADM&quot;</span>,<span class="dt">country=</span><span class="st">&quot;USA&quot;</span>,<span class="dt">level=</span><span class="dv">2</span>)
 OR &lt;-US[US<span class="op">$</span>NAME_<span class="dv">1</span><span class="op">==</span><span class="st">&#39;Oregon&#39;</span>,]
 <span class="kw">proj4string</span>(pts) <span class="op">==</span><span class="st"> </span><span class="kw">proj4string</span>(OR)</code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
