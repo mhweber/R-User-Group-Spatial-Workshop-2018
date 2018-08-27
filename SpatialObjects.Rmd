@@ -242,10 +242,54 @@ plot(pts, add=T)
 pointLabel(coordinates(pts),labels=pts$cities)
 ```
 
-Now let's take a quick look at lines and polygons in `sp`.
+Now let's take a quick look at lines and polygons in `sp`. We'll see how these objects are stored in `sp` to gain a basic understanding, but we'll then move to the newer `sf` package for all our vector example exercises.
 
-![SpatialClassesFig1](/R-User-Group-Spatial-Workshop-2018/img/SpatialClassesFig1.png)
+![SpatialClassesFig2](/R-User-Group-Spatial-Workshop-2018/img/SpatialClassesFig2.png)
 
+By contructing toy `SpatialLines` and `SpatialPolygons` `sp` objects, and then `SpatialLinesDataFrames` and `SpatialPolygonsDataFrames`, we can get a get a feel for the additional details needed to structure these using `sp`. Example here is from [R Spatial](http://rspatial.org/spatial/rst/3-vectordata.html).  Here we use the `raster` package which has handy `spLines` and `spPolys` functions to create `SpatialLines` and `SpatialPolygons` from coordinates(`raster` package has several useful functions for dealing with vector data as well as raster data).
+
+```{r lines, message=FALSE, warning=FALSE, error=FALSE}
+library(raster)
+lon <- c(-116.8, -114.2, -112.9, -111.9, -114.2, -115.4, -117.7)
+lat <- c(41.3, 42.9, 42.4, 39.8, 37.6, 38.3, 37.6)
+lonlat <- cbind(lon, lat)
+lns <- spLines(lonlat, crs='+proj=longlat +datum=WGS84')
+lns
+```
+
+```{r polys, message=FALSE, warning=FALSE, error=FALSE}
+pols <- spPolygons(lonlat, crs='+proj=longlat +datum=WGS84')
+pols
+```
+
+Take minute to examine the way `sp` structures these data in slots - use the various methods we've discussed so far to examine, such as `@`, `str`, and direct method calls on the objects.
+
+```{r, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+str(lns)
+```
+
+```{r, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+str(pols)
+```
+
+```{r, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+lns@bbox
+```
+
+```{r, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+proj4string(lns)
+```
+
+```{r, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+# Eacb polygon element has it's own 5 slots to record information for that polygon
+slotNames(pols@polygons[[1]])
+```
+
+```{r, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+# Here we access the area and label point (centroid) of our polygon using slots
+pols@polygons[[1]]@labpt
+pols@polygons[[1]]@area
+```
 ### Vector Data with sf
 
 ### Raster Data
