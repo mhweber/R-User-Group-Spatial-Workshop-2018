@@ -262,6 +262,10 @@ pols <- spPolygons(lonlat, crs='+proj=longlat +datum=WGS84')
 pols
 ```
 
+```{r plot_lines_polys, message=FALSE, warning=FALSE, error=FALSE}
+plot(pols, axes=TRUE, las=1)
+```
+
 Take minute to examine the way `sp` structures these data in slots - use the various methods we've discussed so far to examine, such as `@`, `str`, and direct method calls on the objects.
 
 ```{r, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
