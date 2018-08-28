@@ -294,9 +294,89 @@ slotNames(pols@polygons[[1]])
 pols@polygons[[1]]@labpt
 pols@polygons[[1]]@area
 ```
+
+And just a quick example of reading in a .csv file with latitude and longitude values to create an `sp` `SpatialPointsDataFrame`:
+```{r read_csv, message=FALSE, warning=FALSE, error=FALSE}
+require(RCurl)
+gages <- read.csv(text = getURL('https://raw.githubusercontent.com/mhweber/R-User-Group-Spatial-Workshop-2018/gh-pages/data/StreamGages.csv'))
+head(gages)    
+```
+
+There are shortcuts to do this, but explicitly we will:
+
+* define the CRS
+* make a matrix of our latitude and longitude values
+* use the `sp` `SpatialPoints` method to combine our matrix and CRS into a `SpatialPoints` object
+* Fold the data frame of values back into the `data` slot in a `SpatialPointsDataFrame`
+
+```{r make_spatial, message=FALSE, warning=FALSE, error=FALSE}
+llCRS <- CRS("+init=epsg:4269")
+coords <- gages[, c('LON_SITE', 'LAT_SITE')]
+# now stitch together the data frame coordinate fields and the  
+# projection string to createa SpatialPoints object
+gages_sp <- SpatialPoints(coords, proj4string = llCRS)
+# summary method gives a description of the spatial object in R
+summary(gages_sp)
+```
+
+```{r spatialdataframe, message=FALSE, warning=FALSE, error=FALSE}
+gages_spdf <- SpatialPointsDataFrame(gages_sp, gages)
+summary(gages_spdf)
+```
+
+And a quick look at our gages using plot and plotting PNW states:
+```{r mapgages, message=FALSE, warning=FALSE, error=FALSE}
+PNW <-US[US$NAME_1 %in% c('Oregon','Washington','Idaho'),]
+PNW <- spTransform(PNW, CRS(proj4string(gages_spdf)))
+plot(PNW, axes=T)
+plot(gages_spdf, col='blue', add=T)
+```
 ### Vector Data with sf
 
-### Raster Data
+The `sf` package developed by Edzer Pebesma ia an implementation of [Simple features](https://en.wikipedia.org/wiki/Simple_Features), an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.  From the first `sf` package vignette we see:
+
+![`sf` Objects](/R-User-Group-Spatial-Workshop-2018/img/sf_objects.png)
+
+The big difference between `sf` and `sp` is that `sf` usesS3 classes rather than S4 as `sp` does.  Simple features are simple `data.frame` objects that have a geometry list-column, essentially.  `sf` rolls together the functions of three packages from the `sp` world - `sp` for the class system, `rgdal` for reading and writing data, and `rgeos` for spatial operations using [GEOS](https://trac.osgeo.org/geos). The simple feature model will be familiar to folks who use [PostGIS](https://en.wikipedia.org/wiki/PostGIS), [MySQL Spatial Extensions](https://en.wikipedia.org/wiki/MySQL), [Oracle Spatial](https://en.wikipedia.org/wiki/Oracle_Spatial_and_Graph), the [OGR component of the GDAL library](https://en.wikipedia.org/wiki/GDAL), [GeoJSON](https://datatracker.ietf.org/doc/rfc7946/) and [GeoPandas](http://geopandas.org/) in Python.  Simple features are represented with Well-Known text - [WKT](https://en.wikipedia.org/wiki/Well-known_text) - and well-known binary formats.
+
+Just as in `PostGIS`, all functions and methods in `sf` are prefixed with `st_`, which stands for 'spatial and temporal'.  An advantage of this prefixing is all commands are easy to find with command-line completion in `sf`.
+
+Edzar Pebesma has extensive documentation, blog posts and vignettes available for `sf` here:
+[Simple Features for R](https://github.com/edzer/sfr).  Additionally, see Edzar's [r-spatial blog](http://r-spatial.org/) which has numerous announcements, discussion pieces and tutorials on spatial work in R focused. 
+
+A very handy page, if you're already familiar with the `sp` ecosystem, is the [Migrating](https://github.com/r-spatial/sf/wiki/migrating) page on the [sf GitHub wiki](https://github.com/r-spatial/sf/wiki).
+
+Here's a quick synopsis of available methods in `sf`:
+```{r sf_methods, message=FALSE, warning=FALSE, error=FALSE}
+library(sf)
+methods(class = 'sf')
+```
+
+Let's start exploring `sf` using the USGS stream gage .csv file we read in previously.  You should still have the gages `data.frame` loaded in memory - if not, simply pull down from the class repository using code step from previous section.
+
+```{r gages2, message=FALSE, warning=FALSE, error=FALSE}
+class(gages)
+```
+
+Now we'll use the `sf` approach to make this `data.frame` with coordinates spatial, just as we did with `sp`:
+```{r promote_gages_sf, message=FALSE, warning=FALSE, error=FALSE}
+gages_sf <- st_as_sf(gages, coords = c("LON_SITE", "LAT_SITE"), crs = 4269)
+gages_sf
+```
+
+Let's break down what we just saw in gages_sf - from the first `sf` package vignette:
+![`sf` Objects](/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png)
+We can see:
+
+* in green a simple feature: a single record, or data.frame row, consisting of attributes and geometry
+* in blue a single simple feature geometry (an object of class sfg)
+* in red a simple feature list-column (an object of class sfc, which is a column in the data.frame)
+
+Generic plotting works on `sf` objects as well - take a minute to play with plot our gages - why do we specify `$geometry` in our plot call?
+```{r sf_plot, message=FALSE, warning=FALSE, error=FALSE}
+plot(gages_sf$geometry, axes=T)
+```
+
 
 ### Geographic Data I/O
 For reading and writing vector and raster data in R, the three primary packages you'll use are:

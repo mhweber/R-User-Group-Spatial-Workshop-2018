@@ -729,6 +729,8 @@ pols</code></pre></div>
 ## features    : 1 
 ## extent      : -117.7, -111.9, 37.6, 42.9  (xmin, xmax, ymin, ymax)
 ## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(pols, <span class="dt">axes=</span><span class="ot">TRUE</span>, <span class="dt">las=</span><span class="dv">1</span>)</code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/plot_lines_polys-1.png" width="672" /></p>
 <p>Take minute to examine the way <code>sp</code> structures these data in slots - use the various methods we’ve discussed so far to examine, such as <code>@</code>, <code>str</code>, and direct method calls on the objects.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(lns)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(pols)</code></pre></div>
@@ -739,13 +741,174 @@ pols</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Here we access the area and label point (centroid) of our polygon using slots</span>
 pols<span class="op">@</span>polygons[[<span class="dv">1</span>]]<span class="op">@</span>labpt
 pols<span class="op">@</span>polygons[[<span class="dv">1</span>]]<span class="op">@</span>area</code></pre></div>
+<p>And just a quick example of reading in a .csv file with latitude and longitude values to create an <code>sp</code> <code>SpatialPointsDataFrame</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(RCurl)
+gages &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">text =</span> <span class="kw">getURL</span>(<span class="st">&#39;https://raw.githubusercontent.com/mhweber/R-User-Group-Spatial-Workshop-2018/gh-pages/data/StreamGages.csv&#39;</span>))
+<span class="kw">head</span>(gages)    </code></pre></div>
+<pre><code>##   SOURCE_FEA  EVENTTYPE                                    STATION_NM
+## 1   14361500 StreamGage                ROGUE RIVER AT GRANTS PASS, OR
+## 2   14344500 StreamGage   N F LTL BUTE CR AB INTKE CANL LKECREEK OREG
+## 3   10378500 StreamGage                  HONEY CREEK NEAR PLUSH,OREG.
+## 4   14341500 StreamGage SOUTH FORK LITTLE BUTTE CR NR LAKECREEK,OREG.
+## 5   14343000 StreamGage      NO FK LITTLE BUTTE CR NR LAKECREEK,OREG.
+## 6   13092500 StreamGage               MCMULLEN CREEK NR ROCK CREEK ID
+##   STATE  LON_SITE LAT_SITE
+## 1    OR -123.3178 42.43040
+## 2    OR -122.6011 42.42763
+## 3    OR -119.9233 42.42488
+## 4    OR -122.6011 42.40819
+## 5    OR -122.5373 42.40263
+## 6    ID -114.3693 42.39648</code></pre>
+<p>There are shortcuts to do this, but explicitly we will:</p>
+<ul>
+<li>define the CRS</li>
+<li>make a matrix of our latitude and longitude values</li>
+<li>use the <code>sp</code> <code>SpatialPoints</code> method to combine our matrix and CRS into a <code>SpatialPoints</code> object</li>
+<li>Fold the data frame of values back into the <code>data</code> slot in a <code>SpatialPointsDataFrame</code></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">llCRS &lt;-<span class="st"> </span><span class="kw">CRS</span>(<span class="st">&quot;+init=epsg:4269&quot;</span>)
+coords &lt;-<span class="st"> </span>gages[, <span class="kw">c</span>(<span class="st">&#39;LON_SITE&#39;</span>, <span class="st">&#39;LAT_SITE&#39;</span>)]
+<span class="co"># now stitch together the data frame coordinate fields and the  </span>
+<span class="co"># projection string to createa SpatialPoints object</span>
+gages_sp &lt;-<span class="st"> </span><span class="kw">SpatialPoints</span>(coords, <span class="dt">proj4string =</span> llCRS)
+<span class="co"># summary method gives a description of the spatial object in R</span>
+<span class="kw">summary</span>(gages_sp)</code></pre></div>
+<pre><code>## Object of class SpatialPoints
+## Coordinates:
+##                 min        max
+## LON_SITE -124.66912 -110.44111
+## LAT_SITE   41.42768   49.00075
+## Is projected: FALSE 
+## proj4string :
+## [+init=epsg:4269 +proj=longlat +datum=NAD83 +no_defs +ellps=GRS80
+## +towgs84=0,0,0]
+## Number of points: 2771</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gages_spdf &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>(gages_sp, gages)
+<span class="kw">summary</span>(gages_spdf)</code></pre></div>
+<pre><code>## Object of class SpatialPointsDataFrame
+## Coordinates:
+##                 min        max
+## LON_SITE -124.66912 -110.44111
+## LAT_SITE   41.42768   49.00075
+## Is projected: FALSE 
+## proj4string :
+## [+init=epsg:4269 +proj=longlat +datum=NAD83 +no_defs +ellps=GRS80
+## +towgs84=0,0,0]
+## Number of points: 2771
+## Data attributes:
+##    SOURCE_FEA              EVENTTYPE   
+##  Min.   :  10361700   StreamGage:2771  
+##  1st Qu.:  12331050                    
+##  Median :  13069000                    
+##  Mean   :  14573679                    
+##  3rd Qu.:  13349362                    
+##  Max.   :1315377299                    
+##                                        
+##                                         STATION_NM       STATE     
+##  ABERDEEN-SPRINGFIELD CANAL NR SPRINGFIELD ID:   1   WA     :1054  
+##  ABERDEEN WASTE NR ABERDEEN ID               :   1   ID     : 800  
+##  ABERNATHY CREEK NEAR LONGVIEW, WA           :   1   OR     : 622  
+##  AENEAS LAKE NEAR TONASKET, WA               :   1   MT     : 220  
+##  Agency Creek near Jocko MT (2)              :   1   WY     :  52  
+##  AGENCY CREEK NEAR JOCKO, MT                 :   1   NV     :  19  
+##  (Other)                                     :2765   (Other):   4  
+##     LON_SITE         LAT_SITE    
+##  Min.   :-124.7   Min.   :41.43  
+##  1st Qu.:-122.2   1st Qu.:43.90  
+##  Median :-119.4   Median :45.91  
+##  Mean   :-118.6   Mean   :45.67  
+##  3rd Qu.:-115.4   3rd Qu.:47.39  
+##  Max.   :-110.4   Max.   :49.00  
+## </code></pre>
+<p>And a quick look at our gages using plot and plotting PNW states:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PNW &lt;-US[US<span class="op">$</span>NAME_<span class="dv">1</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Oregon&#39;</span>,<span class="st">&#39;Washington&#39;</span>,<span class="st">&#39;Idaho&#39;</span>),]
+PNW &lt;-<span class="st"> </span><span class="kw">spTransform</span>(PNW, <span class="kw">CRS</span>(<span class="kw">proj4string</span>(gages_spdf)))
+<span class="kw">plot</span>(PNW, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(gages_spdf, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)</code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/mapgages-1.png" width="672" /> ### Vector Data with sf</p>
+<p>The <code>sf</code> package developed by Edzer Pebesma ia an implementation of <a href="https://en.wikipedia.org/wiki/Simple_Features">Simple features</a>, an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object. From the first <code>sf</code> package vignette we see:</p>
+<div class="figure">
+<img src="/R-User-Group-Spatial-Workshop-2018/img/sf_objects.png" alt="sf Objects" />
+<p class="caption"><code>sf</code> Objects</p>
 </div>
+<p>The big difference between <code>sf</code> and <code>sp</code> is that <code>sf</code> usesS3 classes rather than S4 as <code>sp</code> does. Simple features are simple <code>data.frame</code> objects that have a geometry list-column, essentially. <code>sf</code> rolls together the functions of three packages from the <code>sp</code> world - <code>sp</code> for the class system, <code>rgdal</code> for reading and writing data, and <code>rgeos</code> for spatial operations using <a href="https://trac.osgeo.org/geos">GEOS</a>. The simple feature model will be familiar to folks who use <a href="https://en.wikipedia.org/wiki/PostGIS">PostGIS</a>, <a href="https://en.wikipedia.org/wiki/MySQL">MySQL Spatial Extensions</a>, <a href="https://en.wikipedia.org/wiki/Oracle_Spatial_and_Graph">Oracle Spatial</a>, the <a href="https://en.wikipedia.org/wiki/GDAL">OGR component of the GDAL library</a>, <a href="https://datatracker.ietf.org/doc/rfc7946/">GeoJSON</a> and <a href="http://geopandas.org/">GeoPandas</a> in Python. Simple features are represented with Well-Known text - <a href="https://en.wikipedia.org/wiki/Well-known_text">WKT</a> - and well-known binary formats.</p>
+<p>Just as in <code>PostGIS</code>, all functions and methods in <code>sf</code> are prefixed with <code>st_</code>, which stands for ‘spatial and temporal’. An advantage of this prefixing is all commands are easy to find with command-line completion in <code>sf</code>.</p>
+<p>Edzar Pebesma has extensive documentation, blog posts and vignettes available for <code>sf</code> here: <a href="https://github.com/edzer/sfr">Simple Features for R</a>. Additionally, see Edzar’s <a href="http://r-spatial.org/">r-spatial blog</a> which has numerous announcements, discussion pieces and tutorials on spatial work in R focused.</p>
+<p>A very handy page, if you’re already familiar with the <code>sp</code> ecosystem, is the <a href="https://github.com/r-spatial/sf/wiki/migrating">Migrating</a> page on the <a href="https://github.com/r-spatial/sf/wiki">sf GitHub wiki</a>.</p>
+<p>Here’s a quick synopsis of available methods in <code>sf</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sf)
+<span class="kw">methods</span>(<span class="dt">class =</span> <span class="st">&#39;sf&#39;</span>)</code></pre></div>
+<pre><code>##  [1] $&lt;-                   [                     [[&lt;-                 
+##  [4] aggregate             anti_join             arrange              
+##  [7] as.data.frame         cbind                 coerce               
+## [10] distinct              extent                extract              
+## [13] filter                full_join             group_by             
+## [16] identify              initialize            inner_join           
+## [19] left_join             mask                  merge                
+## [22] mutate                plot                  print                
+## [25] rasterize             rbind                 rename               
+## [28] right_join            sample_frac           sample_n             
+## [31] select                semi_join             show                 
+## [34] slice                 slotsFromS3           st_agr               
+## [37] st_agr&lt;-              st_as_sf              st_bbox              
+## [40] st_boundary           st_buffer             st_cast              
+## [43] st_centroid           st_collection_extract st_convex_hull       
+## [46] st_coordinates        st_crs                st_crs&lt;-             
+## [49] st_difference         st_geometry           st_geometry&lt;-        
+## [52] st_intersection       st_is                 st_line_merge        
+## [55] st_node               st_point_on_surface   st_polygonize        
+## [58] st_precision          st_segmentize         st_set_precision     
+## [61] st_simplify           st_snap               st_sym_difference    
+## [64] st_transform          st_triangulate        st_union             
+## [67] st_voronoi            st_wrap_dateline      st_write             
+## [70] st_zm                 summarise             transmute            
+## [73] ungroup              
+## see &#39;?methods&#39; for accessing help and source code</code></pre>
+<p>Let’s start exploring <code>sf</code> using the USGS stream gage .csv file we read in previously. You should still have the gages <code>data.frame</code> loaded in memory - if not, simply pull down from the class repository using code step from previous section.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(gages)</code></pre></div>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<p>Now we’ll use the <code>sf</code> approach to make this <code>data.frame</code> with coordinates spatial, just as we did with <code>sp</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gages_sf &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(gages, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;LON_SITE&quot;</span>, <span class="st">&quot;LAT_SITE&quot;</span>), <span class="dt">crs =</span> <span class="dv">4269</span>)
+gages_sf</code></pre></div>
+<pre><code>## Simple feature collection with 2771 features and 4 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -124.6691 ymin: 41.42768 xmax: -110.4411 ymax: 49.00075
+## epsg (SRID):    4269
+## proj4string:    +proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs
+## First 10 features:
+##    SOURCE_FEA  EVENTTYPE                                      STATION_NM
+## 1    14361500 StreamGage                  ROGUE RIVER AT GRANTS PASS, OR
+## 2    14344500 StreamGage     N F LTL BUTE CR AB INTKE CANL LKECREEK OREG
+## 3    10378500 StreamGage                    HONEY CREEK NEAR PLUSH,OREG.
+## 4    14341500 StreamGage   SOUTH FORK LITTLE BUTTE CR NR LAKECREEK,OREG.
+## 5    14343000 StreamGage        NO FK LITTLE BUTTE CR NR LAKECREEK,OREG.
+## 6    13092500 StreamGage                 MCMULLEN CREEK NR ROCK CREEK ID
+## 7    10378000 StreamGage               TWELVEMILE CREEK NEAR PLUSH,OREG.
+## 8    10376500 StreamGage                     FISH CREEK NEAR PLUSH,OREG.
+## 9    14378000 StreamGage                      ILLINOIS R NR SELMA, OREG.
+## 10   14342500 StreamGage NO FK LITTLE BUTTE CR AT F L NR LAKECREEK,OREG.
+##    STATE                   geometry
+## 1     OR  POINT (-123.3178 42.4304)
+## 2     OR POINT (-122.6011 42.42763)
+## 3     OR POINT (-119.9233 42.42488)
+## 4     OR POINT (-122.6011 42.40819)
+## 5     OR POINT (-122.5373 42.40263)
+## 6     ID POINT (-114.3693 42.39648)
+## 7     OR POINT (-120.0177 42.38322)
+## 8     OR POINT (-119.9011 42.38322)
+## 9     OR   POINT (-123.8123 42.379)
+## 10    OR POINT (-122.3567 42.37625)</code></pre>
+<p>Let’s break down what we just saw in gages_sf - from the first <code>sf</code> package vignette: <img src="/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png" alt="sf Objects" /> We can see:</p>
+<ul>
+<li>in green a simple feature: a single record, or data.frame row, consisting of attributes and geometry</li>
+<li>in blue a single simple feature geometry (an object of class sfg)</li>
+<li>in red a simple feature list-column (an object of class sfc, which is a column in the data.frame)</li>
+</ul>
+<p>Generic plotting works on <code>sf</code> objects as well - take a minute to play with plot our gages - why do we specify <code>$geometry</code> in our plot call?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gages_sf<span class="op">$</span>geometry, <span class="dt">axes=</span>T)</code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/sf_plot-1.png" width="672" /></p>
 </div>
-<div id="vector-data-with-sf" class="section level3">
-<h3>Vector Data with sf</h3>
-</div>
-<div id="raster-data" class="section level3">
-<h3>Raster Data</h3>
 </div>
 <div id="geographic-data-io" class="section level3">
 <h3>Geographic Data I/O</h3>
