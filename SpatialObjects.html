@@ -918,6 +918,96 @@ gages_sf</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gages_sf<span class="op">$</span>geometry, <span class="dt">axes=</span>T)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/sf_plot-1.png" width="672" /></p>
 </div>
+<div id="raster-data" class="section level3">
+<h3>Raster Data</h3>
+<p>Package <code>sp</code> does have support for raster data, but we won’t look at it here - support for gridded data in R is best implemented currently with the <code>raster</code> package by Robert Hijmans. The <code>raster</code> package allows you to:</p>
+<ul>
+<li>read and write almost any commonly used raster data format using <code>rgdal</code></li>
+<li>perform typical raster processing operations such as resampling, projecting, filtering, raster math, etc.</li>
+<li>work with files on disk that are too big to read into memory in R</li>
+<li>run operations quickly since the package relies on back-end C code</li>
+</ul>
+<p>The <a href="https://cran.r-project.org/web/packages/raster/">home page</a> for the <code>raster</code> package has links to several well-written vignettes and documentation for the package.</p>
+<p>The <code>raster</code> package uses three classes / types of objects to represent raster data - <code>RasterLayer</code>, <code>RasterStack</code>, and <code>RasterBrick</code> - these are all <code>S4</code> new style classes in R, just like <code>sp</code> classes.</p>
+<p>The <code>raster</code> package has not been updated in the last year though- and a new package called <code>stars</code> (spatiotemporal tidy arrays with R) is being developed through an R-Consortium funded project to handle rasters in a way that is both <code>sf</code> and pipe-based workflow friendly. The <a href="https://github.com/r-spatial/stars/blob/master/PROPOSAL.md">proposal</a> by by Edzer Pebezma, Michael Sumer, Etienne Racine and Adriano Fantini outlines the approach they are taking - you can play with the <a href="https://www.r-spatial.org/r/2017/11/23/stars1.html">development version</a> and check out the package <a href="https://r-spatial.github.io/stars/index.html">web page</a> but it is still very much in alpha stages.</p>
+<p>To familiarize ourselves with the <code>raster</code> package, let’s create an empty <code>RasterLayer</code> object - in order to do this we have to: * define the matrix (rows and columns) * define the spatial bounding box * provide values to the cells</p>
+<p>Note that typically we would be reading raster data in from a file rather than creating a raster from scratch. Run through code steps below to familiarize yourself with contsructing a <code>RasterLayer</code> from scratch.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(raster)
+r &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="dt">ncol=</span><span class="dv">10</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">xmx=</span><span class="op">-</span><span class="dv">116</span>,<span class="dt">xmn=</span><span class="op">-</span><span class="dv">126</span>,<span class="dt">ymn=</span><span class="dv">42</span>,<span class="dt">ymx=</span><span class="dv">46</span>)
+<span class="kw">str</span>(r)</code></pre></div>
+<pre><code>## Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
+##   ..@ file    :Formal class &#39;.RasterFile&#39; [package &quot;raster&quot;] with 13 slots
+##   .. .. ..@ name        : chr &quot;&quot;
+##   .. .. ..@ datanotation: chr &quot;FLT4S&quot;
+##   .. .. ..@ byteorder   : chr &quot;little&quot;
+##   .. .. ..@ nodatavalue : num -Inf
+##   .. .. ..@ NAchanged   : logi FALSE
+##   .. .. ..@ nbands      : int 1
+##   .. .. ..@ bandorder   : chr &quot;BIL&quot;
+##   .. .. ..@ offset      : int 0
+##   .. .. ..@ toptobottom : logi TRUE
+##   .. .. ..@ blockrows   : int 0
+##   .. .. ..@ blockcols   : int 0
+##   .. .. ..@ driver      : chr &quot;&quot;
+##   .. .. ..@ open        : logi FALSE
+##   ..@ data    :Formal class &#39;.SingleLayerData&#39; [package &quot;raster&quot;] with 13 slots
+##   .. .. ..@ values    : logi(0) 
+##   .. .. ..@ offset    : num 0
+##   .. .. ..@ gain      : num 1
+##   .. .. ..@ inmemory  : logi FALSE
+##   .. .. ..@ fromdisk  : logi FALSE
+##   .. .. ..@ isfactor  : logi FALSE
+##   .. .. ..@ attributes: list()
+##   .. .. ..@ haveminmax: logi FALSE
+##   .. .. ..@ min       : num Inf
+##   .. .. ..@ max       : num -Inf
+##   .. .. ..@ band      : int 1
+##   .. .. ..@ unit      : chr &quot;&quot;
+##   .. .. ..@ names     : chr &quot;&quot;
+##   ..@ legend  :Formal class &#39;.RasterLegend&#39; [package &quot;raster&quot;] with 5 slots
+##   .. .. ..@ type      : chr(0) 
+##   .. .. ..@ values    : logi(0) 
+##   .. .. ..@ color     : logi(0) 
+##   .. .. ..@ names     : logi(0) 
+##   .. .. ..@ colortable: logi(0) 
+##   ..@ title   : chr(0) 
+##   ..@ extent  :Formal class &#39;Extent&#39; [package &quot;raster&quot;] with 4 slots
+##   .. .. ..@ xmin: num -126
+##   .. .. ..@ xmax: num -116
+##   .. .. ..@ ymin: num 42
+##   .. .. ..@ ymax: num 46
+##   ..@ rotated : logi FALSE
+##   ..@ rotation:Formal class &#39;.Rotation&#39; [package &quot;raster&quot;] with 2 slots
+##   .. .. ..@ geotrans: num(0) 
+##   .. .. ..@ transfun:function ()  
+##   ..@ ncols   : int 10
+##   ..@ nrows   : int 10
+##   ..@ crs     :Formal class &#39;CRS&#39; [package &quot;sp&quot;] with 1 slot
+##   .. .. ..@ projargs: chr &quot;+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0&quot;
+##   ..@ history : list()
+##   ..@ z       : list()</code></pre>
+<p>You see we have our usual <code>S4</code> slot structure with a <code>RasterLayer</code> object. Simply typing the name of the <code>RasterLayer</code> gives a succinct summary of the object at the console.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r</code></pre></div>
+<pre><code>## class       : RasterLayer 
+## dimensions  : 10, 10, 100  (nrow, ncol, ncell)
+## resolution  : 1, 0.4  (x, y)
+## extent      : -126, -116, 42, 46  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0</code></pre>
+<p>So far we just have a container with no values (try plotting what we have so far) - let’s provide values to the cells using the runif function to derive random values from the uniform distribution</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r[] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dt">n=</span><span class="kw">ncell</span>(r))
+r</code></pre></div>
+<pre><code>## class       : RasterLayer 
+## dimensions  : 10, 10, 100  (nrow, ncol, ncell)
+## resolution  : 1, 0.4  (x, y)
+## extent      : -126, -116, 42, 46  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## data source : in memory
+## names       : layer 
+## values      : 0.01620462, 0.979499  (min, max)</code></pre>
+<p>Notice the different output now on typing r? And we can plot now as well with base R <code>plot</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(r)</code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/plot%20raster-1.png" width="672" /></p>
+</div>
 <div id="geographic-data-io" class="section level3">
 <h3>Geographic Data I/O</h3>
 <p>For reading and writing vector and raster data in R, the three primary packages you’ll use are:</p>
@@ -927,7 +1017,7 @@ gages_sf</code></pre></div>
 </ul>
 <div id="downloading-open-data-and-geographic-data-packages" class="section level4">
 <h4>Downloading Open Data and Geographic Data Packages</h4>
-<p><a href="https://pakillo.github.io/R-GIS-tutorial/">this</a></p>
+<p><a href="https://geocompr.robinlovelace.net/read-write.html">main source</a> <a href="https://pakillo.github.io/R-GIS-tutorial/">another source</a></p>
 </div>
 </div>
 </div>

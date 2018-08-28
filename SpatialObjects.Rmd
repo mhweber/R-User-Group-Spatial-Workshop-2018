@@ -380,6 +380,49 @@ Generic plotting works on `sf` objects as well - take a minute to play with plot
 plot(gages_sf$geometry, axes=T)
 ```
 
+### Raster Data
+Package `sp` does have support for raster data, but we won't look at it here - support for gridded data in R is best implemented currently with the `raster` package by Robert Hijmans. The `raster` package allows you to:
+
+* read and write almost any commonly used raster data format using `rgdal`
+* perform typical raster processing operations such as resampling, projecting, filtering, raster math, etc.
+* work with files on disk that are too big to read into memory in R
+* run operations quickly since the package relies on back-end C code 
+
+The [home page](https://cran.r-project.org/web/packages/raster/) for the `raster` package has links to several well-written vignettes and documentation for the package.
+
+The `raster` package uses three classes / types of objects to represent raster data - `RasterLayer`, `RasterStack`, and `RasterBrick` - these are all `S4` new style classes in R, just like `sp` classes.
+
+The `raster` package has not been updated in the last year though- and a new package called `stars` (spatiotemporal tidy arrays with R) is being developed through an R-Consortium funded project to handle rasters in a way that is both `sf` and pipe-based workflow friendly.  The [proposal](https://github.com/r-spatial/stars/blob/master/PROPOSAL.md) by  by Edzer Pebezma, Michael Sumer, Etienne Racine and Adriano Fantini outlines the approach they are taking - you can play with the [development version](https://www.r-spatial.org/r/2017/11/23/stars1.html) and check out the package [web page](https://r-spatial.github.io/stars/index.html) but it is still very much in alpha stages. 
+
+To familiarize ourselves with the `raster` package, let's create an empty `RasterLayer` object - in order to do this we have to:
+* define the matrix (rows and columns) 
+* define the spatial bounding box
+* provide values to the cells  
+
+Note that typically we would be reading raster data in from a file rather than creating a raster from scratch. Run through code steps below to familiarize yourself with contsructing a `RasterLayer` from scratch.
+
+```{r raster-layer, message=FALSE, warning=FALSE, error=FALSE}
+library(raster)
+r <- raster(ncol=10, nrow = 10, xmx=-116,xmn=-126,ymn=42,ymx=46)
+str(r)
+```
+
+You see we have our usual `S4` slot structure with a `RasterLayer` object. Simply typing the name of the `RasterLayer` gives a succinct summary of the object at the console.
+```{r raster-layer2, message=FALSE, warning=FALSE, error=FALSE}
+r
+```
+
+So far we just have a container with no values (try plotting what we have so far) - let's provide values to the cells using the runif function to derive random values from the uniform distribution
+```{r runif, message=FALSE, warning=FALSE, error=FALSE}
+r[] <- runif(n=ncell(r))
+r
+```
+
+Notice the different output now on typing r?  And we can plot now as well with base R `plot`:
+```{r plot raster, message=FALSE, warning=FALSE, error=FALSE}
+plot(r)
+```
+
 ### Geographic Data I/O
 For reading and writing vector and raster data in R, the three primary packages you'll use are:
 
@@ -387,5 +430,6 @@ For reading and writing vector and raster data in R, the three primary packages 
  * `raster` for raster formats such as [GeoTIFF](https://en.wikipedia.org/wiki/GeoTIFF) or [ESRI or ASCII grid](https://en.wikipedia.org/wiki/Esri_grid) using [GDAL](https://en.wikipedia.org/wiki/GDAL) under the hood
  
 #### Downloading Open Data and Geographic Data Packages
-[this](https://pakillo.github.io/R-GIS-tutorial/)
+[main source](https://geocompr.robinlovelace.net/read-write.html)
+[another source](https://pakillo.github.io/R-GIS-tutorial/)
 
