@@ -503,14 +503,12 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 ## 4  Portland     537557
 ## 5   Newport       9603</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(pts)</code></pre></div>
-<pre><code>## class       : SpatialPointsDataFrame 
-## features    : 5 
-## extent      : -124.054, -121.313, 42.189, 45.523  (xmin, xmax, ymin, ymax)
-## coord. ref. : NA 
-## variables   : 2
-## names       :   cities, population 
-## min values  :  Ashland,       9603 
-## max values  : Portland,     537557</code></pre>
+<pre><code>##          coordinates    cities population
+## 1 (-122.699, 42.189)   Ashland      20062
+## 2  (-123.275, 44.57) Corvallis      50297
+## 3 (-121.313, 44.061)      Bend      61362
+## 4  (-122.67, 45.523)  Portland     537557
+## 5 (-124.054, 44.652)   Newport       9603</code></pre>
 <p>We first created vectors of city names, latitude, longitude, and population. Then we made a matix of the longitude and latitude vectors (note that convention is always longitude first!). Then we construct a data frame of our city names and population. Finally, we use <code>SpatialPointsDataFrame</code> as a method call on our matrix of coordinates and data frame to generate a <code>SpatialPointsDataFrame</code> object.</p>
 <p>Conveniently, our base R <code>plot</code> method works with our newly created <code>SpatialPointsDataFrame</code>, and we can add labels as well one way using the <code>maptools</code> package:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(maptools)
@@ -910,7 +908,7 @@ gages_sf</code></pre></div>
 ## 8     OR POINT (-119.9011 42.38322)
 ## 9     OR   POINT (-123.8123 42.379)
 ## 10    OR POINT (-122.3567 42.37625)</code></pre>
-<p>Let’s break down what we just saw in gages_sf - from the first <code>sf</code> package vignette: <img src="/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png" alt="sf Objects" /> We can see:</p>
+<p>Let’s break down what we just saw in gages_sf - from the first <code>sf</code> package vignette: <img src="/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png" alt="sf structure" /> We can see:</p>
 <ul>
 <li>in green a simple feature: a single record, or data.frame row, consisting of attributes and geometry</li>
 <li>in blue a single simple feature geometry (an object of class sfg)</li>
