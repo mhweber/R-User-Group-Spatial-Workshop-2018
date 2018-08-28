@@ -333,9 +333,6 @@ plot(gages_spdf, col='blue', add=T)
 ```
 
 ### Vector Data with sf
-The `sf` package developed by Edzer Pebesma ia an implementation of [Simple features](https://en.wikipedia.org/wiki/Simple_Features), an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.  
-
-![`sf` Objects](/R-User-Group-Spatial-Workshop-2018/img/sf_ob.png)
 
 The `sf` package developed by Edzer Pebesma ia an implementation of [Simple features](https://en.wikipedia.org/wiki/Simple_Features), an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.  From the first `sf` package vignette we see:
 
@@ -369,7 +366,9 @@ gages_sf
 ```
 
 Let's break down what we just saw in gages_sf - from the first `sf` package vignette:
-![`sf` structure](/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png)
+
+![`sf` Structure](/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png)
+
 We can see:
 
 * in green a simple feature: a single record, or data.frame row, consisting of attributes and geometry

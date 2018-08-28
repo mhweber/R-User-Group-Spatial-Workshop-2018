@@ -830,11 +830,6 @@ PNW &lt;-<span class="st"> </span><span class="kw">spTransform</span>(PNW, <span
 </div>
 <div id="vector-data-with-sf" class="section level3">
 <h3>Vector Data with sf</h3>
-<p>The <code>sf</code> package developed by Edzer Pebesma ia an implementation of <a href="https://en.wikipedia.org/wiki/Simple_Features">Simple features</a>, an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.</p>
-<div class="figure">
-<img src="/R-User-Group-Spatial-Workshop-2018/img/sf_ob.png" alt="sf Objects" />
-<p class="caption"><code>sf</code> Objects</p>
-</div>
 <p>The <code>sf</code> package developed by Edzer Pebesma ia an implementation of <a href="https://en.wikipedia.org/wiki/Simple_Features">Simple features</a>, an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object. From the first <code>sf</code> package vignette we see:</p>
 <div class="figure">
 <img src="/R-User-Group-Spatial-Workshop-2018/img/sf_objects.png" alt="sf Objects" />
@@ -908,7 +903,12 @@ gages_sf</code></pre></div>
 ## 8     OR POINT (-119.9011 42.38322)
 ## 9     OR   POINT (-123.8123 42.379)
 ## 10    OR POINT (-122.3567 42.37625)</code></pre>
-<p>Let’s break down what we just saw in gages_sf - from the first <code>sf</code> package vignette: <img src="/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png" alt="sf structure" /> We can see:</p>
+<p>Let’s break down what we just saw in gages_sf - from the first <code>sf</code> package vignette:</p>
+<div class="figure">
+<img src="/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png" alt="sf Structure" />
+<p class="caption"><code>sf</code> Structure</p>
+</div>
+<p>We can see:</p>
 <ul>
 <li>in green a simple feature: a single record, or data.frame row, consisting of attributes and geometry</li>
 <li>in blue a single simple feature geometry (an object of class sfg)</li>
