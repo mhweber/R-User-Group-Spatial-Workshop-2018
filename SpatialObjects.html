@@ -503,12 +503,14 @@ pts &lt;-<span class="st"> </span><span class="kw">SpatialPointsDataFrame</span>
 ## 4  Portland     537557
 ## 5   Newport       9603</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(pts)</code></pre></div>
-<pre><code>##          coordinates    cities population
-## 1 (-122.699, 42.189)   Ashland      20062
-## 2  (-123.275, 44.57) Corvallis      50297
-## 3 (-121.313, 44.061)      Bend      61362
-## 4  (-122.67, 45.523)  Portland     537557
-## 5 (-124.054, 44.652)   Newport       9603</code></pre>
+<pre><code>## class       : SpatialPointsDataFrame 
+## features    : 5 
+## extent      : -124.054, -121.313, 42.189, 45.523  (xmin, xmax, ymin, ymax)
+## coord. ref. : NA 
+## variables   : 2
+## names       :   cities, population 
+## min values  :  Ashland,       9603 
+## max values  : Portland,     537557</code></pre>
 <p>We first created vectors of city names, latitude, longitude, and population. Then we made a matix of the longitude and latitude vectors (note that convention is always longitude first!). Then we construct a data frame of our city names and population. Finally, we use <code>SpatialPointsDataFrame</code> as a method call on our matrix of coordinates and data frame to generate a <code>SpatialPointsDataFrame</code> object.</p>
 <p>Conveniently, our base R <code>plot</code> method works with our newly created <code>SpatialPointsDataFrame</code>, and we can add labels as well one way using the <code>maptools</code> package:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(maptools)
@@ -825,7 +827,12 @@ gages_sp &lt;-<span class="st"> </span><span class="kw">SpatialPoints</span>(coo
 PNW &lt;-<span class="st"> </span><span class="kw">spTransform</span>(PNW, <span class="kw">CRS</span>(<span class="kw">proj4string</span>(gages_spdf)))
 <span class="kw">plot</span>(PNW, <span class="dt">axes=</span>T)
 <span class="kw">plot</span>(gages_spdf, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)</code></pre></div>
-<p><img src="SpatialObjects_files/figure-html/mapgages-1.png" width="672" /> ### Vector Data with sf The <code>sf</code> package developed by Edzer Pebesma ia an implementation of <a href="https://en.wikipedia.org/wiki/Simple_Features">Simple features</a>, an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.</p>
+<p><img src="SpatialObjects_files/figure-html/mapgages-1.png" width="672" /></p>
+</div>
+</div>
+<div id="vector-data-with-sf" class="section level3">
+<h3>Vector Data with sf</h3>
+<p>The <code>sf</code> package developed by Edzer Pebesma ia an implementation of <a href="https://en.wikipedia.org/wiki/Simple_Features">Simple features</a>, an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.</p>
 <div class="figure">
 <img src="/R-User-Group-Spatial-Workshop-2018/img/sf_ob.png" alt="sf Objects" />
 <p class="caption"><code>sf</code> Objects</p>
@@ -912,7 +919,6 @@ gages_sf</code></pre></div>
 <p>Generic plotting works on <code>sf</code> objects as well - take a minute to play with plot our gages - why do we specify <code>$geometry</code> in our plot call?</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gages_sf<span class="op">$</span>geometry, <span class="dt">axes=</span>T)</code></pre></div>
 <p><img src="SpatialObjects_files/figure-html/sf_plot-1.png" width="672" /></p>
-</div>
 </div>
 <div id="geographic-data-io" class="section level3">
 <h3>Geographic Data I/O</h3>
