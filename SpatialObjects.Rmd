@@ -369,7 +369,7 @@ gages_sf
 ```
 
 Let's break down what we just saw in gages_sf - from the first `sf` package vignette:
-![`sf` Objects](/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png)
+![`sf` structure](/R-User-Group-Spatial-Workshop-2018/img/sf_structure.png)
 We can see:
 
 * in green a simple feature: a single record, or data.frame row, consisting of attributes and geometry
@@ -380,7 +380,6 @@ Generic plotting works on `sf` objects as well - take a minute to play with plot
 ```{r sf_plot, message=FALSE, warning=FALSE, error=FALSE}
 plot(gages_sf$geometry, axes=T)
 ```
-
 
 ### Geographic Data I/O
 For reading and writing vector and raster data in R, the three primary packages you'll use are:
