@@ -334,7 +334,7 @@ plot(gages_spdf, col='blue', add=T)
 
 ### Vector Data with sf
 
-The `sf` package developed by Edzer Pebesma ia an implementation of [Simple features](https://en.wikipedia.org/wiki/Simple_Features), an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types(but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.  From the first `sf` package vignette we see:
+The `sf` package developed by Edzer Pebesma ia an implementation of [Simple features](https://en.wikipedia.org/wiki/Simple_Features), an open standard developed and endorsed by the Open Geospatial Consortium (OGC). Simple Features is a hierarchical data model that represents a wide range of geometry types - it includes all common vector geometry types (but does not include raster) and even allows geometry collections, which can have multiple geometry types in a single object.  From the first `sf` package vignette we see:
 
 ![`sf` Objects](/R-User-Group-Spatial-Workshop-2018/img/sf_objects.png)
 
@@ -412,16 +412,83 @@ You see we have our usual `S4` slot structure with a `RasterLayer` object. Simpl
 r
 ```
 
+A few quick questions to work through-
+
+* what is the minimal data required to define a `RasterLayer`? 
+* What is odd here about the CRS? 
+* Based on our work with `sp`, how do we pull out just the CRS for our r `rasterLayer`? Hint - what is another way besides str(r) to see slots available with our `RasterLayer` r?
+* Building on this, what is the code to pull out just our xmin value in our extent, or bounding box?
+
+```{r raster-slots, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+r@crs
+# or
+crs(r)
+slotNames(r)
+r@extent[1]
+extent(r)[1]
+```
+
 So far we just have a container with no values (try plotting what we have so far) - let's provide values to the cells using the runif function to derive random values from the uniform distribution
 ```{r runif, message=FALSE, warning=FALSE, error=FALSE}
 r[] <- runif(n=ncell(r))
 r
 ```
 
-Notice the different output now on typing r?  And we can plot now as well with base R `plot`:
+Notice the different output now when typing 'r?'  An important point to make here is that objects in the `raster` package can be either in memory or on disk - not the value for our `RasterLayer` r of 'data source'.  If this were a large raster on disk, the value would be the path to the file on disk.
+
+We can test this as well using methods in `raster` (and test if the raster has values too):
+
+```{r inmemory, message=FALSE, warning=FALSE, error=FALSE}
+inMemory(r)
+fromDisk(r)
+hasValues(r)
+```
+
+We can plot now as well with base R `plot`:
 ```{r plot raster, message=FALSE, warning=FALSE, error=FALSE}
 plot(r)
 ```
+
+We can also overwrite the cell values for our raster:
+```{r new_values_raster, message=FALSE, warning=FALSE, error=FALSE}
+values(r) <- 1:ncell(r)
+values(r)
+```
+
+You can access raster values via direct indexing or line, column indexing - take a minute to see how this works using raster r we just created - the syntax is:
+```r
+r[i]
+r[line, column]
+```
+
+How is `raster` data storage unlike a `matrix` in R?  You can create a `matrix` with same dimensions and values and compare if you want:
+```{r matrix_raster, message=FALSE, warning=FALSE, error=FALSE}
+m <- matrix (1:100, nrow=10, ncol=10)
+m[1,2]
+r[1,2]
+```
+
+`RasterBrick` and `RasterStack` are the two additional classes in `raster` and handle multiple raster layers.  They differ from each other in how they handle multiple layers, file formats they support, their representation and their processing speed.  A `RasterBrick` typicallly is a single multi-layer file such as a multispectral image. A `RasterStack` can virtually connect several `RasterLayer` objects in memory and allows pixel-based calculations on separate raster layers, while a `RasterBrick` has to refer to a single multi-layer file or multi-layer object.  Note that methods that operate on either a `RasterStack` or `RasterBrick` usually return a `RasterBrick`, and processing will be mor efficient on a `RasterBrick` object.  
+
+It's easy to manipulate our `RasterLayer` to make a couple new layers, and then stack layers:
+
+```{r raster_stack, message=FALSE, warning=FALSE, error=FALSE}
+r2 <- r * 50
+r3 <- sqrt(r * 5)
+s <- stack(r, r2, r3)
+s
+```
+
+```{r plot_stack, message=FALSE, warning=FALSE, error=FALSE}
+plot(s)
+```
+Same process for generating a raster brick (here I make layers and create a `RasterBrick` in same step):
+
+```{r raster_brick, message=FALSE, warning=FALSE, error=FALSE}
+b <- brick(x=c(r, r * 50, sqrt(r * 5)))
+b
+```
+
 
 ### Geographic Data I/O
 For reading and writing vector and raster data in R, the three primary packages you'll use are:
