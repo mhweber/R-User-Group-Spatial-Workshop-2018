@@ -1016,7 +1016,7 @@ r</code></pre></div>
 ## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
 ## data source : in memory
 ## names       : layer 
-## values      : 0.01235175, 0.9997275  (min, max)</code></pre>
+## values      : 0.0001894338, 0.9870884  (min, max)</code></pre>
 <p>Notice the different output now when typing ‘r?’ An important point to make here is that objects in the <code>raster</code> package can be either in memory or on disk - not the value for our <code>RasterLayer</code> r of ‘data source’. If this were a large raster on disk, the value would be the path to the file on disk.</p>
 <p>We can test this as well using methods in <code>raster</code> (and test if the raster has values too):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">inMemory</span>(r)</code></pre></div>
@@ -1062,7 +1062,8 @@ s</code></pre></div>
 ## min values  :   1.000000,  50.000000,   2.236068 
 ## max values  :  100.00000, 5000.00000,   22.36068</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(s)</code></pre></div>
-<p><img src="SpatialObjects_files/figure-html/plot_stack-1.png" width="672" /> Same process for generating a raster brick (here I make layers and create a <code>RasterBrick</code> in same step):</p>
+<p><img src="SpatialObjects_files/figure-html/plot_stack-1.png" width="672" /></p>
+<p>Same process for generating a raster brick (here I make layers and create a <code>RasterBrick</code> in same step):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b &lt;-<span class="st"> </span><span class="kw">brick</span>(<span class="dt">x=</span><span class="kw">c</span>(r, r <span class="op">*</span><span class="st"> </span><span class="dv">50</span>, <span class="kw">sqrt</span>(r <span class="op">*</span><span class="st"> </span><span class="dv">5</span>)))
 b</code></pre></div>
 <pre><code>## class       : RasterBrick 
@@ -1082,9 +1083,444 @@ b</code></pre></div>
 <li><code>rgdal</code> or <code>sf</code> for vector formats such as <a href="https://en.wikipedia.org/wiki/Shapefile">ESRI Shapefiles</a>, <a href="https://en.wikipedia.org/wiki/GeoJSON">GeoJSON</a>, and <a href="https://en.wikipedia.org/wiki/GPS_Exchange_Format">GPX</a> - both packages use <strong>OGR</strong>, which is a library under the <a href="https://en.wikipedia.org/wiki/GDAL">GDAL</a> source tree,under the hood</li>
 <li><code>raster</code> for raster formats such as <a href="https://en.wikipedia.org/wiki/GeoTIFF">GeoTIFF</a> or <a href="https://en.wikipedia.org/wiki/Esri_grid">ESRI or ASCII grid</a> using <a href="https://en.wikipedia.org/wiki/GDAL">GDAL</a> under the hood</li>
 </ul>
+<p>We can quickly discover supported I/O vector formats either via <code>rgdal</code> or <code>sf</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ogrDrivers</span>()</code></pre></div>
+<pre><code>##              name                                            long_name
+## 1      AeronavFAA                                          Aeronav FAA
+## 2      AmigoCloud                                           AmigoCloud
+## 3          ARCGEN                                    Arc/Info Generate
+## 4          AVCBin                             Arc/Info Binary Coverage
+## 5          AVCE00                        Arc/Info E00 (ASCII) Coverage
+## 6             BNA                                            Atlas BNA
+## 7             CAD                                       AutoCAD Driver
+## 8           Carto                                                Carto
+## 9        Cloudant                                   Cloudant / CouchDB
+## 10        CouchDB                                   CouchDB / GeoCouch
+## 11            CSV                         Comma Separated Value (.csv)
+## 12            CSW               OGC CSW (Catalog  Service for the Web)
+## 13            DGN                                     Microstation DGN
+## 14            DXF                                          AutoCAD DXF
+## 15         EDIGEO                        French EDIGEO exchange format
+## 16  ElasticSearch                                       Elastic Search
+## 17 ESRI Shapefile                                       ESRI Shapefile
+## 18     Geoconcept                                           Geoconcept
+## 19        GeoJSON                                              GeoJSON
+## 20       Geomedia                                        Geomedia .mdb
+## 21         GeoRSS                                               GeoRSS
+## 22            GFT                                 Google Fusion Tables
+## 23            GML                      Geography Markup Language (GML)
+## 24           GPKG                                           GeoPackage
+## 25       GPSBabel                                             GPSBabel
+## 26  GPSTrackMaker                                        GPSTrackMaker
+## 27            GPX                                                  GPX
+## 28            HTF                         Hydrographic Transfer Vector
+## 29           HTTP                                HTTP Fetching Wrapper
+## 30         Idrisi                                 Idrisi Vector (.vct)
+## 31            JML                                         OpenJUMP JML
+## 32            KML                        Keyhole Markup Language (KML)
+## 33   MapInfo File                                         MapInfo File
+## 34         Memory                                               Memory
+## 35   MSSQLSpatial                Microsoft SQL Server Spatial Database
+## 36         netCDF                           Network Common Data Format
+## 37           ODBC                                                 ODBC
+## 38            ODS Open Document/ LibreOffice / OpenOffice Spreadsheet 
+## 39        OGR_GMT                             GMT ASCII Vectors (.gmt)
+## 40        OGR_PDS                         Planetary Data Systems TABLE
+## 41       OGR_SDTS                                                 SDTS
+## 42        OGR_VRT                             VRT - Virtual Datasource
+## 43        OpenAir                                              OpenAir
+## 44    OpenFileGDB                                         ESRI FileGDB
+## 45            OSM                            OpenStreetMap XML and PBF
+## 46         PCIDSK                                 PCIDSK Database File
+## 47            PDF                                       Geospatial PDF
+## 48         PGDUMP                                  PostgreSQL SQL dump
+## 49           PGeo                            ESRI Personal GeoDatabase
+## 50       PLSCENES                               Planet Labs Scenes API
+## 51     PostgreSQL                                   PostgreSQL/PostGIS
+## 52            REC                                        EPIInfo .REC 
+## 53            S57                                       IHO S-57 (ENC)
+## 54       SEGUKOOA                                 SEG-P1 / UKOOA P1/90
+## 55           SEGY                                                SEG-Y
+## 56        Selafin                                              Selafin
+## 57         SQLite                                  SQLite / Spatialite
+## 58            SUA      Tim Newport-Peace&#39;s Special Use Airspace Format
+## 59            SVG                             Scalable Vector Graphics
+## 60            SXF                          Storage and eXchange Format
+## 61          TIGER                               U.S. Census TIGER/Line
+## 62        UK .NTF                                              UK .NTF
+## 63            VDV                  VDV-451/VDV-452/INTREST Data Format
+## 64            VFK                 Czech Cadastral Exchange Data Format
+## 65           Walk                                                 Walk
+## 66           WAsP                                     WAsP .map format
+## 67            WFS                        OGC WFS (Web Feature Service)
+## 68            XLS                                      MS Excel format
+## 69           XLSX                       MS Office Open XML spreadsheet
+## 70         XPlane                 X-Plane/Flightgear aeronautical data
+##    write  copy isVector
+## 1  FALSE FALSE     TRUE
+## 2   TRUE FALSE     TRUE
+## 3  FALSE FALSE     TRUE
+## 4  FALSE FALSE     TRUE
+## 5  FALSE FALSE     TRUE
+## 6   TRUE FALSE     TRUE
+## 7  FALSE FALSE     TRUE
+## 8   TRUE FALSE     TRUE
+## 9   TRUE FALSE     TRUE
+## 10  TRUE FALSE     TRUE
+## 11  TRUE FALSE     TRUE
+## 12 FALSE FALSE     TRUE
+## 13  TRUE FALSE     TRUE
+## 14  TRUE FALSE     TRUE
+## 15 FALSE FALSE     TRUE
+## 16  TRUE FALSE     TRUE
+## 17  TRUE FALSE     TRUE
+## 18  TRUE FALSE     TRUE
+## 19  TRUE FALSE     TRUE
+## 20 FALSE FALSE     TRUE
+## 21  TRUE FALSE     TRUE
+## 22  TRUE FALSE     TRUE
+## 23  TRUE FALSE     TRUE
+## 24  TRUE  TRUE     TRUE
+## 25  TRUE FALSE     TRUE
+## 26  TRUE FALSE     TRUE
+## 27  TRUE FALSE     TRUE
+## 28 FALSE FALSE     TRUE
+## 29 FALSE FALSE     TRUE
+## 30 FALSE FALSE     TRUE
+## 31  TRUE FALSE     TRUE
+## 32  TRUE FALSE     TRUE
+## 33  TRUE FALSE     TRUE
+## 34  TRUE FALSE     TRUE
+## 35  TRUE FALSE     TRUE
+## 36  TRUE  TRUE     TRUE
+## 37  TRUE FALSE     TRUE
+## 38  TRUE FALSE     TRUE
+## 39  TRUE FALSE     TRUE
+## 40 FALSE FALSE     TRUE
+## 41 FALSE FALSE     TRUE
+## 42 FALSE FALSE     TRUE
+## 43 FALSE FALSE     TRUE
+## 44 FALSE FALSE     TRUE
+## 45 FALSE FALSE     TRUE
+## 46  TRUE FALSE     TRUE
+## 47  TRUE  TRUE     TRUE
+## 48  TRUE FALSE     TRUE
+## 49 FALSE FALSE     TRUE
+## 50 FALSE FALSE     TRUE
+## 51  TRUE FALSE     TRUE
+## 52 FALSE FALSE     TRUE
+## 53  TRUE FALSE     TRUE
+## 54 FALSE FALSE     TRUE
+## 55 FALSE FALSE     TRUE
+## 56  TRUE FALSE     TRUE
+## 57  TRUE FALSE     TRUE
+## 58 FALSE FALSE     TRUE
+## 59 FALSE FALSE     TRUE
+## 60 FALSE FALSE     TRUE
+## 61  TRUE FALSE     TRUE
+## 62 FALSE FALSE     TRUE
+## 63  TRUE FALSE     TRUE
+## 64 FALSE FALSE     TRUE
+## 65 FALSE FALSE     TRUE
+## 66  TRUE FALSE     TRUE
+## 67 FALSE FALSE     TRUE
+## 68 FALSE FALSE     TRUE
+## 69  TRUE FALSE     TRUE
+## 70 FALSE FALSE     TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">st_drivers</span>()</code></pre></div>
+<pre><code>##                          name
+## PCIDSK                 PCIDSK
+## netCDF                 netCDF
+## JP2OpenJPEG       JP2OpenJPEG
+## JPEG2000             JPEG2000
+## PDF                       PDF
+## ESRI Shapefile ESRI Shapefile
+## MapInfo File     MapInfo File
+## UK .NTF               UK .NTF
+## OGR_SDTS             OGR_SDTS
+## S57                       S57
+## DGN                       DGN
+## OGR_VRT               OGR_VRT
+## REC                       REC
+## Memory                 Memory
+## BNA                       BNA
+## CSV                       CSV
+## GML                       GML
+## GPX                       GPX
+## KML                       KML
+## GeoJSON               GeoJSON
+## OGR_GMT               OGR_GMT
+## GPKG                     GPKG
+## SQLite                 SQLite
+## ODBC                     ODBC
+## WAsP                     WAsP
+## PGeo                     PGeo
+## MSSQLSpatial     MSSQLSpatial
+## PostgreSQL         PostgreSQL
+## MySQL                   MySQL
+## OpenFileGDB       OpenFileGDB
+## XPlane                 XPlane
+## DXF                       DXF
+## CAD                       CAD
+## Geoconcept         Geoconcept
+## GeoRSS                 GeoRSS
+## GPSTrackMaker   GPSTrackMaker
+## VFK                       VFK
+## PGDUMP                 PGDUMP
+## OSM                       OSM
+## GPSBabel             GPSBabel
+## SUA                       SUA
+## OpenAir               OpenAir
+## OGR_PDS               OGR_PDS
+## WFS                       WFS
+## HTF                       HTF
+## AeronavFAA         AeronavFAA
+## Geomedia             Geomedia
+## EDIGEO                 EDIGEO
+## GFT                       GFT
+## SVG                       SVG
+## CouchDB               CouchDB
+## Cloudant             Cloudant
+## Idrisi                 Idrisi
+## ARCGEN                 ARCGEN
+## SEGUKOOA             SEGUKOOA
+## SEGY                     SEGY
+## XLS                       XLS
+## ODS                       ODS
+## XLSX                     XLSX
+## ElasticSearch   ElasticSearch
+## Walk                     Walk
+## Carto                   Carto
+## AmigoCloud         AmigoCloud
+## SXF                       SXF
+## Selafin               Selafin
+## JML                       JML
+## PLSCENES             PLSCENES
+## CSW                       CSW
+## VDV                       VDV
+## TIGER                   TIGER
+## AVCBin                 AVCBin
+## AVCE00                 AVCE00
+## HTTP                     HTTP
+##                                                                  long_name
+## PCIDSK                                                PCIDSK Database File
+## netCDF                                          Network Common Data Format
+## JP2OpenJPEG                     JPEG-2000 driver based on OpenJPEG library
+## JPEG2000       JPEG-2000 part 1 (ISO/IEC 15444-1), based on Jasper library
+## PDF                                                         Geospatial PDF
+## ESRI Shapefile                                              ESRI Shapefile
+## MapInfo File                                                  MapInfo File
+## UK .NTF                                                            UK .NTF
+## OGR_SDTS                                                              SDTS
+## S57                                                         IHO S-57 (ENC)
+## DGN                                                       Microstation DGN
+## OGR_VRT                                           VRT - Virtual Datasource
+## REC                                                          EPIInfo .REC 
+## Memory                                                              Memory
+## BNA                                                              Atlas BNA
+## CSV                                           Comma Separated Value (.csv)
+## GML                                        Geography Markup Language (GML)
+## GPX                                                                    GPX
+## KML                                          Keyhole Markup Language (KML)
+## GeoJSON                                                            GeoJSON
+## OGR_GMT                                           GMT ASCII Vectors (.gmt)
+## GPKG                                                            GeoPackage
+## SQLite                                                 SQLite / Spatialite
+## ODBC                                                                  ODBC
+## WAsP                                                      WAsP .map format
+## PGeo                                             ESRI Personal GeoDatabase
+## MSSQLSpatial                         Microsoft SQL Server Spatial Database
+## PostgreSQL                                              PostgreSQL/PostGIS
+## MySQL                                                                MySQL
+## OpenFileGDB                                                   ESRI FileGDB
+## XPlane                                X-Plane/Flightgear aeronautical data
+## DXF                                                            AutoCAD DXF
+## CAD                                                         AutoCAD Driver
+## Geoconcept                                                      Geoconcept
+## GeoRSS                                                              GeoRSS
+## GPSTrackMaker                                                GPSTrackMaker
+## VFK                                   Czech Cadastral Exchange Data Format
+## PGDUMP                                                 PostgreSQL SQL dump
+## OSM                                              OpenStreetMap XML and PBF
+## GPSBabel                                                          GPSBabel
+## SUA                        Tim Newport-Peace&#39;s Special Use Airspace Format
+## OpenAir                                                            OpenAir
+## OGR_PDS                                       Planetary Data Systems TABLE
+## WFS                                          OGC WFS (Web Feature Service)
+## HTF                                           Hydrographic Transfer Vector
+## AeronavFAA                                                     Aeronav FAA
+## Geomedia                                                     Geomedia .mdb
+## EDIGEO                                       French EDIGEO exchange format
+## GFT                                                   Google Fusion Tables
+## SVG                                               Scalable Vector Graphics
+## CouchDB                                                 CouchDB / GeoCouch
+## Cloudant                                                Cloudant / CouchDB
+## Idrisi                                                Idrisi Vector (.vct)
+## ARCGEN                                                   Arc/Info Generate
+## SEGUKOOA                                              SEG-P1 / UKOOA P1/90
+## SEGY                                                                 SEG-Y
+## XLS                                                        MS Excel format
+## ODS                   Open Document/ LibreOffice / OpenOffice Spreadsheet 
+## XLSX                                        MS Office Open XML spreadsheet
+## ElasticSearch                                               Elastic Search
+## Walk                                                                  Walk
+## Carto                                                                Carto
+## AmigoCloud                                                      AmigoCloud
+## SXF                                            Storage and eXchange Format
+## Selafin                                                            Selafin
+## JML                                                           OpenJUMP JML
+## PLSCENES                                            Planet Labs Scenes API
+## CSW                                 OGC CSW (Catalog  Service for the Web)
+## VDV                                    VDV-451/VDV-452/INTREST Data Format
+## TIGER                                               U.S. Census TIGER/Line
+## AVCBin                                            Arc/Info Binary Coverage
+## AVCE00                                       Arc/Info E00 (ASCII) Coverage
+## HTTP                                                 HTTP Fetching Wrapper
+##                write  copy is_raster is_vector   vsi
+## PCIDSK          TRUE FALSE      TRUE      TRUE  TRUE
+## netCDF          TRUE  TRUE      TRUE      TRUE FALSE
+## JP2OpenJPEG    FALSE  TRUE      TRUE      TRUE  TRUE
+## JPEG2000       FALSE  TRUE      TRUE      TRUE  TRUE
+## PDF             TRUE  TRUE      TRUE      TRUE FALSE
+## ESRI Shapefile  TRUE FALSE     FALSE      TRUE  TRUE
+## MapInfo File    TRUE FALSE     FALSE      TRUE  TRUE
+## UK .NTF        FALSE FALSE     FALSE      TRUE FALSE
+## OGR_SDTS       FALSE FALSE     FALSE      TRUE FALSE
+## S57             TRUE FALSE     FALSE      TRUE  TRUE
+## DGN             TRUE FALSE     FALSE      TRUE FALSE
+## OGR_VRT        FALSE FALSE     FALSE      TRUE  TRUE
+## REC            FALSE FALSE     FALSE      TRUE FALSE
+## Memory          TRUE FALSE     FALSE      TRUE FALSE
+## BNA             TRUE FALSE     FALSE      TRUE  TRUE
+## CSV             TRUE FALSE     FALSE      TRUE  TRUE
+## GML             TRUE FALSE     FALSE      TRUE  TRUE
+## GPX             TRUE FALSE     FALSE      TRUE  TRUE
+## KML             TRUE FALSE     FALSE      TRUE  TRUE
+## GeoJSON         TRUE FALSE     FALSE      TRUE  TRUE
+## OGR_GMT         TRUE FALSE     FALSE      TRUE FALSE
+## GPKG            TRUE  TRUE      TRUE      TRUE  TRUE
+## SQLite          TRUE FALSE     FALSE      TRUE  TRUE
+## ODBC            TRUE FALSE     FALSE      TRUE FALSE
+## WAsP            TRUE FALSE     FALSE      TRUE  TRUE
+## PGeo           FALSE FALSE     FALSE      TRUE FALSE
+## MSSQLSpatial    TRUE FALSE     FALSE      TRUE FALSE
+## PostgreSQL      TRUE FALSE     FALSE      TRUE FALSE
+## MySQL           TRUE FALSE     FALSE      TRUE FALSE
+## OpenFileGDB    FALSE FALSE     FALSE      TRUE  TRUE
+## XPlane         FALSE FALSE     FALSE      TRUE  TRUE
+## DXF             TRUE FALSE     FALSE      TRUE  TRUE
+## CAD            FALSE FALSE      TRUE      TRUE  TRUE
+## Geoconcept      TRUE FALSE     FALSE      TRUE FALSE
+## GeoRSS          TRUE FALSE     FALSE      TRUE  TRUE
+## GPSTrackMaker   TRUE FALSE     FALSE      TRUE  TRUE
+## VFK            FALSE FALSE     FALSE      TRUE FALSE
+## PGDUMP          TRUE FALSE     FALSE      TRUE  TRUE
+## OSM            FALSE FALSE     FALSE      TRUE  TRUE
+## GPSBabel        TRUE FALSE     FALSE      TRUE FALSE
+## SUA            FALSE FALSE     FALSE      TRUE  TRUE
+## OpenAir        FALSE FALSE     FALSE      TRUE  TRUE
+## OGR_PDS        FALSE FALSE     FALSE      TRUE  TRUE
+## WFS            FALSE FALSE     FALSE      TRUE  TRUE
+## HTF            FALSE FALSE     FALSE      TRUE  TRUE
+## AeronavFAA     FALSE FALSE     FALSE      TRUE  TRUE
+## Geomedia       FALSE FALSE     FALSE      TRUE FALSE
+## EDIGEO         FALSE FALSE     FALSE      TRUE  TRUE
+## GFT             TRUE FALSE     FALSE      TRUE FALSE
+## SVG            FALSE FALSE     FALSE      TRUE  TRUE
+## CouchDB         TRUE FALSE     FALSE      TRUE FALSE
+## Cloudant        TRUE FALSE     FALSE      TRUE FALSE
+## Idrisi         FALSE FALSE     FALSE      TRUE  TRUE
+## ARCGEN         FALSE FALSE     FALSE      TRUE  TRUE
+## SEGUKOOA       FALSE FALSE     FALSE      TRUE  TRUE
+## SEGY           FALSE FALSE     FALSE      TRUE  TRUE
+## XLS            FALSE FALSE     FALSE      TRUE FALSE
+## ODS             TRUE FALSE     FALSE      TRUE  TRUE
+## XLSX            TRUE FALSE     FALSE      TRUE  TRUE
+## ElasticSearch   TRUE FALSE     FALSE      TRUE FALSE
+## Walk           FALSE FALSE     FALSE      TRUE FALSE
+## Carto           TRUE FALSE     FALSE      TRUE FALSE
+## AmigoCloud      TRUE FALSE     FALSE      TRUE FALSE
+## SXF            FALSE FALSE     FALSE      TRUE FALSE
+## Selafin         TRUE FALSE     FALSE      TRUE  TRUE
+## JML             TRUE FALSE     FALSE      TRUE  TRUE
+## PLSCENES       FALSE FALSE      TRUE      TRUE FALSE
+## CSW            FALSE FALSE     FALSE      TRUE FALSE
+## VDV             TRUE FALSE     FALSE      TRUE  TRUE
+## TIGER           TRUE FALSE     FALSE      TRUE  TRUE
+## AVCBin         FALSE FALSE     FALSE      TRUE FALSE
+## AVCE00         FALSE FALSE     FALSE      TRUE FALSE
+## HTTP           FALSE FALSE      TRUE      TRUE FALSE</code></pre>
+<p>Both <code>rgdal</code> and <code>sf</code> support about every vector format you would need. Typically working with vector GIS data we work with ESRI shapefiles or geodatabases - here we have an example of how one would read in either format using <code>sf</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">download.file</span>(<span class="st">&quot;ftp://ftp.gis.oregon.gov/adminbound/citylim_2017.zip&quot;</span>,<span class="st">&quot;citylim_2017.zip&quot;</span>)
+<span class="kw">unzip</span>(<span class="st">&quot;citylim_2017.zip&quot;</span>, <span class="dt">exdir =</span> <span class="st">&quot;.&quot;</span>) 
+citylims &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&quot;citylim_2017.shp&quot;</span>) 
+<span class="kw">plot</span>(citylims<span class="op">$</span>geometry, <span class="dt">axes=</span>T, <span class="dt">main=</span><span class="st">&#39;Oregon City Limits&#39;</span>) <span class="co"># plot it!</span></code></pre></div>
+<p>We use <code>st_read</code> similarly for reading in an ESRI file geodatabase feature:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">download.file</span>(<span class="st">&quot;https://www.blm.gov/or/gis/files/web_corp/state_county_boundary.zip&quot;</span>,<span class="st">&quot;state_county_boundary.zip&quot;</span>)
+<span class="kw">unzip</span>(<span class="st">&quot;state_county_boundary.zip&quot;</span>, <span class="dt">exdir =</span> <span class="st">&quot;.&quot;</span>)
+fgdb =<span class="st"> &quot;state_county_boundary.gdb&quot;</span>
+
+<span class="co"># List all feature classes in a file geodatabase</span>
+<span class="kw">st_layers</span>(fgdb)
+
+<span class="co"># Read the feature class</span>
+state_poly &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="dt">dsn=</span>fgdb,<span class="dt">layer=</span><span class="st">&quot;state_poly&quot;</span>)
+<span class="kw">plot</span>(state_poly<span class="op">$</span>SHAPE, <span class="dt">axes=</span><span class="ot">TRUE</span>)</code></pre></div>
 <div id="downloading-open-data-and-geographic-data-packages" class="section level4">
 <h4>Downloading Open Data and Geographic Data Packages</h4>
-<p><a href="https://geocompr.robinlovelace.net/read-write.html">main source</a> <a href="https://pakillo.github.io/R-GIS-tutorial/">another source</a></p>
+<p>With <code>sf</code>, you can read geojson files online directly. I’m a visitor, so I want to learn a bit more about Durham:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">city_limits &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/city-limits0/exports/geojson&quot;</span>)
+trails &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson&quot;</span>)
+parks &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson&quot;</span>)
+<span class="kw">plot</span>(city_limits<span class="op">$</span>geometry, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(trails<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)
+<span class="kw">plot</span>(parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">add=</span>T)
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;Parks and Trails in Durham&#39;</span>)</code></pre></div>
+<p><img src="SpatialObjects_files/figure-html/open_data-1.png" width="672" /></p>
+<p>There is a weatlh of open spatial data accessible online now via static URLs or APIs - a few examples include <a href="https://catalog.data.gov/dataset?metadata_type=geospatial">Data.gov</a>, NASA <a href="http://sedac.ciesin.columbia.edu/">SECAC Portal</a>, <a href="http://www.naturalearthdata.com/">Natural Earth</a>, <a href="http://geodata.grid.unep.ch/">UNEP GEOdata</a>, and countless others listed here at <a href="https://freegisdata.rtwilson.com/">Free GIS Data</a>.</p>
+<p>From static URLs, we can simply use <code>download.file()</code> as in this example from <a href="https://geocompr.robinlovelace.net/read-write.html">Geocomputation with R</a> using data from the <a href="https://catalog.data.gov/dataset/national-parks">National Park data catalog</a>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">download.file</span>(<span class="dt">url =</span> <span class="st">&quot;http://nrdata.nps.gov/programs/lands/nps_boundary.zip&quot;</span>,
+              <span class="dt">destfile =</span> <span class="st">&quot;nps_boundary.zip&quot;</span>)
+<span class="kw">unzip</span>(<span class="dt">zipfile =</span> <span class="st">&quot;nps_boundary.zip&quot;</span>)
+f =<span class="st"> &quot;temp/Current_Shapes/Data_Store/06-06-12_Posting/nps_boundary.shp&quot;</span>
+usa_parks &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="dt">dsn =</span> f)
+ca_parks &lt;-<span class="st"> </span><span class="kw">subset</span>(usa_parks, STATE <span class="op">==</span><span class="st">&#39;CA&#39;</span>)
+<span class="kw">plot</span>(ca_parks<span class="op">$</span>geometry, <span class="dt">axes=</span>T)</code></pre></div>
+<table>
+<caption>Selected R packages for spatial data retrieval.</caption>
+<thead>
+<tr class="header">
+<th align="left">Package name</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">getlandsat</td>
+<td align="left">Provides access to Landsat 8 data.</td>
+</tr>
+<tr class="even">
+<td align="left">osmdata</td>
+<td align="left">Download and import of OpenStreetMap data.</td>
+</tr>
+<tr class="odd">
+<td align="left">raster</td>
+<td align="left">The <code>getData()</code> function downloads and imports administrative country, SRTM/ASTER elevation, WorldClim data.</td>
+</tr>
+<tr class="even">
+<td align="left">rnaturalearth</td>
+<td align="left">Functions to download Natural Earth vector and raster data, including world country borders.</td>
+</tr>
+<tr class="odd">
+<td align="left">rnoaa</td>
+<td align="left">An R interface to National Oceanic and Atmospheric Administration (NOAA) climate data.</td>
+</tr>
+<tr class="even">
+<td align="left">rWBclimate</td>
+<td align="left">An access to the World Bank climate data.</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>

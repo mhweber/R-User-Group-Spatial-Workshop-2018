@@ -482,6 +482,7 @@ s
 ```{r plot_stack, message=FALSE, warning=FALSE, error=FALSE}
 plot(s)
 ```
+
 Same process for generating a raster brick (here I make layers and create a `RasterBrick` in same step):
 
 ```{r raster_brick, message=FALSE, warning=FALSE, error=FALSE}
@@ -496,7 +497,72 @@ For reading and writing vector and raster data in R, the three primary packages 
  * `rgdal` or `sf` for vector formats such as [ESRI Shapefiles](https://en.wikipedia.org/wiki/Shapefile),  [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), and [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) - both packages use **OGR**, which is a library under the [GDAL](https://en.wikipedia.org/wiki/GDAL) source tree,under the hood
  * `raster` for raster formats such as [GeoTIFF](https://en.wikipedia.org/wiki/GeoTIFF) or [ESRI or ASCII grid](https://en.wikipedia.org/wiki/Esri_grid) using [GDAL](https://en.wikipedia.org/wiki/GDAL) under the hood
  
+We can quickly discover supported I/O vector formats either via `rgdal` or `sf`:
+```{r vector_drivers, message=FALSE, warning=FALSE, error=FALSE}
+ogrDrivers()
+st_drivers()
+```
+
+Both `rgdal` and `sf` support about every vector format you would need.  Typically working with vector GIS data we work with ESRI shapefiles or geodatabases - here we have an example of how one would read in either format using `sf`:
+```{r shapefile_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+download.file("ftp://ftp.gis.oregon.gov/adminbound/citylim_2017.zip","citylim_2017.zip")
+unzip("citylim_2017.zip", exdir = ".") 
+citylims <- st_read("citylim_2017.shp") 
+plot(citylims$geometry, axes=T, main='Oregon City Limits') # plot it!
+```
+
+We use `st_read` similarly for reading in an ESRI file geodatabase feature:
+```{r geodatabase_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+download.file("https://www.blm.gov/or/gis/files/web_corp/state_county_boundary.zip","state_county_boundary.zip")
+unzip("state_county_boundary.zip", exdir = ".")
+fgdb = "state_county_boundary.gdb"
+
+# List all feature classes in a file geodatabase
+st_layers(fgdb)
+
+# Read the feature class
+state_poly <- st_read(dsn=fgdb,layer="state_poly")
+plot(state_poly$SHAPE, axes=TRUE)
+```
+
+
 #### Downloading Open Data and Geographic Data Packages
-[main source](https://geocompr.robinlovelace.net/read-write.html)
-[another source](https://pakillo.github.io/R-GIS-tutorial/)
+
+With `sf`, you can read geojson files online directly.  I'm a visitor, so I want to learn a bit more about Durham:
+```{r open_data, message=FALSE, warning=FALSE, error=FALSE}
+city_limits <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/city-limits0/exports/geojson")
+trails <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson")
+parks <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson")
+plot(city_limits$geometry, axes=T)
+plot(trails$geometry, col='blue', add=T)
+plot(parks$geometry, col='green', add=T)
+title(main='Parks and Trails in Durham')
+```
+
+There is a weatlh of open spatial data accessible online now via static URLs or APIs - a few examples include [Data.gov](https://catalog.data.gov/dataset?metadata_type=geospatial), NASA [SECAC Portal](http://sedac.ciesin.columbia.edu/), [Natural Earth](http://www.naturalearthdata.com/), [UNEP GEOdata](http://geodata.grid.unep.ch/), and countless others listed here at [Free GIS Data](https://freegisdata.rtwilson.com/).
+
+From static URLs, we can simply use `download.file()` as in this example from [Geocomputation with R](https://geocompr.robinlovelace.net/read-write.html) using data from the [National Park data catalog](https://catalog.data.gov/dataset/national-parks):
+```{r, eval=FALSE}
+download.file(url = "http://nrdata.nps.gov/programs/lands/nps_boundary.zip",
+              destfile = "nps_boundary.zip")
+unzip(zipfile = "nps_boundary.zip")
+f = "temp/Current_Shapes/Data_Store/06-06-12_Posting/nps_boundary.shp"
+usa_parks <- st_read(dsn = f)
+ca_parks <- subset(usa_parks, STATE =='CA')
+plot(ca_parks$geometry, axes=T)
+```
+
+```{r datapackages, echo=FALSE}
+datapackages = tibble::tribble(
+  ~`Package name`, ~Description,
+  "getlandsat", "Provides access to Landsat 8 data.",
+  "osmdata", "Download and import of OpenStreetMap data.",
+  "raster", "The `getData()` function downloads and imports administrative country, SRTM/ASTER elevation, WorldClim data.",
+  "rnaturalearth", "Functions to download Natural Earth vector and raster data, including world country borders.",
+  "rnoaa", "An R interface to National Oceanic and Atmospheric Administration (NOAA) climate data.",
+  "rWBclimate", "An access to the World Bank climate data."
+)
+knitr::kable(datapackages, caption = "Selected R packages for spatial data retrieval.")
+```
+
 
