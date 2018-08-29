@@ -552,9 +552,15 @@ ca_parks <- subset(usa_parks, STATE =='CA')
 plot(ca_parks$geometry, axes=T)
 ```
 
+There are also a number of R packages written specifically to provide access to geospatial data - below are a few and we'll step through some examples of pulling in data using some of these packages.
 ```{r datapackages, echo=FALSE}
 datapackages = tibble::tribble(
   ~`Package name`, ~Description,
+  "USABoundaries", "Provide historic and contemporary boundaries of the US",
+  "tigris", "Download and use US Census TIGER/Line Shapefiles in R",
+  "tidycensus", "Uses Census American Community API to return tidyverse and optionally sf ready data frames",
+  "FedData","Functions for downloading geospatial data from several federal sources",
+  "elevatr", "Access elevation data from various APIs (by Jeff Hollister)",
   "getlandsat", "Provides access to Landsat 8 data.",
   "osmdata", "Download and import of OpenStreetMap data.",
   "raster", "The `getData()` function downloads and imports administrative country, SRTM/ASTER elevation, WorldClim data.",
@@ -565,4 +571,58 @@ datapackages = tibble::tribble(
 knitr::kable(datapackages, caption = "Selected R packages for spatial data retrieval.")
 ```
 
+Below is an example of pulling in US states using the `rnaturalearth` package - note that the default is to pull in data as `sp` objects and we coerce to `sf`.  Also take a look at the chained operation using dplyr and see if this makes sense to you - we'll eplore more in following section.  Try changing the filter or a parameter in ggplot.
+```{r naturalearth, , message=FALSE, warning=FALSE, error=FALSE}
+library(rnaturalearth)
+library(dplyr)
+library(ggplot2)
+states <- ne_states(country = 'United States of America')
+states_sf <- st_as_sf(states)
+states_sf %>%
+  dplyr::filter(!name %in% c('Hawaii','Alaska') & !is.na(name)) %>%
+  ggplot + geom_sf()
+```
+
+Part of the fun (or consternation) of R, and spatial work in R, is the pace of development of new packages.  I like scanning for new spatial packages and trying to incorporate into my workflow - [tidycensus](https://walkerke.github.io/tidycensus/index.html) is a brand new and very handy package - note that you'll have to [request](http://api.census.gov/data/key_signup.html) a Census Data API key to run this code - so just you can just examine code below for now.
+```{r tidycensus, , message=FALSE, warning=FALSE, error=FALSE}
+library(tidycensus)
+library(tidyverse)
+library(viridis)
+options(tigris_use_cache = TRUE)
+
+durham <- get_acs(state = "NC", county = "Durham", geography = "tract", 
+                  variables = "B19013_001", geometry = TRUE)
+options(scipen=3)
+durham %>%
+  ggplot(aes(fill = estimate, color = estimate)) + 
+  geom_sf() +  
+  scale_fill_viridis() + 
+  scale_color_viridis() + 
+  ggtitle('Median Household Income from 2011-2015 ACS for Durham County, NC')
+```
+
+Here we use the `getData` function in the `raster` package to download elevation into a `RasterLayer` and grab administrative boundaries from a database of global administrative boundaries - warning: sometimes `getData` function has trouble accessing the server and download can be a bit slow. Here we see as well how we can use vector spataio polygon data to crop raster data.
+```{r rasterdata, message=FALSE, warning=FALSE, error=FALSE}
+library(raster)
+US <- getData("GADM",country="USA",level=2)
+Benton <- US[US$NAME_1=='Oregon' & US$NAME_2=='Benton',]
+elev <- getData('SRTM', lon=-123, lat=44)
+elev <- crop(elev, Benton)
+elev <- mask(elev, Benton)
+plot(Benton, main="Elevation (m) in Benton County, Oregon", axes=T)
+plot(elev, add=TRUE)
+plot(Benton, add=TRUE)
+```
+
+The [osmdata](https://github.com/ropensci/osmdata) package is a fantastic resource for leveraging the OpenStreetMap (OSM) database - I've used on work projects as a source for looking at proximity to recreation and trails for ecosystem function.  Here we'll get a previw of our mapping section coming up later - try playing with this osmdata and see if you can pull out something else around the area - parks for instance.
+```{r osmdata , message=FALSE, warning=FALSE, error=FALSE}
+library(osmdata)
+library(mapview)
+trails = opq(bbox = "durham nc") %>% 
+  add_osm_feature(key = "highway", value = "path") %>% 
+  osmdata_sf()
+trails <- trails$osm_lines
+trails <- subset(trails, foot=='yes' | bicycle == 'yes')
+mapview(trails$geometry)
+```
 
