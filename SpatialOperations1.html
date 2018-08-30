@@ -397,12 +397,15 @@ trails_in_parks &lt;-<span class="st"> </span>trails[parks,]
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bike_parking &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson&quot;</span>)
 bike_parking &lt;-<span class="st"> </span><span class="kw">st_transform</span>(bike_parking, <span class="dt">crs=</span><span class="dv">26917</span>)
 parks &lt;-<span class="st"> </span><span class="kw">st_transform</span>(parks, <span class="dt">crs=</span><span class="dv">26917</span>)
-
-parking_near_parks &lt;-<span class="st"> </span><span class="kw">st_join</span>(bike_parking, parks, st_is_within_distance, <span class="dt">dist =</span><span class="fl">1609.34</span>) <span class="co"># meters - miles conversion factor</span>
+mat &lt;-<span class="st"> </span><span class="kw">st_distance</span>(bike_parking, parks, <span class="dt">by_element=</span><span class="ot">TRUE</span>)
+parking_near_parks &lt;-<span class="st"> </span>bike_parking[parks, , op=st_is_within_distance, dist =<span class="st"> </span><span class="fl">16.34</span>]
+parking_near_parks &lt;-<span class="st"> </span><span class="kw">st_join</span>(parks, bike_parking, st_is_within_distance, <span class="dt">dist =</span><span class="fl">1609.34</span>) <span class="co"># meters - miles conversion factor</span>
+parking_near_parks &lt;-<span class="st"> </span>bike_parking[bike_parking<span class="op">$</span>fid <span class="op">%in%</span><span class="st"> </span>parking_near_parks<span class="op">$</span>fid,]
 parking_near_parks &lt;-<span class="st"> </span>parking_near_parks <span class="op">%&gt;%</span>
 <span class="st">  </span>dplyr<span class="op">::</span><span class="kw">distinct</span>(fid)
 <span class="kw">plot</span>(parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(bike_racks<span class="op">$</span>geometry, <span class="dt">pch=</span><span class="dv">2</span>, <span class="dt">cex=</span>.<span class="dv">5</span>, <span class="dt">col=</span><span class="st">&#39;black&#39;</span>,<span class="dt">add=</span>T)
+<span class="kw">plot</span>(bike_parking <span class="op">$</span>geometry, <span class="dt">pch=</span><span class="dv">2</span>, <span class="dt">cex=</span>.<span class="dv">5</span>, <span class="dt">col=</span><span class="st">&#39;black&#39;</span>,<span class="dt">add=</span>T)
+
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;Bike Parking and Parks in Durham&#39;</span>)</code></pre></div>
 </div>
 </div>
