@@ -2,3 +2,41 @@
 title: Spatial Operations 1
 ---
 
+## Lesson Goals
+
+* Familiarity with topological operations (spatial subsetting, aggregation, buffering, spatial joins) using `sf`
+* Learning how `sf` and `dplyr` work together
+* Becoming familiar with typical raster operations using the `raster` package and combining with `vector` data
+
+### Spatial Subsetting
+Let's return to the Durham Open Data we grabbed in the previous section - the parks and trails layers in particular.  A typical spatial question we might ask of the data is 'what trails go through parks in town?' You should already have loaded but code below loads again, and shows the simplest of all methods to perform this spatial subset using `sf`:
+```{r subset, message=FALSE, warning=FALSE, error=FALSE}
+library(sf)
+trails <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson")
+parks <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson")
+plot(trails$geometry, col='green', axes=T)
+plot(parks$geometry, col='blue', add=T)
+trails_in_parks <- trails[parks,]
+plot(trails_in_parks$geometry, col='red', lwd = 2, add=T)
+title(main='Parks and Trails in Durham')
+```
+
+Notice the warning we got about planar coordinates - should we be concerned about that?
+
+### Spatial Joins
+Let's roll together a couple concepts now using a spatial join in `sf`.  We'll grab a geojson of bike parking locations from Durham Open Data, and then let's try to find and map all the covered bike parking that is within a mile of a park:
+```{r bike_racks, message=FALSE, warning=FALSE, error=FALSE, eval = FALSE}
+bike_parking <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson")
+bike_parking <- st_transform(bike_parking, crs=26917)
+parks <- st_transform(parks, crs=26917)
+
+parking_near_parks <- st_join(bike_parking, parks, st_is_within_distance, dist =1609.34) # meters - miles conversion factor
+parking_near_parks <- parking_near_parks %>%
+  dplyr::distinct(fid)
+plot(parks$geometry, col='green', axes=T)
+plot(bike_racks$geometry, pch=2, cex=.5, col='black',add=T)
+title(main='Bike Parking and Parks in Durham')
+```
+
+
+

@@ -27,6 +27,52 @@
 <link rel="stylesheet" href="site_libs_extra/academicons-1.8.0/css/academicons.css"/>
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+div.sourceCode {
+  overflow-x: visible;
+}
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
 
 
 <style type="text/css">
@@ -324,7 +370,42 @@ div.tocify {
 </div>
 
 
+<div id="lesson-goals" class="section level2">
+<h2>Lesson Goals</h2>
+<ul>
+<li>Familiarity with topological operations (spatial subsetting, aggregation, buffering, spatial joins) using <code>sf</code></li>
+<li>Learning how <code>sf</code> and <code>dplyr</code> work together</li>
+<li>Becoming familiar with typical raster operations using the <code>raster</code> package and combining with <code>vector</code> data</li>
+</ul>
+<div id="spatial-subsetting" class="section level3">
+<h3>Spatial Subsetting</h3>
+<p>Let’s return to the Durham Open Data we grabbed in the previous section - the parks and trails layers in particular. A typical spatial question we might ask of the data is ‘what trails go through parks in town?’ You should already have loaded but code below loads again, and shows the simplest of all methods to perform this spatial subset using <code>sf</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sf)
+trails &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson&quot;</span>)
+parks &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson&quot;</span>)
+<span class="kw">plot</span>(trails<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)
+trails_in_parks &lt;-<span class="st"> </span>trails[parks,]
+<span class="kw">plot</span>(trails_in_parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">add=</span>T)
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;Parks and Trails in Durham&#39;</span>)</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/subset-1.png" width="672" /></p>
+<p>Notice the warning we got about planar coordinates - should we be concerned about that?</p>
+</div>
+<div id="spatial-joins" class="section level3">
+<h3>Spatial Joins</h3>
+<p>Let’s roll together a couple concepts now using a spatial join in <code>sf</code>. We’ll grab a geojson of bike parking locations from Durham Open Data, and then let’s try to find and map all the covered bike parking that is within a mile of a park:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bike_parking &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson&quot;</span>)
+bike_parking &lt;-<span class="st"> </span><span class="kw">st_transform</span>(bike_parking, <span class="dt">crs=</span><span class="dv">26917</span>)
+parks &lt;-<span class="st"> </span><span class="kw">st_transform</span>(parks, <span class="dt">crs=</span><span class="dv">26917</span>)
 
+parking_near_parks &lt;-<span class="st"> </span><span class="kw">st_join</span>(bike_parking, parks, st_is_within_distance, <span class="dt">dist =</span><span class="fl">1609.34</span>) <span class="co"># meters - miles conversion factor</span>
+parking_near_parks &lt;-<span class="st"> </span>parking_near_parks <span class="op">%&gt;%</span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">distinct</span>(fid)
+<span class="kw">plot</span>(parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(bike_racks<span class="op">$</span>geometry, <span class="dt">pch=</span><span class="dv">2</span>, <span class="dt">cex=</span>.<span class="dv">5</span>, <span class="dt">col=</span><span class="st">&#39;black&#39;</span>,<span class="dt">add=</span>T)
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;Bike Parking and Parks in Durham&#39;</span>)</code></pre></div>
+</div>
+</div>
 
 
 

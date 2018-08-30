@@ -104,7 +104,7 @@ sudo apt-get install libudunits2-dev
 ```
 
 ### Basic R Background
-#### Terminology: Working Directory
+#### **Terminology: Working Directory**
 
 Working directory in R is the location on your computer R is working from.  To determine your working directory, in console type:
 
@@ -128,7 +128,7 @@ setwd("/home/marc/GitProjects")
 ```
 
 
-#### Terminology: data structures
+#### **Terminology: data structures**
 R is an interpreted language (access through a command-line interpreter) with a number of data structures (vectors, matrices, arrays, data frames, lists) and extensible objects (regression models, time-series, geospatial coordinates) and supports procedural programming with functions. 
 
 To learn about objects, become friends with the built-in `class` and `str` functions. Let's explore the built-in iris data set to start:
@@ -225,7 +225,7 @@ names(iris)[1] <- 'Length of Sepal'
 
 Explain what this last line did
 
-#### Overview of Classes and Methods
+#### **Overview of Classes and Methods**
 
 - Class: object types
     - `class()`: gives the class type 

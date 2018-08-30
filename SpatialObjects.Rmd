@@ -375,6 +375,16 @@ We can see:
 * in blue a single simple feature geometry (an object of class sfg)
 * in red a simple feature list-column (an object of class sfc, which is a column in the data.frame)
 
+The `sfc`, our geometry list-column, is presented as *well-known text*, in the form of (for polygon data):
+
+* Multipolygon(polygon1, polygon2)
+
+polygon1 might have 1 or more holes, and itself could be represented as (poly1, hole1, hole2).
+
+Each polygon and its holes are held together by a set of parentheses, so:
+
+* Multipolygon(((list of coordinates))) indicates the exterior ring coordinates, going counter-clockwise in direction, without holes, of the first polygon.
+
 Generic plotting works on `sf` objects as well - take a minute to play with plot our gages - why do we specify `$geometry` in our plot call?
 ```{r sf_plot, message=FALSE, warning=FALSE, error=FALSE}
 plot(gages_sf$geometry, axes=T)
@@ -498,7 +508,7 @@ For reading and writing vector and raster data in R, the three primary packages 
  * `raster` for raster formats such as [GeoTIFF](https://en.wikipedia.org/wiki/GeoTIFF) or [ESRI or ASCII grid](https://en.wikipedia.org/wiki/Esri_grid) using [GDAL](https://en.wikipedia.org/wiki/GDAL) under the hood
  
 We can quickly discover supported I/O vector formats either via `rgdal` or `sf`:
-```{r vector_drivers, message=FALSE, warning=FALSE, error=FALSE}
+```{r vector_drivers, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 ogrDrivers()
 st_drivers()
 ```
@@ -568,7 +578,7 @@ datapackages = tibble::tribble(
   "rnoaa", "An R interface to National Oceanic and Atmospheric Administration (NOAA) climate data.",
   "rWBclimate", "An access to the World Bank climate data."
 )
-knitr::kable(datapackages, caption = "Selected R packages for spatial data retrieval.")
+knitr::kable(datapackages, caption = "Example R packages for spatial data retrieval.")
 ```
 
 Below is an example of pulling in US states using the `rnaturalearth` package - note that the default is to pull in data as `sp` objects and we coerce to `sf`.  Also take a look at the chained operation using dplyr and see if this makes sense to you - we'll eplore more in following section.  Try changing the filter or a parameter in ggplot.
@@ -583,7 +593,7 @@ states_sf %>%
   ggplot + geom_sf()
 ```
 
-Part of the fun (or consternation) of R, and spatial work in R, is the pace of development of new packages.  I like scanning for new spatial packages and trying to incorporate into my workflow - [tidycensus](https://walkerke.github.io/tidycensus/index.html) is a brand new and very handy package - note that you'll have to [request](http://api.census.gov/data/key_signup.html) a Census Data API key to run this code - so just you can just examine code below for now.
+Part of the fun (or consternation) of R, and spatial work in R, is the pace of development of new packages.  I enjoy scanning for new spatial packages and trying to incorporate into my workflow - [tidycensus](https://walkerke.github.io/tidycensus/index.html) is a brand new and very handy package - note that you'll have to [request](http://api.census.gov/data/key_signup.html) a Census Data API key to run this code - so just you can just examine code below for now.
 ```{r tidycensus, , message=FALSE, warning=FALSE, error=FALSE}
 library(tidycensus)
 library(tidyverse)
@@ -598,7 +608,7 @@ durham %>%
   geom_sf() +  
   scale_fill_viridis() + 
   scale_color_viridis() + 
-  ggtitle('Median Household Income from 2011-2015 ACS for Durham County, NC')
+  ggtitle('Median Household Income from 2011-2015 \nACS for Durham County, NC')
 ```
 
 Here we use the `getData` function in the `raster` package to download elevation into a `RasterLayer` and grab administrative boundaries from a database of global administrative boundaries - warning: sometimes `getData` function has trouble accessing the server and download can be a bit slow. Here we see as well how we can use vector spataio polygon data to crop raster data.
@@ -618,11 +628,16 @@ The [osmdata](https://github.com/ropensci/osmdata) package is a fantastic resour
 ```{r osmdata , message=FALSE, warning=FALSE, error=FALSE}
 library(osmdata)
 library(mapview)
-trails = opq(bbox = "durham nc") %>% 
-  add_osm_feature(key = "highway", value = "path") %>% 
+path = opq(bbox = "durham nc") %>% 
+  add_osm_feature(key = "highway", value = 'path') %>% 
   osmdata_sf()
-trails <- trails$osm_lines
-trails <- subset(trails, foot=='yes' | bicycle == 'yes')
+
+path <- path$osm_lines
+footway = opq(bbox = "durham nc") %>% 
+  add_osm_feature(key = "highway", value = "footway") %>% 
+  osmdata_sf()
+footway <- footway$osm_lines
+trails <- rbind(path[,c(1,37)], footway[,c(1,59)])
 mapview(trails$geometry)
 ```
 
