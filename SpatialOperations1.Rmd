@@ -23,21 +23,28 @@ title(main='Parks and Trails in Durham')
 
 Notice the warning we got about planar coordinates - should we be concerned about that?
 
-### Spatial Joins
-Let's roll together a couple concepts now using a spatial join in `sf`.  We'll grab a geojson of bike parking locations from Durham Open Data, and then let's try to find and map all the covered bike parking that is within a mile of a park:
+### Proximity calculation
+
+Here's a gist I have of a function I've used based on `gDistance` in `geos` package working with `sp` points and polygons - we'll try to implement something similar in `sf`:
+<script src="https://gist.github.com/mhweber/d87c3fdf9f71ac4f9e69565086ece74f.js"></script> 
+
+Let's grab a geojson of bike parking locations from Durham Open Data, and then let's try to find and map all the covered bike parking that is within a mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, ask questions and we can discuss:
 ```{r bike_racks, message=FALSE, warning=FALSE, error=FALSE, eval = FALSE}
 bike_parking <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson")
 bike_parking <- st_transform(bike_parking, crs=26917)
 parks <- st_transform(parks, crs=26917)
-mat <- st_distance(bike_parking, parks, by_element=TRUE)
-parking_near_parks <- bike_parking[parks, , op=st_is_within_distance, dist = 16.34]
-parking_near_parks <- st_join(parks, bike_parking, st_is_within_distance, dist =1609.34) # meters - miles conversion factor
-parking_near_parks <- bike_parking[bike_parking$fid %in% parking_near_parks$fid,]
-parking_near_parks <- parking_near_parks %>%
-  dplyr::distinct(fid)
-plot(parks$geometry, col='green', axes=T)
-plot(bike_parking $geometry, pch=2, cex=.5, col='black',add=T)
+sel <- st_is_within_distance(bike_parking, parks, dist = 1609.34)
+summary(lengths(sel) > 0) 
+# This is obviously not correct if we were to look at the features in ArcMap - there are numerous bike parking stations more than a mile from parks - something is wrong here....
 
+# Let's try a different approach...
+sel <- st_distance(bike_parking, parks, by_element = TRUE)
+bike_parking$park_dist <- as.numeric(sel)
+bike_parking_near_parks <- bike_parking[bike_parking$park_dist <= 1609.34,]
+plot(bike_parking_near_parks$geometry, pch=2, cex=.5, col='black',axes=T)
+plot(parks$geometry, col='green', border = 'green', add=T,)
+bike_parking_away_from_parks <- bike_parking[bike_parking$park_dist > 1609.34,]
+plot(bike_parking_away_from_parks$geometry, pch=3, cex=.5, col='red',add=T)
 title(main='Bike Parking and Parks in Durham')
 ```
 

@@ -125,9 +125,6 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
-.html-widget {
-  margin-bottom: 20px;
-}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -383,29 +380,34 @@ div.tocify {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sf)
 trails &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson&quot;</span>)
 parks &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson&quot;</span>)
-<span class="kw">plot</span>(trails<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)
+<span class="kw">plot</span>(trails$geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(parks$geometry, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)
 trails_in_parks &lt;-<span class="st"> </span>trails[parks,]
-<span class="kw">plot</span>(trails_in_parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">add=</span>T)
+<span class="kw">plot</span>(trails_in_parks$geometry, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">add=</span>T)
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;Parks and Trails in Durham&#39;</span>)</code></pre></div>
 <p><img src="SpatialOperations1_files/figure-html/subset-1.png" width="672" /></p>
 <p>Notice the warning we got about planar coordinates - should we be concerned about that?</p>
 </div>
-<div id="spatial-joins" class="section level3">
-<h3>Spatial Joins</h3>
-<p>Let’s roll together a couple concepts now using a spatial join in <code>sf</code>. We’ll grab a geojson of bike parking locations from Durham Open Data, and then let’s try to find and map all the covered bike parking that is within a mile of a park:</p>
+<div id="proximity-calculation" class="section level3">
+<h3>Proximity calculation</h3>
+Here’s a gist I have of a function I’ve used based on <code>gDistance</code> in <code>geos</code> package working with <code>sp</code> points and polygons - we’ll try to implement something similar in <code>sf</code>:
+<script src="https://gist.github.com/mhweber/d87c3fdf9f71ac4f9e69565086ece74f.js"></script>
+<p>Let’s grab a geojson of bike parking locations from Durham Open Data, and then let’s try to find and map all the covered bike parking that is within a mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, ask questions and we can discuss:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bike_parking &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson&quot;</span>)
 bike_parking &lt;-<span class="st"> </span><span class="kw">st_transform</span>(bike_parking, <span class="dt">crs=</span><span class="dv">26917</span>)
 parks &lt;-<span class="st"> </span><span class="kw">st_transform</span>(parks, <span class="dt">crs=</span><span class="dv">26917</span>)
-mat &lt;-<span class="st"> </span><span class="kw">st_distance</span>(bike_parking, parks, <span class="dt">by_element=</span><span class="ot">TRUE</span>)
-parking_near_parks &lt;-<span class="st"> </span>bike_parking[parks, , op=st_is_within_distance, dist =<span class="st"> </span><span class="fl">16.34</span>]
-parking_near_parks &lt;-<span class="st"> </span><span class="kw">st_join</span>(parks, bike_parking, st_is_within_distance, <span class="dt">dist =</span><span class="fl">1609.34</span>) <span class="co"># meters - miles conversion factor</span>
-parking_near_parks &lt;-<span class="st"> </span>bike_parking[bike_parking<span class="op">$</span>fid <span class="op">%in%</span><span class="st"> </span>parking_near_parks<span class="op">$</span>fid,]
-parking_near_parks &lt;-<span class="st"> </span>parking_near_parks <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">distinct</span>(fid)
-<span class="kw">plot</span>(parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(bike_parking <span class="op">$</span>geometry, <span class="dt">pch=</span><span class="dv">2</span>, <span class="dt">cex=</span>.<span class="dv">5</span>, <span class="dt">col=</span><span class="st">&#39;black&#39;</span>,<span class="dt">add=</span>T)
+sel &lt;-<span class="st"> </span><span class="kw">st_is_within_distance</span>(bike_parking, parks, <span class="dt">dist =</span> <span class="fl">1609.34</span>)
+<span class="kw">summary</span>(<span class="kw">lengths</span>(sel) &gt;<span class="st"> </span><span class="dv">0</span>) 
+<span class="co"># This is obviously not correct if we were to look at the features in ArcMap - there are numerous bike parking stations more than a mile from parks - something is wrong here....</span>
 
+<span class="co"># Let&#39;s try a different approach...</span>
+sel &lt;-<span class="st"> </span><span class="kw">st_distance</span>(bike_parking, parks, <span class="dt">by_element =</span> <span class="ot">TRUE</span>)
+bike_parking$park_dist &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(sel)
+bike_parking_near_parks &lt;-<span class="st"> </span>bike_parking[bike_parking$park_dist &lt;=<span class="st"> </span><span class="fl">1609.34</span>,]
+<span class="kw">plot</span>(bike_parking_near_parks$geometry, <span class="dt">pch=</span><span class="dv">2</span>, <span class="dt">cex=</span>.<span class="dv">5</span>, <span class="dt">col=</span><span class="st">&#39;black&#39;</span>,<span class="dt">axes=</span>T)
+<span class="kw">plot</span>(parks$geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">border =</span> <span class="st">&#39;green&#39;</span>, <span class="dt">add=</span>T,)
+bike_parking_away_from_parks &lt;-<span class="st"> </span>bike_parking[bike_parking$park_dist &gt;<span class="st"> </span><span class="fl">1609.34</span>,]
+<span class="kw">plot</span>(bike_parking_away_from_parks$geometry, <span class="dt">pch=</span><span class="dv">3</span>, <span class="dt">cex=</span>.<span class="dv">5</span>, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>,<span class="dt">add=</span>T)
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;Bike Parking and Parks in Durham&#39;</span>)</code></pre></div>
 </div>
 </div>
