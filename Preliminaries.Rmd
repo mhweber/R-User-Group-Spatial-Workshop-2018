@@ -78,6 +78,7 @@ install.packages("lubridate")
 install.packages("tidycensus")
 install.packages("rnaturalearth")
 install.packages("osmdata")
+install.packages('FedData')
 ```
 
 Installing `rgdal` will install the foundation spatial package, `sp`, as a dependency, and installing `tidyverse` will install both `ggplot2` and `dplyr`.

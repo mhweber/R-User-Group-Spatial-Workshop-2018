@@ -4,8 +4,7 @@ title: Spatial Operations 1
 
 ## Lesson Goals
 
-* Familiarity with topological operations (spatial subsetting, aggregation, buffering, spatial joins) using `sf`
-* Learn how `sf` and `dplyr` work together
+* Familiarity with topological operations (spatial subsetting, proximity, aggregation, spatial joins) using `sf`
 * Become familiar with typical raster operations using the `raster` package and combining with `vector` data
 
 ### Spatial Subsetting
@@ -123,4 +122,10 @@ schools %>%
 
 If we have time, try exploring another data set from Open Data Durham, or using existing data to put together another spatial subset, join, or aggregation.
 
+### Raster - Raster-Vector Processing
+Now let's look at an example of some raster processing.  First, let's generate a watershed to use as our template, and as a first step we'll make use of the nice [nhrR](https://jsta.github.io/nhdR/) package by Joseph Stachelek.
 
+```{r watershed stats, message=FALSE, warning=FALSE, error=FALSE}
+
+
+```
