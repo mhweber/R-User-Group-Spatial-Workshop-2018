@@ -4,8 +4,8 @@ title: Spatial Operations 1
 
 ## Lesson Goals
 
-* Familiarity with topological operations (spatial subsetting, proximity, aggregation, spatial joins) using `sf`
-* Become familiar with typical raster operations using the `raster` package and combining with `vector` data
+* Familiarity with some typical topological operations (spatial subsetting, proximity, aggregation, spatial joins, dissolve) using `sf`
+* Familiarity with some typical raster operations using the `raster` package and combining with `vector` data
 
 ### Spatial Subsetting
 Let's return to the Durham Open Data we grabbed in the previous section - the parks and trails layers in particular.  A typical spatial question we might ask of the data is 'what trails go through parks in town?' You should already have loaded but code below loads again, and shows the simplest of all methods to perform this spatial subset using `sf`:
@@ -27,7 +27,7 @@ Notice the warning we got about planar coordinates - should we be concerned abou
 Here's a gist I have of a function I've used based on `gDistance` in `geos` package working with `sp` points and polygons - we'll try to implement something similar in `sf`:
 <script src="https://gist.github.com/mhweber/d87c3fdf9f71ac4f9e69565086ece74f.js"></script> 
 
-Let's grab a geojson of bike parking locations from Durham Open Data, and then let's try to find and map all the bike parking that is within a half-mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, we'll talk through, ask questions and we can discuss:
+Let's grab a geojson of bike parking locations from [Durham Open Data](https://opendurham.nc.gov/explore/?sort=modified), and then let's try to find and map all the bike parking that is within a half-mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, we'll talk through, ask questions and we can discuss:
 ```{r bike_parking, message=FALSE, warning=FALSE, error=FALSE, eval = FALSE}
 library(dplyr)
 bike_parking <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson")
@@ -71,7 +71,13 @@ ggplot() +
 ```
 
 ### Using `sf` and `dplyr` together
-It took a bit of a detour to figure out but we got our proximity question solved - now say I'm concerned it might rain.  I want to know where the covered bike parking is that is near parks and along trails.  Given what we know so far, see if you can figure out how to subset the bike parking near parks within 100 meters of trails and that is covered (attribute in the attribute table) and try using dplyr as well.
+It took a bit of a detour to figure out but we got our proximity question solved - now say I'm concerned it might rain.  I want to know where the covered bike parking is that is near parks and along trails.  Given what we know so far, see if you can figure out how to:
+
+* subset the bike parking near parks to records within 100 meters of trails
+* and subset to just those bike parking locations that are covered 
+
+If you're comfortalbe with `dplyr`, try doing this with `dplyr`.
+
 ```{r bike_parking3, message=FALSE, warning=FALSE, error=FALSE}
 trails <- st_transform(trails, crs=st_crs(parks))
 bike_parking_near_parks_and_trails <- bike_parking_near_parks[trails, ,op = st_is_within_distance, dist = 100]
@@ -87,7 +93,7 @@ ggplot() +
 ```
 
 ### Spatial Joining and Aggregating
-Let's grab a couple more sample data sets from Open Data Durham. Let's use EnviroAtlas data and schools, and we'll join schols to EnviroAtlas to determine percent population below poverty for the block group each school lands in using a spatial join.  
+Let's grab a couple more sample data sets from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified). Let's use [EnviroAtlas](https://www.epa.gov/enviroatlas) data and schools, and we'll join schols to EnviroAtlas to determine percent population below poverty for the block group each school lands in using a spatial join.  
 ```{r schools_envatlas, message=FALSE, warning=FALSE, error=FALSE}
 library(dplyr)
 library(ggplot2)
@@ -112,20 +118,50 @@ ggplot() +
   geom_sf(data=enviroatlas , fill = NA, show.legend = F, color="black") +
   labs(title="Schools in Durham and \nCensus Block Groups") +
   theme_bw()
+# Spatial Join-
+schools_env <- st_join(enviroatlas, schools) # st_intersects is the default
 
-schools <- st_join(schools, enviroatlas) # st_intersects is the defaout
-schools %>%
-  group_by(Type) %>%
+schools_env %>%
+  group_by(block_group_id, Type) %>%
+  filter(!is.na(Type)) %>%
   dplyr::summarize(PercTwicePov = mean(percent_population_with_income_below_twice_the_poverty_level, na.rm = TRUE)) %>%
-  ggplot(aes(x=Type, y=PercTwicePov, fill=Type)) + geom_bar(stat="identity") 
+  ggplot() + geom_sf(aes(fill=(PercTwicePov))) +
+  scale_fill_distiller("Percent Twice Poverty Level", palette = "Greens",  direction = 1) +
+  ggtitle("Percent Living at Twice the Poverty Level by School Type") + 
+  theme_bw() +
+  facet_wrap(~Type)
 ```
 
-If we have time, try exploring another data set from Open Data Durham, or using existing data to put together another spatial subset, join, or aggregation.
+
+### Dissolve
+We can take a quick look at using a spatial dissolve and then re-aggregate our result to see if there is a difference at another spatial level by dissolving to the tract level - we do this dissolve simply by using `dplyr` `group_by` and `summarize` functions with an `sf` object!
+```{r dissolve, message=FALSE, warning=FALSE, error=FALSE}
+# We can see we have 78 census tracts - 
+levels(as.factor(enviroatlas$tract_fips))
+tracts <- schools_env %>% 
+  group_by(tract_fips) %>%
+  dplyr::summarize() 
+
+# Pull back in school type and poverty
+tracts$TwicePercPov <- schools_env$percent_population_with_income_below_twice_the_poverty_level[match(tracts$tract_fips, schools_env$tract_fips)]
+tracts$Type <- schools_env$Type[match(tracts$tract_fips, schools_env$tract_fips)]
+tracts <- tracts %>%
+  filter(!is.na(Type))
+# And same routine as before to look at our data aggregated to tract level
+ggplot(data = tracts) + geom_sf(aes(fill=(TwicePercPov))) +
+  scale_fill_distiller("Percent Twice Poverty Level", palette = "Greens",  direction = 1) +
+  ggtitle("Percent Living at Twice the Poverty Level by School Type") + 
+  theme_bw() +
+  facet_wrap(~Type)
+```
+
+If we have time, try exploring another data set from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified), or use existing data to put together another spatial subset, join, or aggregation.
 
 ### Raster - Raster-Vector Processing
-Now let's look at an example of some raster processing.  First, let's generate a watershed to use as our template, and as a first step we'll make use of the nice [nhrR](https://jsta.github.io/nhdR/) package by Joseph Stachelek.
+Now let's look at an example of some raster processing.  First, we'll load the Third Fork watershed shapefile I have in our course GitHub repository:
 
 ```{r watershed stats, message=FALSE, warning=FALSE, error=FALSE}
-
-
+ThirdFork <- st_read('data/Third_Fork.shp')
+ggplot(ThirdFork) + geom_sf() + ggtitle("Third Fork Watershed") +
+  theme_bw()
 ```

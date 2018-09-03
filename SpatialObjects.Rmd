@@ -538,7 +538,7 @@ plot(state_poly$SHAPE, axes=TRUE)
 
 #### Downloading Open Data and Geographic Data Packages
 
-With `sf`, you can read geojson files online directly.  I'm a visitor, so I want to learn a bit more about Durham:
+With `sf`, you can read geojson files online directly.  I'm a visitor, so I want to learn a bit more about Durham.  Below we load some spatial data (geojson files) directly in `sf` objects from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified):
 ```{r open_data, message=FALSE, warning=FALSE, error=FALSE}
 city_limits <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/city-limits0/exports/geojson")
 trails <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson")

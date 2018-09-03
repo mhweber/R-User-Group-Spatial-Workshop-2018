@@ -125,9 +125,6 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
-.html-widget {
-  margin-bottom: 20px;
-}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -373,9 +370,8 @@ div.tocify {
 <div id="lesson-goals" class="section level2">
 <h2>Lesson Goals</h2>
 <ul>
-<li>Familiarity with topological operations (spatial subsetting, aggregation, buffering, spatial joins) using <code>sf</code></li>
-<li>Learn how <code>sf</code> and <code>dplyr</code> work together</li>
-<li>Become familiar with typical raster operations using the <code>raster</code> package and combining with <code>vector</code> data</li>
+<li>Familiarity with some typical topological operations (spatial subsetting, proximity, aggregation, spatial joins, dissolve) using <code>sf</code></li>
+<li>Familiarity with some typical raster operations using the <code>raster</code> package and combining with <code>vector</code> data</li>
 </ul>
 <div id="spatial-subsetting" class="section level3">
 <h3>Spatial Subsetting</h3>
@@ -383,10 +379,10 @@ div.tocify {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sf)
 trails &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson&quot;</span>)
 parks &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson&quot;</span>)
-<span class="kw">plot</span>(trails<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)
+<span class="kw">plot</span>(trails$geometry, <span class="dt">col=</span><span class="st">&#39;green&#39;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(parks$geometry, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>, <span class="dt">add=</span>T)
 trails_in_parks &lt;-<span class="st"> </span>trails[parks,]
-<span class="kw">plot</span>(trails_in_parks<span class="op">$</span>geometry, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">add=</span>T)
+<span class="kw">plot</span>(trails_in_parks$geometry, <span class="dt">col=</span><span class="st">&#39;red&#39;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">add=</span>T)
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;Parks and Trails in Durham&#39;</span>)</code></pre></div>
 <p><img src="SpatialOperations1_files/figure-html/subset-1.png" width="672" /></p>
 <p>Notice the warning we got about planar coordinates - should we be concerned about that?</p>
@@ -395,13 +391,13 @@ trails_in_parks &lt;-<span class="st"> </span>trails[parks,]
 <h3>Proximity calculation</h3>
 Here’s a gist I have of a function I’ve used based on <code>gDistance</code> in <code>geos</code> package working with <code>sp</code> points and polygons - we’ll try to implement something similar in <code>sf</code>:
 <script src="https://gist.github.com/mhweber/d87c3fdf9f71ac4f9e69565086ece74f.js"></script>
-<p>Let’s grab a geojson of bike parking locations from Durham Open Data, and then let’s try to find and map all the bike parking that is within a half-mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, we’ll talk through, ask questions and we can discuss:</p>
+<p>Let’s grab a geojson of bike parking locations from <a href="https://opendurham.nc.gov/explore/?sort=modified">Durham Open Data</a>, and then let’s try to find and map all the bike parking that is within a half-mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, we’ll talk through, ask questions and we can discuss:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
 bike_parking &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson&quot;</span>)
 bike_parking &lt;-<span class="st"> </span><span class="kw">st_transform</span>(bike_parking, <span class="dt">crs=</span><span class="dv">26917</span>)
 parks &lt;-<span class="st"> </span><span class="kw">st_transform</span>(parks, <span class="dt">crs=</span><span class="dv">26917</span>)
 sel &lt;-<span class="st"> </span><span class="kw">st_is_within_distance</span>(bike_parking, parks, <span class="dt">dist =</span> <span class="dv">804</span>) <span class="co"># conversion of miles to meters - why am I using meters here?</span>
-<span class="kw">summary</span>(<span class="kw">lengths</span>(sel) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) 
+<span class="kw">summary</span>(<span class="kw">lengths</span>(sel) &gt;<span class="st"> </span><span class="dv">0</span>) 
 <span class="co"># This is obviously not correct if we were to look at the features in ArcMap - there are numerous bike parking stations more than a mile from parks - something is wrong here....</span>
 
 <span class="co"># Let&#39;s try a different approach...perhaps I&#39;m not understanding using the built in approach above, but here&#39;s how I got it to work</span>
@@ -410,10 +406,10 @@ dist_mat &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(dis
 <span class="co"># run the head statement below - why do I have &#39;as.data.frame&#39; in here?</span>
 <span class="kw">head</span>(<span class="kw">as.data.frame</span>(bike_parking))
 <span class="co"># Do you notice something strance about all the distance values in the matrix we produced?</span>
-dist_mat &lt;-<span class="st"> </span><span class="kw">mutate_all</span>(dist_mat, <span class="cf">function</span>(x) <span class="kw">as.numeric</span>(x)) <span class="co"># we use mutate_all from dplyr to convert everything in data frame to actual numeric values</span>
-dist_mat<span class="op">$</span>min &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="dt">X=</span>dist_mat, <span class="dt">MARGIN=</span><span class="dv">1</span>, <span class="dt">FUN=</span>min) <span class="co"># use apply function to generate new minimum distance column</span>
+dist_mat &lt;-<span class="st"> </span><span class="kw">mutate_all</span>(dist_mat, function(x) <span class="kw">as.numeric</span>(x)) <span class="co"># we use mutate_all from dplyr to convert everything in data frame to actual numeric values</span>
+dist_mat$min &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="dt">X=</span>dist_mat, <span class="dt">MARGIN=</span><span class="dv">1</span>, <span class="dt">FUN=</span>min) <span class="co"># use apply function to generate new minimum distance column</span>
 
-<span class="kw">any</span>(dist_mat<span class="op">$</span>min <span class="op">&gt;</span><span class="dv">0</span>) <span class="co"># Still showing me there are no bike parking stations more than a half-mile from parks, which I know is not true from mapping the data</span>
+<span class="kw">any</span>(dist_mat$min &gt;<span class="dv">0</span>) <span class="co"># Still showing me there are no bike parking stations more than a half-mile from parks, which I know is not true from mapping the data</span>
 <span class="co"># solution is that there is a park record with corrupt geometry - park with &#39;objectid&#39; 28 - it&#39;s distance is zero to every bike station!</span>
 <span class="co"># once we remove this record, the simple solution works just fine</span></code></pre></div>
 <p>The code chunk above identified a problem in the data - below we deal with it and use the simplest method in <code>sf</code> to plot our proximity results:</p>
@@ -421,47 +417,52 @@ dist_mat<span class="op">$</span>min &lt;-<span class="st"> </span><span class="
 bike_parking &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson&quot;</span>)
 bike_parking &lt;-<span class="st"> </span><span class="kw">st_transform</span>(bike_parking, <span class="dt">crs=</span><span class="dv">26917</span>)
 parks &lt;-<span class="st"> </span><span class="kw">st_transform</span>(parks, <span class="dt">crs=</span><span class="dv">26917</span>)
-parks &lt;-<span class="st"> </span>parks[<span class="op">!</span>parks<span class="op">$</span>objectid<span class="op">==</span><span class="dv">28</span>,]
+parks &lt;-<span class="st"> </span>parks[!parks$objectid==<span class="dv">28</span>,]
 sel &lt;-<span class="st"> </span><span class="kw">st_is_within_distance</span>(bike_parking, parks, <span class="dt">dist =</span> <span class="dv">804</span>) <span class="co"># just generating a distance matrix again to double-check</span>
-<span class="kw">summary</span>(<span class="kw">lengths</span>(sel) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) </code></pre></div>
+<span class="kw">summary</span>(<span class="kw">lengths</span>(sel) &gt;<span class="st"> </span><span class="dv">0</span>) </code></pre></div>
 <pre><code>##    Mode   FALSE    TRUE 
 ## logical      38     222</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># That looks more like it! And I verified in desktop GIS that this is the correct answer</span>
 <span class="co"># Now it&#39;s simple to pull out what we want...</span>
 bike_parking_near_parks &lt;-<span class="st"> </span>bike_parking[parks, ,op =<span class="st"> </span>st_is_within_distance, dist =<span class="st"> </span><span class="dv">804</span>]
-<span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span>
+<span class="kw">ggplot</span>() +<span class="st"> </span>
 <span class="st">  </span><span class="co"># geom_sf(data=parks, fill = &quot;green&quot;, color=&quot;green&quot;) +</span>
-<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>bike_parking_near_parks, <span class="dt">fill =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">show.legend =</span> F, <span class="dt">color=</span><span class="st">&quot;red&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Bike Parking Near Parks in Durham&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>bike_parking_near_parks, <span class="dt">fill =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">show.legend =</span> F, <span class="dt">color=</span><span class="st">&quot;red&quot;</span>) +
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Bike Parking Near Parks in Durham&quot;</span>) +
 <span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
 <p><img src="SpatialOperations1_files/figure-html/bike_parking2-1.png" width="672" /></p>
 </div>
 <div id="using-sf-and-dplyr-together" class="section level3">
 <h3>Using <code>sf</code> and <code>dplyr</code> together</h3>
-<p>It took a bit of a detour to figure out but we got our proximity question solved - now say I’m concerned it might rain. I want to know where the covered bike parking is that is near parks and along trails. Given what we know so far, see if you can figure out how to subset the bike parking near parks within 100 meters of trails and that is covered (attribute in the attribute table) and try using dplyr as well.</p>
+<p>It took a bit of a detour to figure out but we got our proximity question solved - now say I’m concerned it might rain. I want to know where the covered bike parking is that is near parks and along trails. Given what we know so far, see if you can figure out how to:</p>
+<ul>
+<li>subset the bike parking near parks to records within 100 meters of trails</li>
+<li>and subset to just those bike parking locations that are covered</li>
+</ul>
+<p>If you’re comfortalbe with <code>dplyr</code>, try doing this with <code>dplyr</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">trails &lt;-<span class="st"> </span><span class="kw">st_transform</span>(trails, <span class="dt">crs=</span><span class="kw">st_crs</span>(parks))
 bike_parking_near_parks_and_trails &lt;-<span class="st"> </span>bike_parking_near_parks[trails, ,op =<span class="st"> </span>st_is_within_distance, dist =<span class="st"> </span><span class="dv">100</span>]
 <span class="co"># dplyr chained operation</span>
-covered_bike_parking_near_parks_and_trails &lt;-<span class="st"> </span>bike_parking_near_parks_and_trails <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(covered <span class="op">==</span><span class="st"> &#39;yes&#39;</span>)
+covered_bike_parking_near_parks_and_trails &lt;-<span class="st"> </span>bike_parking_near_parks_and_trails %&gt;%
+<span class="st">  </span>dplyr::<span class="kw">filter</span>(covered ==<span class="st"> &#39;yes&#39;</span>)
 
-<span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>trails, <span class="dt">color=</span><span class="st">&quot;green&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>covered_bike_parking_near_parks_and_trails, <span class="dt">fill =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">show.legend =</span> F, <span class="dt">color=</span><span class="st">&quot;red&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Covered Bike Parking Near Parks </span><span class="ch">\n</span><span class="st">Along Trails in Durham&quot;</span>) <span class="op">+</span>
+<span class="kw">ggplot</span>() +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>trails, <span class="dt">color=</span><span class="st">&quot;green&quot;</span>) +
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>covered_bike_parking_near_parks_and_trails, <span class="dt">fill =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">show.legend =</span> F, <span class="dt">color=</span><span class="st">&quot;red&quot;</span>) +
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Covered Bike Parking Near Parks </span><span class="ch">\n</span><span class="st">Along Trails in Durham&quot;</span>) +
 <span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
 <p><img src="SpatialOperations1_files/figure-html/bike_parking3-1.png" width="672" /></p>
 </div>
 <div id="spatial-joining-and-aggregating" class="section level3">
 <h3>Spatial Joining and Aggregating</h3>
-<p>Let’s grab a couple more sample data sets from Open Data Durham. Let’s use EnviroAtlas data and schools, and we’ll join schols to EnviroAtlas to determine percent population below poverty for the block group each school lands in using a spatial join.</p>
+<p>Let’s grab a couple more sample data sets from <a href="https://opendurham.nc.gov/explore/?sort=modified">Open Data Durham</a>. Let’s use <a href="https://www.epa.gov/enviroatlas">EnviroAtlas</a> data and schools, and we’ll join schols to EnviroAtlas to determine percent population below poverty for the block group each school lands in using a spatial join.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
 <span class="kw">library</span>(ggplot2)
 enviroatlas &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/enviroatlas/exports/geojson&quot;</span>)
 public_schools &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/public-schools/exports/geojson&quot;</span>)
 <span class="co"># We want non-public schools too, but this is only available as tabular files, not geojson or shapefile:</span>
 non_public_schools &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;https://opendurham.nc.gov/api/v2/catalog/datasets/non-public-schools-in-durham-county-by-type/exports/csv&quot;</span>, <span class="dt">sep=</span><span class="st">&#39;;&#39;</span>)
-<span class="co"># Review - how do we promote to spaitial data? </span><span class="al">NOTE</span><span class="co">: the csv we read in they recorded latitude and longitude backwards, we fix below</span>
+<span class="co"># Review - how do we promote to spaitial data? NOTE: the csv we read in they recorded latitude and longitude backwards, we fix below</span>
 non_public_schools  &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(non_public_schools , <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;lat&quot;</span>, <span class="st">&quot;long&quot;</span>), <span class="dt">crs =</span> <span class="dv">4326</span>) <span class="co"># The order should be long then lat, but they recorded it wrong!</span>
 <span class="co"># what is crs of public_schools?</span>
 <span class="kw">st_crs</span>(public_schools)</code></pre></div>
@@ -469,27 +470,83 @@ non_public_schools  &lt;-<span class="st"> </span><span class="kw">st_as_sf</spa
 ##   EPSG: 4326 
 ##   proj4string: &quot;+proj=longlat +datum=WGS84 +no_defs&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># verify both are equal:</span>
-<span class="kw">st_crs</span>(public_schools) <span class="op">==</span><span class="st"> </span><span class="kw">st_crs</span>(non_public_schools)</code></pre></div>
+<span class="kw">st_crs</span>(public_schools) ==<span class="st"> </span><span class="kw">st_crs</span>(non_public_schools)</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We want to combine these two schools data frmaes and preserve school type-</span>
-public_schools<span class="op">$</span>Type &lt;-<span class="st"> &#39;Public&#39;</span>
+public_schools$Type &lt;-<span class="st"> &#39;Public&#39;</span>
 public_schools &lt;-<span class="st"> </span>public_schools[<span class="kw">c</span>(<span class="dv">14</span>,<span class="dv">13</span>)]
-non_public_schools<span class="op">$</span>Type &lt;-<span class="st"> &#39;Non-Public&#39;</span>
+non_public_schools$Type &lt;-<span class="st"> &#39;Non-Public&#39;</span>
 non_public_schools &lt;-<span class="st"> </span>non_public_schools[<span class="kw">c</span>(<span class="dv">17</span>,<span class="dv">16</span>)]
 schools &lt;-<span class="st"> </span><span class="kw">rbind</span>(public_schools, non_public_schools)
-<span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>schools, <span class="kw">aes</span>(<span class="dt">col=</span>Type)) <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>enviroatlas , <span class="dt">fill =</span> <span class="ot">NA</span>, <span class="dt">show.legend =</span> F, <span class="dt">color=</span><span class="st">&quot;black&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Schools in Durham and </span><span class="ch">\n</span><span class="st">Census Block Groups&quot;</span>) <span class="op">+</span>
+<span class="kw">ggplot</span>() +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>schools, <span class="kw">aes</span>(<span class="dt">col=</span>Type)) +
+<span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>enviroatlas , <span class="dt">fill =</span> <span class="ot">NA</span>, <span class="dt">show.legend =</span> F, <span class="dt">color=</span><span class="st">&quot;black&quot;</span>) +
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Schools in Durham and </span><span class="ch">\n</span><span class="st">Census Block Groups&quot;</span>) +
 <span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
 <p><img src="SpatialOperations1_files/figure-html/schools_envatlas-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">schools &lt;-<span class="st"> </span><span class="kw">st_join</span>(schools, enviroatlas) <span class="co"># st_intersects is the defaout</span>
-schools <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(Type) <span class="op">%&gt;%</span>
-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(<span class="dt">PercTwicePov =</span> <span class="kw">mean</span>(percent_population_with_income_below_twice_the_poverty_level, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>Type, <span class="dt">y=</span>PercTwicePov, <span class="dt">fill=</span>Type)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>) </code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Spatial Join-</span>
+schools_env &lt;-<span class="st"> </span><span class="kw">st_join</span>(enviroatlas, schools) <span class="co"># st_intersects is the default</span>
+
+schools_env %&gt;%
+<span class="st">  </span><span class="kw">group_by</span>(block_group_id, Type) %&gt;%
+<span class="st">  </span><span class="kw">filter</span>(!<span class="kw">is.na</span>(Type)) %&gt;%
+<span class="st">  </span>dplyr::<span class="kw">summarize</span>(<span class="dt">PercTwicePov =</span> <span class="kw">mean</span>(percent_population_with_income_below_twice_the_poverty_level, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)) %&gt;%
+<span class="st">  </span><span class="kw">ggplot</span>() +<span class="st"> </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>(PercTwicePov))) +
+<span class="st">  </span><span class="kw">scale_fill_distiller</span>(<span class="st">&quot;Percent Twice Poverty Level&quot;</span>, <span class="dt">palette =</span> <span class="st">&quot;Greens&quot;</span>,  <span class="dt">direction =</span> <span class="dv">1</span>) +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Percent Living at Twice the Poverty Level by School Type&quot;</span>) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">facet_wrap</span>(~Type)</code></pre></div>
 <p><img src="SpatialOperations1_files/figure-html/schools_envatlas-2.png" width="672" /></p>
-<p>If we have time, try exploring another data set from Open Data Durham, or using existing data to put together another spatial subset, join, or aggregation.</p>
+</div>
+<div id="dissolve" class="section level3">
+<h3>Dissolve</h3>
+<p>We can take a quick look at using a spatial dissolve and then re-aggregate our result to see if there is a difference at another spatial level by dissolving to the tract level - we do this dissolve simply by using <code>dplyr</code> <code>group_by</code> and <code>summarize</code> functions with an <code>sf</code> object!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># We can see we have 78 census tracts - </span>
+<span class="kw">levels</span>(<span class="kw">as.factor</span>(enviroatlas$tract_fips))</code></pre></div>
+<pre><code>##  [1] &quot;000101&quot; &quot;000102&quot; &quot;000200&quot; &quot;000301&quot; &quot;000302&quot; &quot;000401&quot; &quot;000402&quot;
+##  [8] &quot;000500&quot; &quot;000600&quot; &quot;000700&quot; &quot;000900&quot; &quot;001001&quot; &quot;001002&quot; &quot;001100&quot;
+## [15] &quot;001301&quot; &quot;001303&quot; &quot;001304&quot; &quot;001400&quot; &quot;001501&quot; &quot;001502&quot; &quot;001503&quot;
+## [22] &quot;001601&quot; &quot;001603&quot; &quot;001604&quot; &quot;001705&quot; &quot;001706&quot; &quot;001707&quot; &quot;001708&quot;
+## [29] &quot;001709&quot; &quot;001710&quot; &quot;001711&quot; &quot;001801&quot; &quot;001802&quot; &quot;001806&quot; &quot;001807&quot;
+## [36] &quot;001808&quot; &quot;001809&quot; &quot;002007&quot; &quot;002008&quot; &quot;002009&quot; &quot;002013&quot; &quot;002015&quot;
+## [43] &quot;002016&quot; &quot;002017&quot; &quot;002018&quot; &quot;002019&quot; &quot;002020&quot; &quot;002021&quot; &quot;002022&quot;
+## [50] &quot;002023&quot; &quot;002024&quot; &quot;002025&quot; &quot;002026&quot; &quot;002027&quot; &quot;002028&quot; &quot;002200&quot;
+## [57] &quot;002300&quot; &quot;010703&quot; &quot;010704&quot; &quot;010705&quot; &quot;010706&quot; &quot;010901&quot; &quot;010902&quot;
+## [64] &quot;011000&quot; &quot;011102&quot; &quot;011202&quot; &quot;011205&quot; &quot;011300&quot; &quot;011400&quot; &quot;011500&quot;
+## [71] &quot;011601&quot; &quot;011602&quot; &quot;011700&quot; &quot;011800&quot; &quot;011901&quot; &quot;011902&quot; &quot;012100&quot;
+## [78] &quot;012201&quot; &quot;012202&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tracts &lt;-<span class="st"> </span>schools_env %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(tract_fips) %&gt;%
+<span class="st">  </span>dplyr::<span class="kw">summarize</span>() 
+
+<span class="co"># Pull back in school type and poverty</span>
+tracts$TwicePercPov &lt;-<span class="st"> </span>schools_env$percent_population_with_income_below_twice_the_poverty_level[<span class="kw">match</span>(tracts$tract_fips, schools_env$tract_fips)]
+tracts$Type &lt;-<span class="st"> </span>schools_env$Type[<span class="kw">match</span>(tracts$tract_fips, schools_env$tract_fips)]
+tracts &lt;-<span class="st"> </span>tracts %&gt;%
+<span class="st">  </span><span class="kw">filter</span>(!<span class="kw">is.na</span>(Type))
+<span class="co"># And same routine as before to look at our data aggregated to tract level</span>
+<span class="kw">ggplot</span>(<span class="dt">data =</span> tracts) +<span class="st"> </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>(TwicePercPov))) +
+<span class="st">  </span><span class="kw">scale_fill_distiller</span>(<span class="st">&quot;Percent Twice Poverty Level&quot;</span>, <span class="dt">palette =</span> <span class="st">&quot;Greens&quot;</span>,  <span class="dt">direction =</span> <span class="dv">1</span>) +
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Percent Living at Twice the Poverty Level by School Type&quot;</span>) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>() +
+<span class="st">  </span><span class="kw">facet_wrap</span>(~Type)</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/dissolve-1.png" width="672" /></p>
+<p>If we have time, try exploring another data set from <a href="https://opendurham.nc.gov/explore/?sort=modified">Open Data Durham</a>, or use existing data to put together another spatial subset, join, or aggregation.</p>
+</div>
+<div id="raster---raster-vector-processing" class="section level3">
+<h3>Raster - Raster-Vector Processing</h3>
+<p>Now let’s look at an example of some raster processing. First, we’ll load the Third Fork watershed shapefile I have in our course GitHub repository:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ThirdFork &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_Fork.shp&#39;</span>)</code></pre></div>
+<pre><code>## Reading layer `Third_Fork&#39; from data source `/home/marc/GitProjects/R-User-Group-Spatial-Workshop-2018/data/Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 1 feature and 21 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -78.96945 ymin: 35.90316 xmax: -78.86583 ymax: 35.99798
+## epsg (SRID):    4269
+## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ThirdFork) +<span class="st"> </span><span class="kw">geom_sf</span>() +<span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Third Fork Watershed&quot;</span>) +
+<span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/watershed%20stats-1.png" width="672" /></p>
 </div>
 </div>
 
