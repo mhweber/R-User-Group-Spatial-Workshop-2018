@@ -2,3 +2,66 @@
 title: Spatial Operations 2
 ---
 
+## Lesson Goals
+
+* Learn ways to extract and summarize raster data by point and by polygon
+* Explore working with water data using `dataRetrieval` 
+
+### Data Retrieval package
+Let's explore the [DataRetrieval](https://github.com/USGS-R/dataRetrieval) package a bit and download some sample data.  This is a phenomenal package for retrieving and working with USGS and EPA hydrology and water quality data. There is a lot to this package - I'm still learning, and we'll just scratch the surface.  For more info look at the [USGS site](https://owi.usgs.gov/R/training-curriculum/usgs-packages/dataRetrieval-readNWIS/) and [online tutorial](https://owi.usgs.gov/R/dataRetrieval.html#1).
+```{r NWIS, message=FALSE, warning=FALSE, error=FALSE}
+library(dataRetrieval)
+library(sf)
+Durham_Stations <- readNWISdata(stateCd="North Carolina", countyCd="Durham")
+# DataRetrival returns objects as 'attributes' - things like the url used, site metadata, site info, etc - just use attributes(Durham_Stations) to examine
+siteInfo <- attr(Durham_Stations , "siteInfo") 
+stations_sf = st_as_sf(siteInfo, coords = c("dec_lon_va", "dec_lat_va"), crs = 4269,agr = "constant")
+
+ThirdFork <- st_read('data/Third_Fork.shp')
+plot(ThirdFork$geometry, axes=T)
+plot(stations_sf$geometry, add=T)
+title(main='NWIS Stations and \nThird Fork Watershed')
+```
+
+We could clip our sites to our watershed, and create plots of hourly discharge for the three sites in our watershed - first we use spatial indexing to clip our stations:
+```{r flow, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+ThirdForkSites <- stations_sf[ThirdFork,]
+```
+
+**Quick Exercise**
+Fix the error we get in code above then continue on with next code chunk to clip and plot discharge
+
+Ideas for leveraging `DataRetrieval` to plot hourly discharge from [Ryan Peek](https://ryanpeek.github.io/2018_river-rally-Rmapping-workshop/get_water_quality.html#read_shapefiles).
+```{r flow2, message=FALSE, warning=FALSE, error=FALSE}
+library(ggplot2)
+stations_sf <- st_transform(stations_sf, st_crs(ThirdFork))
+library(lubridate)
+ThirdForkSites <- stations_sf[ThirdFork,]
+pCode <- "00060" # 00060 is flow
+start.date <- "2015-10-01"
+end.date <- "2018-03-30"
+
+# get NWIS data  - I'm passing all three station numbers to readNWISuv
+ThirdForkFlow <- readNWISuv(siteNumbers = ThirdForkSites$site_no,
+                     parameterCd = pCode,
+                     startDate = start.date,
+                     endDate = end.date)
+
+# add the water year - this function in DataRetrieval knows the data range we have comprises one water year...
+ThirdForkFlow <- addWaterYear(ThirdForkFlow)
+
+# We can rename the columns to something easier to understand (i.e., not X00060_00000)
+ThirdForkFlow <- renameNWISColumns(ThirdForkFlow)
+
+# here we'll calculate and add approximate day of the WATER YEAR (doesn't take leap year into account)
+ThirdForkFlow$DOWY <- yday(ThirdForkFlow$dateTime) + ifelse(month(ThirdForkFlow$dateTime) > 9, -273, 92)
+
+# plot flow
+(plot1 <- ggplot() + geom_line(data=ThirdForkFlow, aes(x=DOWY, y=Flow_Inst), color="dodgerblue") + 
+    facet_grid(waterYear~., scales = "free_y") +
+    labs(y="Hourly Flow (cfs)", x= "Day of Water Year", title="Hourly Discharge USGS Stations in Third Fork Watershed"))
+```
+
+Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn't have data in that date range.
+
+

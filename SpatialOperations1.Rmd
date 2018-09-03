@@ -155,6 +155,7 @@ ggplot(data = tracts) + geom_sf(aes(fill=(TwicePercPov))) +
   facet_wrap(~Type)
 ```
 
+**Exercise**
 If we have time, try exploring another data set from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified), or use existing data to put together another spatial subset, join, or aggregation.
 
 ### Raster - Raster-Vector Processing
@@ -179,7 +180,7 @@ plot(ThirdFork, add=T)
 
 The `get_ned` function from `FedData` grabs a corresponding online tile of NED (National Elevation Data) from Amazon - you can simply type get_ned at console to examine the function and see how it works.  
 
-We saw the `getData` function in the `raster` package in the *SpatialObjects* section - is `get_ned` from `FedData` any differet?  We can mask to the watershed as we did earlier - notice we don't need to use `crop` then `mask`...why?
+We saw the `getData` function in the `raster` package in the *SpatialObjects* section. Is `get_ned` from `FedData` any differet?  We can mask to the watershed as we did earlier - notice we don't need to use `crop` then `mask`...why?
 ```{r mask_wat, message=FALSE, warning=FALSE, error=FALSE}
 library(raster)
 NED <- mask(NED, ThirdFork)
@@ -203,6 +204,7 @@ wat_terrain <- terrain(NED, opt = c("slope","aspect", "tri",
 plot(wat_terrain)
 ```
 
+**Quick Exercise**
 What kind of object did `terrain` return?  How would you get the projection for our 'NED' raster?  The min, max, standard deviation of NED, mean as single values? Same for our 'wat_terrain'? Play with on your own and look at code if you need to
 ```{r raster_stats, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 cellStats(NED, min)
