@@ -160,8 +160,57 @@ If we have time, try exploring another data set from [Open Data Durham](https://
 ### Raster - Raster-Vector Processing
 Now let's look at an example of some raster processing.  First, we'll load the Third Fork watershed shapefile I have in our course GitHub repository:
 
-```{r watershed stats, message=FALSE, warning=FALSE, error=FALSE}
+```{r watershed, message=FALSE, warning=FALSE, error=FALSE}
+library(FedData)
 ThirdFork <- st_read('data/Third_Fork.shp')
 ggplot(ThirdFork) + geom_sf() + ggtitle("Third Fork Watershed") +
   theme_bw()
 ```
+
+FedData still uses sp rather than `sf` objects, so we could have loaded our shapefile template in with `readOGR` from `rgdal`, but we'll just convert from `sf` to `sp`
+```{r ned, message=FALSE, warning=FALSE, error=FALSE}
+ThirdFork <- as(ThirdFork,'Spatial')
+# We can pull in elevation data for this template watershed with FedData
+NED <- get_ned(template = ThirdFork,
+               label = "ThirdFork")
+raster::plot(NED)
+plot(ThirdFork, add=T)
+```
+
+The `get_ned` function from `FedData` grabs a corresponding online tile of NED (National Elevation Data) from Amazon - you can simply type get_ned at console to examine the function and see how it works.  
+
+We saw the `getData` function in the `raster` package in the *SpatialObjects* section - is `get_ned` from `FedData` any differet?  We can mask to the watershed as we did earlier - notice we don't need to use `crop` then `mask`...why?
+```{r mask_wat, message=FALSE, warning=FALSE, error=FALSE}
+library(raster)
+NED <- mask(NED, ThirdFork)
+plot(ThirdFork, main="Elevation (m) in Third Fork Watershed", axes=T)
+plot(NED, add=TRUE)
+```
+
+The `RasterViz` package has some neat additional visualization methods for rasters:
+```{r RasterViz, message=FALSE, warning=FALSE, error=FALSE}
+library(rasterVis)
+histogram(NED, main="Elevation In ThirdFork")
+densityplot(NED, main="Elevation In ThirdFork")
+p <- levelplot(NED, layers=1, margin = list(FUN = median))
+p + layer(sp.polygons(ThirdFork, lwd=2, col='black'))
+```
+
+We can easily do some terrain analysis with `raster` as well:
+```{r terrain, message=FALSE, warning=FALSE, error=FALSE}
+wat_terrain <- terrain(NED, opt = c("slope","aspect", "tri",
+                                          "tpi","roughness","flowdir"))
+plot(wat_terrain)
+```
+
+What kind of object did `terrain` return?  How would you get the projection for our 'NED' raster?  The min, max, standard deviation of NED, mean as single values? Same for our 'wat_terrain'? Play with on your own and look at code if you need to
+```{r raster_stats, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+cellStats(NED, min)
+cellStats(NED, max)
+cellStats(NED, mean)
+cellStats(NED, sd)
+projection(NED)
+cellStats(wat_terrain, min)
+# et cetera...
+```
+

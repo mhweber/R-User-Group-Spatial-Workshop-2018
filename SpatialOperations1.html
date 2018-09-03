@@ -536,7 +536,8 @@ tracts &lt;-<span class="st"> </span>tracts %&gt;%
 <div id="raster---raster-vector-processing" class="section level3">
 <h3>Raster - Raster-Vector Processing</h3>
 <p>Now let’s look at an example of some raster processing. First, we’ll load the Third Fork watershed shapefile I have in our course GitHub repository:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ThirdFork &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_Fork.shp&#39;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FedData)
+ThirdFork &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_Fork.shp&#39;</span>)</code></pre></div>
 <pre><code>## Reading layer `Third_Fork&#39; from data source `/home/marc/GitProjects/R-User-Group-Spatial-Workshop-2018/data/Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 1 feature and 21 fields
 ## geometry type:  POLYGON
@@ -546,7 +547,44 @@ tracts &lt;-<span class="st"> </span>tracts %&gt;%
 ## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ThirdFork) +<span class="st"> </span><span class="kw">geom_sf</span>() +<span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Third Fork Watershed&quot;</span>) +
 <span class="st">  </span><span class="kw">theme_bw</span>()</code></pre></div>
-<p><img src="SpatialOperations1_files/figure-html/watershed%20stats-1.png" width="672" /></p>
+<p><img src="SpatialOperations1_files/figure-html/watershed-1.png" width="672" /></p>
+<p>FedData still uses sp rather than <code>sf</code> objects, so we could have loaded our shapefile template in with <code>readOGR</code> from <code>rgdal</code>, but we’ll just convert from <code>sf</code> to <code>sp</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ThirdFork &lt;-<span class="st"> </span><span class="kw">as</span>(ThirdFork,<span class="st">&#39;Spatial&#39;</span>)
+<span class="co"># We can pull in elevation data for this template watershed with FedData</span>
+NED &lt;-<span class="st"> </span><span class="kw">get_ned</span>(<span class="dt">template =</span> ThirdFork,
+               <span class="dt">label =</span> <span class="st">&quot;ThirdFork&quot;</span>)
+raster::<span class="kw">plot</span>(NED)
+<span class="kw">plot</span>(ThirdFork, <span class="dt">add=</span>T)</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/ned-1.png" width="672" /></p>
+<p>The <code>get_ned</code> function from <code>FedData</code> grabs a corresponding online tile of NED (National Elevation Data) from Amazon - you can simply type get_ned at console to examine the function and see how it works.</p>
+<p>We saw the <code>getData</code> function in the <code>raster</code> package in the <em>SpatialObjects</em> section - is <code>get_ned</code> from <code>FedData</code> any differet? We can mask to the watershed as we did earlier - notice we don’t need to use <code>crop</code> then <code>mask</code>…why?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(raster)
+NED &lt;-<span class="st"> </span><span class="kw">mask</span>(NED, ThirdFork)
+<span class="kw">plot</span>(ThirdFork, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(NED, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/mask_wat-1.png" width="672" /></p>
+<p>The <code>RasterViz</code> package has some neat additional visualization methods for rasters:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rasterVis)
+<span class="kw">histogram</span>(NED, <span class="dt">main=</span><span class="st">&quot;Elevation In ThirdFork&quot;</span>)</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/RasterViz-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">densityplot</span>(NED, <span class="dt">main=</span><span class="st">&quot;Elevation In ThirdFork&quot;</span>)</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/RasterViz-2.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p &lt;-<span class="st"> </span><span class="kw">levelplot</span>(NED, <span class="dt">layers=</span><span class="dv">1</span>, <span class="dt">margin =</span> <span class="kw">list</span>(<span class="dt">FUN =</span> median))
+p +<span class="st"> </span><span class="kw">layer</span>(<span class="kw">sp.polygons</span>(ThirdFork, <span class="dt">lwd=</span><span class="dv">2</span>, <span class="dt">col=</span><span class="st">&#39;black&#39;</span>))</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/RasterViz-3.png" width="672" /></p>
+<p>We can easily do some terrain analysis with <code>raster</code> as well:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wat_terrain &lt;-<span class="st"> </span><span class="kw">terrain</span>(NED, <span class="dt">opt =</span> <span class="kw">c</span>(<span class="st">&quot;slope&quot;</span>,<span class="st">&quot;aspect&quot;</span>, <span class="st">&quot;tri&quot;</span>,
+                                          <span class="st">&quot;tpi&quot;</span>,<span class="st">&quot;roughness&quot;</span>,<span class="st">&quot;flowdir&quot;</span>))
+<span class="kw">plot</span>(wat_terrain)</code></pre></div>
+<p><img src="SpatialOperations1_files/figure-html/terrain-1.png" width="672" /></p>
+<p>What kind of object did <code>terrain</code> return? How would you get the projection for our ‘NED’ raster? The min, max, standard deviation of NED, mean as single values? Same for our ‘wat_terrain’? Play with on your own and look at code if you need to</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cellStats</span>(NED, min)
+<span class="kw">cellStats</span>(NED, max)
+<span class="kw">cellStats</span>(NED, mean)
+<span class="kw">cellStats</span>(NED, sd)
+<span class="kw">projection</span>(NED)
+<span class="kw">cellStats</span>(wat_terrain, min)
+<span class="co"># et cetera...</span></code></pre></div>
 </div>
 </div>
 
