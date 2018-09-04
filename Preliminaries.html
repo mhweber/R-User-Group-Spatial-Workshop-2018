@@ -125,9 +125,6 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
-.html-widget {
-  margin-bottom: 20px;
-}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -370,8 +367,8 @@ div.tocify {
 </div>
 
 
-<div id="background" class="section level3">
-<h3>Background</h3>
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
 <p>So, to begin, what is R and why should we use R for spatial analysis? Let’s break that into two questions - first, what is R and why should we use it?</p>
 <ul>
 <li>A language and environment for statistical computing and graphics</li>
@@ -430,7 +427,7 @@ div.tocify {
 <span class="co"># From CRAN:</span>
 <span class="co"># install.packages(&quot;tidyverse&quot;)</span>
 <span class="co"># From GitHub:</span>
-devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;hadley/tidyverse&quot;</span>)
+devtools::<span class="kw">install_github</span>(<span class="st">&quot;hadley/tidyverse&quot;</span>)
 <span class="kw">install.packages</span>(<span class="st">&quot;micromap&quot;</span>)
 <span class="kw">install.packages</span>(<span class="st">&quot;tmap&quot;</span>)
 <span class="kw">install.packages</span>(<span class="st">&quot;RCurl&quot;</span>)
@@ -439,54 +436,74 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <span class="kw">install.packages</span>(<span class="st">&quot;USAboundaries&quot;</span>)
 <span class="kw">install.packages</span>(<span class="st">&quot;rasterVis&quot;</span>)
 <span class="kw">install.packages</span>(<span class="st">&quot;landsat&quot;</span>)
-<span class="kw">install.packages</span>(<span class="st">&quot;plotly&quot;</span>)
+<span class="kw">install_github</span>(<span class="st">&quot;ropensci/plotly&quot;</span>)
 <span class="kw">install.packages</span>(<span class="st">&quot;leaflet&quot;</span>)
-<span class="kw">install.packages</span>(<span class="st">&quot;lubridate&quot;</span>)</code></pre></div>
+<span class="kw">install.packages</span>(<span class="st">&quot;lubridate&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;tidycensus&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;rnaturalearth&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&quot;osmdata&quot;</span>)
+<span class="kw">install.packages</span>(<span class="st">&#39;FedData&#39;</span>)</code></pre></div>
 <p>Installing <code>rgdal</code> will install the foundation spatial package, <code>sp</code>, as a dependency, and installing <code>tidyverse</code> will install both <code>ggplot2</code> and <code>dplyr</code>.</p>
 <p>For Linux users, to install simple features for R (<code>sf</code>), you need GDAL &gt;= 2.0.0, GEOS &gt;= 3.3.0, and Proj.4 &gt;= 4.8.0. Edzer Pebesma’s Simple Features for R GitHub repo has a good explanation:</p>
 <p><a href="https://github.com/edzer/sfr">Simple Features for R</a></p>
 <p>You basically want to add <a href="http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu/">ubuntugis-unstable</a> to the package repositories and then get those three dependencies:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sudo add<span class="op">-</span>apt<span class="op">-</span>repository ppa<span class="op">:</span>ubuntugis<span class="op">/</span>ubuntugis<span class="op">-</span>unstable
-sudo apt<span class="op">-</span>get install libgdal<span class="op">-</span>dev libgeos<span class="op">-</span>dev libproj<span class="op">-</span>dev</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+sudo apt-get install libgdal-dev libgeos-dev libproj-dev</code></pre></div>
 <p>The Simple features for R package , <code>sf</code>, also needs udunits and udunits2 which may need coercing in linux:</p>
 <p><a href="https://github.com/edzer/units/issues/1">Units Issues in sf GitHub repo</a></p>
 <p>The following should resolve:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sudo apt<span class="op">-</span>get install libudunits2<span class="op">-</span>dev</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sudo apt-get install libudunits2-dev</code></pre></div>
 </div>
 <div id="basic-r-background" class="section level3">
 <h3>Basic R Background</h3>
 <div id="terminology-working-directory" class="section level4">
-<h4>Terminology: Working Directory</h4>
+<h4><strong>Terminology: Working Directory</strong></h4>
 <p>Working directory in R is the location on your computer R is working from. To determine your working directory, in console type:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getwd</span>()</code></pre></div>
-<pre><code>## [1] &quot;F:/Git Projects/R-User-Group-Spatial-Workshop-2018&quot;</code></pre>
+<pre><code>## [1] &quot;/home/marc/GitProjects/R-User-Group-Spatial-Workshop-2018&quot;</code></pre>
 <p>Which should return something like:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;/home/marc/GitProjects/AWRA_GIS_R_Workshop&quot;</span></code></pre></div>
 <p>To see what is in the directory:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir</span>()</code></pre></div>
-<pre><code>##  [1] &quot;_site.yml&quot;                               
-##  [2] &quot;data&quot;                                    
+<pre><code>##  [1] &quot;data&quot;                                    
+##  [2] &quot;EXTRACTIONS&quot;                             
 ##  [3] &quot;GADM_2.8_USA_adm2.rds&quot;                   
 ##  [4] &quot;header.html&quot;                             
 ##  [5] &quot;img&quot;                                     
 ##  [6] &quot;index.html&quot;                              
 ##  [7] &quot;index.Rmd&quot;                               
-##  [8] &quot;Mapping.html&quot;                            
-##  [9] &quot;Mapping.Rmd&quot;                             
-## [10] &quot;Preliminaries.Rmd&quot;                       
-## [11] &quot;R-User-Group-Spatial-Workshop-2018.Rproj&quot;
-## [12] &quot;README.md&quot;                               
-## [13] &quot;Resources.Rmd&quot;                           
-## [14] &quot;site_libs&quot;                               
-## [15] &quot;SpatialObjects.Rmd&quot;                      
-## [16] &quot;SpatialOperations1.Rmd&quot;                  
-## [17] &quot;SpatialOperations2.Rmd&quot;                  
-## [18] &quot;style.css&quot;</code></pre>
+##  [8] &quot;Mapping_files&quot;                           
+##  [9] &quot;Mapping.html&quot;                            
+## [10] &quot;Mapping.Rmd&quot;                             
+## [11] &quot;Preliminaries.html&quot;                      
+## [12] &quot;Preliminaries.Rmd&quot;                       
+## [13] &quot;RAW&quot;                                     
+## [14] &quot;README.html&quot;                             
+## [15] &quot;README.md&quot;                               
+## [16] &quot;readme.txt&quot;                              
+## [17] &quot;Resources.html&quot;                          
+## [18] &quot;Resources.Rmd&quot;                           
+## [19] &quot;R-User-Group-Spatial-Workshop-2018.Rproj&quot;
+## [20] &quot;site_libs&quot;                               
+## [21] &quot;_site.yml&quot;                               
+## [22] &quot;SpatialObjects_files&quot;                    
+## [23] &quot;SpatialObjects.html&quot;                     
+## [24] &quot;SpatialObjects.Rmd&quot;                      
+## [25] &quot;SpatialOperations1_files&quot;                
+## [26] &quot;SpatialOperations1.html&quot;                 
+## [27] &quot;SpatialOperations1.Rmd&quot;                  
+## [28] &quot;SpatialOperations2_files&quot;                
+## [29] &quot;SpatialOperations2.html&quot;                 
+## [30] &quot;SpatialOperations2.Rmd&quot;                  
+## [31] &quot;srtm_12_04.hdr&quot;                          
+## [32] &quot;srtm_12_04.tfw&quot;                          
+## [33] &quot;srtm_12_04.tif&quot;                          
+## [34] &quot;style.css&quot;</code></pre>
 <p>To establish a different directory:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;/home/marc/GitProjects&quot;</span>)</code></pre></div>
 </div>
 <div id="terminology-data-structures" class="section level4">
-<h4>Terminology: data structures</h4>
+<h4><strong>Terminology: data structures</strong></h4>
 <p>R is an interpreted language (access through a command-line interpreter) with a number of data structures (vectors, matrices, arrays, data frames, lists) and extensible objects (regression models, time-series, geospatial coordinates) and supports procedural programming with functions.</p>
 <p>To learn about objects, become friends with the built-in <code>class</code> and <code>str</code> functions. Let’s explore the built-in iris data set to start:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(iris)</code></pre></div>
@@ -520,32 +537,32 @@ sudo apt<span class="op">-</span>get install libgdal<span class="op">-</span>dev
 <p>We can ask what data type something is using <code>typeof</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;list&quot;</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris<span class="op">$</span>Sepal.Length)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris$Sepal.Length)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;double&quot;</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris<span class="op">$</span>Specis)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(iris$Specis)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="st">&quot;integer&quot;</span></code></pre></div>
 <p>We see a couple interesting things here - <code>iris</code>, which we just said is a data frame, is a data type of <code>list</code>. <code>Sepal.Length</code> is data type <code>double</code>, and in <code>str(iris)</code> we saw it was numeric - that makes sense - but we see that <code>Species</code> is data type <code>integer</code>, and in <code>str(iris)</code> we were told this variable was a factor with three levels. What’s going on here?</p>
 <p>First off, <code>class</code> refers to the abstract type of an object in R, whereas <code>typeof</code> or <code>mode</code> refer to how an object is stored in memory. So iris is an object of class <code>data.frame</code>, but it is stored in memory as a list (i.e. each column is an item in a list). Note that this allows data frames to have columns of different classes, whereas a matrix needs to be all of the same mode.</p>
 <p>For our <code>Species</code> column, We see it’s <code>mode</code> is numeric, it’s <code>typeof</code> is <code>integer</code>, and it’s class is <code>factor</code>. Nominal variables in R are treated as a vector of integers 1:k, where k is the number of unique values of that nominal variable and a mapping of the character strings to these integer values.</p>
 <p>This allows us to quickly see see all the unique values of a particular nominal variable or quickly re-asign a level of a nominal variable to a new value - remember, everything in R is in memory, so don’t worry about tweaking the data!</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(iris<span class="op">$</span>Species)
-<span class="kw">levels</span>(iris<span class="op">$</span>Species)[<span class="dv">1</span>] &lt;-<span class="st"> &#39;sibirica&#39;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(iris$Species)
+<span class="kw">levels</span>(iris$Species)[<span class="dv">1</span>] &lt;-<span class="st"> &#39;sibirica&#39;</span></code></pre></div>
 <p>See if you can explain how that re-asignment we just did worked.</p>
 <p>To access particular columns in a data frame, as we saw above, we use the <code>$</code> operator - we can see the value for <code>Species</code> for each observation in `iris by doing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris<span class="op">$</span>Species</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris$Species</code></pre></div>
 <p>To access particular columns or rows of a data frame, we use indexing:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris[<span class="dv">1</span>,<span class="dv">3</span>] <span class="co"># the 1st row and the 3rd column</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] <span class="fl">1.4</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris[<span class="dv">4</span>,<span class="dv">5</span>] <span class="co"># the 4th row and the 5th column</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">[<span class="dv">1</span>] sibirica
-Levels<span class="op">:</span><span class="st"> </span>sibirica versicolor virginica</code></pre></div>
+Levels:<span class="st"> </span>sibirica versicolor virginica</code></pre></div>
 <p>A handy function is <code>names</code>, which you can use to get or to set data frame variable names:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iris)
 <span class="kw">names</span>(iris)[<span class="dv">1</span>] &lt;-<span class="st"> &#39;Length of Sepal&#39;</span></code></pre></div>
 <p>Explain what this last line did</p>
 </div>
 <div id="overview-of-classes-and-methods" class="section level4">
-<h4>Overview of Classes and Methods</h4>
+<h4><strong>Overview of Classes and Methods</strong></h4>
 <ul>
 <li>Class: object types
 <ul>
@@ -561,6 +578,18 @@ Levels<span class="op">:</span><span class="st"> </span>sibirica versicolor virg
 </ul></li>
 </ul>
 </div>
+</div>
+<div id="workshop-data" class="section level3">
+<h3>Workshop Data</h3>
+<p>All the material for this workshop is in a <a href="https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018">GitHub repository</a>.<br />
+There are two simple ways to get all the material for the course on your local machine:</p>
+<ol style="list-style-type: decimal">
+<li>If you are comfortable with git and GitHub, you should clone the repository locally, and then you’ll have everything</li>
+<li>If git and GitHub are new to you, on the <a href="https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018">workshop repository page</a>, click the green ‘Clone or download’ button, and choose ‘Download ZIP’. This will download everything in the workshop repository as a zip file for you locally.</li>
+</ol>
+<p>For the workshop, we will follow along with the content on the workshop web pages, but the expectation is we will all have RStudio with R installed and running. Each of theh workshop sections is an <a href="https://rmarkdown.rstudio.com/">RMarkdown</a> file - if you have never used <code>RMarkdown</code>, take a few minutes to explore the link or look over the nice <a href="https://ryan-hill.github.io/sfs-r-gis-2018/modules/getting%20started/r-markdown/">overview put together by Ryan Hill and Marcus Beck for their recent R Spatial SFS Workshop</a>.</p>
+<p>Code in an <code>RMarkdown</code> document will run just the same as code in an R script, and I do all my work in .Rmd files rather than .r files in order to easily share work, create attractive output and reports weaving together code, images, figures and documentation, and follow a reproducible workflow.</p>
+<p>As we go through each section, you should have the corresponding .Rmd file open for each section so that you can run and replicate the code, and have a another temporary R file open to solve questions, try your own approaches, and explore ideas presented.</p>
 </div>
 
 

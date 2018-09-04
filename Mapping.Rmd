@@ -1,18 +1,70 @@
 ---
 title: Visualization and Interactive Mapping
 ---
+## Lesson Goals
 
-Make a leaflet map
+* Explore a sampling of interactive mapping libraries in R
+
+R is fantastic for making high-quality publication quality static maps, and for generating repetitive graphics through scripts, and we've scattered the use of base plotting and using `ggplot` for making maps through exercises so far. There are also a number of packages now in R that  link R code to plotting libraries developed in Javascript (or other languages) for interactive plotting and web integration, and we'll take a brief look here.
+
+We've already been using ggplot throughout the workshop, but let's revisit making a basic `ggplot` map and then explore the `plotly` package and it's integration with `ggplot`. 
+
+Below we pull in US states as an `sf` object using the `USAboundaries` package (notice packages are quickly moving to the `sf` framework).  We then use `dplyr` to filter just CONUS states and create a new 'perc_water' variable, and then make a static `ggplot` map.
+```{r ggplot, eval=T}
+# create sf object for states, estimate and add area
+library(USAboundaries)
+library(dplyr)
+library(sf)
+library(ggplot2)
+states <- us_states()
+states <- states %>%
+  dplyr::filter(!name %in% c('Alaska','Hawaii', 'Puerto Rico')) %>%
+  dplyr::mutate(perc_water = log10((awater)/(awater + aland)))
+# Transform to Albers for making map of US
+states <- st_transform(states, 5070)
+# plot with ggplot
+ggplot(states) +
+  geom_sf(aes(fill = perc_water)) +
+  scale_fill_distiller("perc_water",palette = "Spectral", direction = 1) +
+  ggtitle("Percent Water by State")
+```
+
+We created a pretty nice static map of a mocked-up variable for CONUS using `ggplot2`. Using the development version of `plotly`, we can make an interactive map directly with our `sf` states object - take a minute to explore the interactive map created and tools in the menu bar (click the zoom button or view in browser button in your viewer pane in RStudio):
+```{r ggplotly, eval=T}
+library(plotly)
+plot_ly(states)
+```
+
+This makes a a nice basic interactive map, next we'll add a few arguments:
+
+* `split` defines a grouping variable using a column in the input data, without this the color wan’t map to anything and it also defines what we see on mouse-over
+* `color` identifies the column in the data to map
+* `showlegend` can toggle the legend for the splitting variable, here we don’t need it
+* `alpha` sets the transparency of the polygons, we don’t see the polygon borders if we set the transparency as completely opaque
+```{r plotly2, eval=T}
+plot_ly(states, split = ~state_abbr, color = ~ perc_water , showlegend = F, alpha = 1)
+```
+
+Take a minute to look over the [maps section of the plotly cookbook](https://plotly-book.cpsievert.me/maps.html) and try some of the ideas there - basic example below using `ggplotly` with `ggplot` and `geom_sf` layer - note that you may need to click the 'show in new window' button in viewer tab for the `plotly` map to show up.
+```{r plotly3, eval=T}
+nc <- sf::st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+p <- ggplot(nc) + geom_sf(aes(fill = AREA))
+ggplotly(p)
+```
+
+[Leaflet](https://leafletjs.com/) is an extremely popular open-source javascript library for interactive web mapping, and the `leaflet` R package allows R users to create Leaflet maps from R. `Leaflet` can plot `sf` or `sp` objects, or x / y coordinates, and can plot points, lines or polygons. There are a number of [base layers you can choose from](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).  It's worth spending some time exploring the excellent [Leaflet for R site](https://rstudio.github.io/leaflet/).
+
+Here we make the simplest of leaflet maps:
 ```{r leaflet, eval=T}
-
-
 library(leaflet)
 
 m <- leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
-  addMarkers(lng=174.768, lat=-36.852, popup="The birthplace of R")
+  addMarkers(lng=-78.8757119, lat=35.8824723, popup="Here's where we are right now")
 m  # Print the map
 ```
+
+Note the use of chained operators we've been using in `dplyr` in our `leaflet` code.
 
 Make a plotly figure
 ```{r plotly, eval=T}

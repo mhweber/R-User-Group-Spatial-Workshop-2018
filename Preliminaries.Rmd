@@ -2,7 +2,7 @@
 title: "Preliminaries"
 ---
 
-### Background
+### Introduction
 
 So, to begin, what is R and why should we use R for spatial analysis?  Let's break that into two questions - first, what is R and why should we use it?
 
@@ -72,7 +72,7 @@ install.packages("maps")
 install.packages("USAboundaries")
 install.packages("rasterVis")
 install.packages("landsat")
-install.packages("plotly")
+install_github("ropensci/plotly")
 install.packages("leaflet")
 install.packages("lubridate")
 install.packages("tidycensus")
@@ -237,3 +237,15 @@ Explain what this last line did
     - `plot()`
     - `summary()
 
+### Workshop Data
+All the material for this workshop is in a [GitHub repository](https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018).  
+There are two simple ways to get all the material for the course on your local machine:
+
+1) If you are comfortable with git and GitHub, you should clone the repository locally, and then you'll have everything
+2) If git and GitHub are new to you, on the [workshop repository page](https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018), click the green 'Clone or download' button, and choose 'Download ZIP'.  This will download everything in the workshop repository as a zip file for you locally.
+
+For the workshop, we will follow along with the content on the workshop web pages, but the expectation is we will all have RStudio with R installed and running.  Each of theh workshop sections is an [RMarkdown](https://rmarkdown.rstudio.com/) file - if you have never used `RMarkdown`, take a few minutes to explore the link or look over the nice [overview put together by Ryan Hill and Marcus Beck for their recent R Spatial SFS Workshop](https://ryan-hill.github.io/sfs-r-gis-2018/modules/getting%20started/r-markdown/).
+
+Code in an `RMarkdown` document will run just the same as code in an R script, and I do all my work in .Rmd files rather than .r files in order to easily share work, create attractive output and reports weaving together code, images, figures and documentation, and follow a reproducible workflow.
+
+As we go through each section, you should have the corresponding .Rmd file open for each section so that you can run and replicate the code, and have a another temporary R file open to solve questions, try your own approaches, and explore ideas presented.
