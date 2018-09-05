@@ -242,15 +242,23 @@ Explain what this last line did
     - `plot()`
     - `summary()
 
-### Workshop Data
+### Workshop Data and Logistics
 All the material for this workshop is in a [GitHub repository](https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018).  
 There are two simple ways to get all the material for the course on your local machine:
 
 1) If you are comfortable with git and GitHub, you should clone the repository locally, and then you'll have everything
 2) If git and GitHub are new to you, on the [workshop repository page](https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018), click the green 'Clone or download' button, and choose 'Download ZIP'.  This will download everything in the workshop repository as a zip file for you locally.
 
-For the workshop, we will follow along with the content on the workshop web pages, but the expectation is we will all have RStudio with R installed and running.  Each of theh workshop sections is an [RMarkdown](https://rmarkdown.rstudio.com/) file - if you have never used `RMarkdown`, take a few minutes to explore the link or look over the nice [overview put together by Ryan Hill and Marcus Beck for their recent R Spatial SFS Workshop](https://ryan-hill.github.io/sfs-r-gis-2018/modules/getting%20started/r-markdown/).
+For the workshop, the way things will run is:
 
-Code in an `RMarkdown` document will run just the same as code in an R script, and I do all my work in .Rmd files rather than .r files in order to easily share work, create attractive output and reports weaving together code, images, figures and documentation, and follow a reproducible workflow.
+* We will follow along with the content on the workshop web pages which I will have up on the screen (and you can have up on your machine as well)
+* We will all have RStudio with R installed and running  
+* Each of theh workshop sections is an [RMarkdown](https://rmarkdown.rstudio.com/) file - if you have never used `RMarkdown`, take a few minutes to explore [RMarkdown](https://rmarkdown.rstudio.com/) or look over the nice [overview put together by Ryan Hill and Marcus Beck for their recent R Spatial SFS Workshop](https://ryan-hill.github.io/sfs-r-gis-2018/modules/getting%20started/r-markdown/).
+* Code in an `RMarkdown` document will run just the same as code in an R script. I do all my work in .Rmd files rather than .r files in order to easily share work, create attractive output and reports weaving together code, images, figures and documentation, and follow a reproducible workflow.
+* As we go through each section, you should have the corresponding .Rmd file open for each section so that you can run and replicate the code, and have a another temporary R file open to solve questions, try your own approaches, and explore ideas presented.
+* You are welcome to move through content at your own pace if you are already comfortable with material, but be aware that much of the code needs to be run in a sequential fashion in order to run (so that you have correct objects in memory)
+* The course pages use 'code-folding' - at the top of the page you have the option to show all code, but ideally you will unfold code to run each section and in many sections try on your own prior to undolding solution.
 
-As we go through each section, you should have the corresponding .Rmd file open for each section so that you can run and replicate the code, and have a another temporary R file open to solve questions, try your own approaches, and explore ideas presented.
+Dr. Wei-Lun Tsai has graciously offered to assist in the workshop, and will help with quesitons that arise, and Dr. Michael McManus will be helping remote participants with any quesitons and monitoring the chat in Skype.  If we run into technical difficulties with remote participants, Mike McManus can be reached at his office line to help individuals with connection problems, and if we have major problems with Skype, we can use this call-information:
+866.299.3188  Conf. Code 541.754.4469
+

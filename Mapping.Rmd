@@ -107,12 +107,15 @@ m2 <- mapview(NHD)
 sync(m1, m2)
 ```
 
+<br>
+
 `latticeView` will render small multiples without synchronizing the views:
 
 ```{r latticeView, message=FALSE, warning=FALSE, error=FALSE}
 latticeView(m1, m2)
 ```
 
+<br>
 
 `slideView` is same functionality as map slider in ArcGIS, seamlessly integrated into R - here we'll try with two of the raster layers pulled down using `FedData` -  this code should work for you, however the slider does not show properly on GitHub pages so I'm not showing the result below:
 
