@@ -113,7 +113,7 @@ latticeView(m1, m2)
 ```
 
 `slideView` is same functionality as map slider in ArcGIS, seamlessly integrated into R - here we'll try with two of the raster layers pulled down using `FedData`:
-```{r sliderView, message=FALSE, warning=FALSE, error=FALSE}
+```{r sliderView, message=FALSE, warning=FALSE, error=FALSE, echo = T, eval=T}
 # load the NLCD and NED rasters masked to ThirdFork watershed
 NLCD <- raster('data/NLCD.tif')
 NED <- projectRaster(NED, crs=projection(NLCD))

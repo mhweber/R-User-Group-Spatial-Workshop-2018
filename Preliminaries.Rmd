@@ -51,10 +51,12 @@ install.packages("rgdal")
 install.packages("rgeos")
 install.packages("raster")
 # From CRAN:
-# install.packages("sf")
+install.packages("sf")
 # From GitHub:
 library(devtools)
-install_github("edzer/sfr")
+# devtools::install_github("r-spatial/sf")
+# if you are running 3.5.1 on windows and have trouble with devtools install, try:
+# assignInNamespace("version_info", c(devtools:::version_info, list("3.5" = list(version_min = "3.3.0", version_max = "99.99.99", path = "bin"))), "devtools")
 install.packages("gstat")
 install.packages("spdep")
 install.packages("maptools")
@@ -79,6 +81,9 @@ install.packages("tidycensus")
 install.packages("rnaturalearth")
 install.packages("osmdata")
 install.packages('FedData')
+install.packages("mapview")
+# From GitHub
+# devtools::install_github("r-spatial/mapview@develop")
 ```
 
 Installing `rgdal` will install the foundation spatial package, `sp`, as a dependency, and installing `tidyverse` will install both `ggplot2` and `dplyr`.
