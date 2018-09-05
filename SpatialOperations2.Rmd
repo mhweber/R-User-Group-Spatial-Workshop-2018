@@ -64,4 +64,33 @@ ThirdForkFlow$DOWY <- yday(ThirdForkFlow$dateTime) + ifelse(month(ThirdForkFlow$
 
 Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn't have data in that date range.
 
+### Summarize NHD in watershed
+```{r nhd, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 
+```
+
+### Zonal Stats
+```{r zonal, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+
+```
+### Summarize Categorical Raster
+```{r nlcd, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+library(FedData)
+library(raster)
+NLCD <- get_nlcd(template = as(ThirdFork,'Spatial'),
+                 year = 2011,
+                 dataset = "landcover",
+                 label = "ThirdFork")
+proj4string(NLCD)
+# we'll project to albers
+ThirdFork_alb <- st_transform(ThirdFork, crs=projection(NLCD))
+NLCD <- mask(NLCD, as(ThirdFork_alb,'Spatial'))
+plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
+plot(NLCD, add=TRUE)
+```
+
+```{r nlcd2, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+NAvalue(NLCD) <-0 
+plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
+plot(NLCD, add=TRUE)
+```

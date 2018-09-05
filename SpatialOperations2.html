@@ -429,6 +429,30 @@ ThirdForkFlow$DOWY &lt;-<span class="st"> </span><span class="kw">yday</span>(Th
 <p><img src="SpatialOperations2_files/figure-html/flow2-1.png" width="672" /></p>
 <p>Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn’t have data in that date range.</p>
 </div>
+<div id="summarize-nhd-in-watershed" class="section level3">
+<h3>Summarize NHD in watershed</h3>
+</div>
+<div id="zonal-stats" class="section level3">
+<h3>Zonal Stats</h3>
+</div>
+<div id="summarize-categorical-raster" class="section level3">
+<h3>Summarize Categorical Raster</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FedData)
+<span class="kw">library</span>(raster)
+NLCD &lt;-<span class="st"> </span><span class="kw">get_nlcd</span>(<span class="dt">template =</span> <span class="kw">as</span>(ThirdFork,<span class="st">&#39;Spatial&#39;</span>),
+                 <span class="dt">year =</span> <span class="dv">2011</span>,
+                 <span class="dt">dataset =</span> <span class="st">&quot;landcover&quot;</span>,
+                 <span class="dt">label =</span> <span class="st">&quot;ThirdFork&quot;</span>)
+<span class="kw">proj4string</span>(NLCD)
+<span class="co"># we&#39;ll project to albers</span>
+ThirdFork_alb &lt;-<span class="st"> </span><span class="kw">st_transform</span>(ThirdFork, <span class="dt">crs=</span><span class="kw">projection</span>(NLCD))
+NLCD &lt;-<span class="st"> </span><span class="kw">mask</span>(NLCD, <span class="kw">as</span>(ThirdFork_alb,<span class="st">&#39;Spatial&#39;</span>))
+<span class="kw">plot</span>(ThirdFork_alb$geometry, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(NLCD, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NAvalue</span>(NLCD) &lt;-<span class="dv">0</span> 
+<span class="kw">plot</span>(ThirdFork_alb$geometry, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(NLCD, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
+</div>
 </div>
 
 

@@ -7,10 +7,11 @@ title: Visualization and Interactive Mapping
 
 R is fantastic for making high-quality publication quality static maps, and for generating repetitive graphics through scripts, and we've scattered the use of base plotting and using `ggplot` for making maps through exercises so far. There are also a number of packages now in R that  link R code to plotting libraries developed in Javascript (or other languages) for interactive plotting and web integration, and we'll take a brief look here.
 
+### ggplot2
 We've already been using ggplot throughout the workshop, but let's revisit making a basic `ggplot` map and then explore the `plotly` package and it's integration with `ggplot`. 
 
 Below we pull in US states as an `sf` object using the `USAboundaries` package (notice packages are quickly moving to the `sf` framework).  We then use `dplyr` to filter just CONUS states and create a new 'perc_water' variable, and then make a static `ggplot` map.
-```{r ggplot, eval=T}
+```{r ggplot, message=FALSE, warning=FALSE, error=FALSE}
 # create sf object for states, estimate and add area
 library(USAboundaries)
 library(dplyr)
@@ -29,8 +30,9 @@ ggplot(states) +
   ggtitle("Percent Water by State")
 ```
 
+### Plotly and ggplotly
 We created a pretty nice static map of a mocked-up variable for CONUS using `ggplot2`. Using the development version of `plotly`, we can make an interactive map directly with our `sf` states object - take a minute to explore the interactive map created and tools in the menu bar (click the zoom button or view in browser button in your viewer pane in RStudio):
-```{r ggplotly, eval=T}
+```{r ggplotly, message=FALSE, warning=FALSE, error=FALSE}
 library(plotly)
 plot_ly(states)
 ```
@@ -41,7 +43,7 @@ This makes a a nice basic interactive map, next we'll add a few arguments:
 * `color` identifies the column in the data to map
 * `showlegend` can toggle the legend for the splitting variable, here we don’t need it
 * `alpha` sets the transparency of the polygons, we don’t see the polygon borders if we set the transparency as completely opaque
-```{r plotly2, eval=T}
+```{r plotly2, message=FALSE, warning=FALSE, error=FALSE}
 plot_ly(states, split = ~state_abbr, color = ~ perc_water , showlegend = F, alpha = 1)
 ```
 
@@ -52,10 +54,11 @@ p <- ggplot(nc) + geom_sf(aes(fill = AREA))
 ggplotly(p)
 ```
 
+### Leaflet
 [Leaflet](https://leafletjs.com/) is an extremely popular open-source javascript library for interactive web mapping, and the `leaflet` R package allows R users to create Leaflet maps from R. `Leaflet` can plot `sf` or `sp` objects, or x / y coordinates, and can plot points, lines or polygons. There are a number of [base layers you can choose from](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).  It's worth spending some time exploring the excellent [Leaflet for R site](https://rstudio.github.io/leaflet/).
 
 Here we make the simplest of leaflet maps:
-```{r leaflet, eval=T}
+```{r leaflet, message=FALSE, warning=FALSE, error=FALSE}
 library(leaflet)
 
 m <- leaflet() %>%
@@ -64,11 +67,55 @@ m <- leaflet() %>%
 m  # Print the map
 ```
 
-Note the use of chained operators we've been using in `dplyr` in our `leaflet` code.
+### Mapview
+[Mapview](https://r-spatial.github.io/mapview/index.html) is a package designed for quick and easy interactive visualizations of spatial data - it makes use of `leaflet` but simplifies mapping functions compared to the `leaflet` package.  Both are handy, but similar enough that we'll focus on additional plotting of spatial data on basemaps using `mapview` rather than `leaflet`.
 
-Make a plotly figure
-```{r plotly, eval=T}
-library(plotly)
-p <- plot_ly(midwest, x = ~percollege, color = ~state, type = "box")
-p
+`mapview` directly supports using `sf`, `sp`, and `raster` objects. Let's return to some of the previous data we used and view using `mapview` - if you don't still have the 'stations_sf' data frame loaded in your environment, reload using the steps in `DataRetrieval` section of previous workshop section.
+```{r mapview, message=FALSE, warning=FALSE, error=FALSE}
+library(mapview)
+library(sf)
+stations_sf <-st_read('data/stations.shp')
+mapview(stations_sf)
+```
+
+It's easy to layer features with `mapview` - you can supply a list of objects to `mapview` or use + syntax as with `ggplot` - here we'll add a layer for the watershed we used previously:
+```{r mapview2, message=FALSE, warning=FALSE, error=FALSE}
+ThirdFork <-st_read('data/Third_Fork.shp')
+mapview(stations_sf) + ThirdFork 
+```
+
+**Quick Exercise**
+Glance through the [`mapview` basics](https://r-spatial.github.io/mapview/articles/articles/mapview_01-basics.html) and adjust legend and attributes.  Take a look at [`mapview` advanced controls](https://r-spatial.github.io/mapview/articles/articles/mapview_02-advanced.html) as well and try plotting stations and watershed together again with black outline and transparent fill with the watershed.
+
+Let's plot some raster data as well and then explore cool features like sync, lattice view and swipe in `mapview`- we'll again recycle some raster data from previous exercise, if not loaded in environment anymore go to SpatialOperations1 or SpatialOperations2 where we loaded sample raster data and run code to pull rasters in:
+```{r mapview_raster, message=FALSE, warning=FALSE, error=FALSE}
+library(raster)
+NED <- raster('data/NED.tif')
+mapview(stations_sf) + mapview(ThirdFork, alpha.regions=0) + NED
+```
+
+Notice how we controlled transparency in order to plot the elevation raster and watershed together - and notice how in map we can toggle our layers on and off, as well as change our base maps.
+
+**QuickExercise**
+Try plotting separately or together any other of the data we've looked at with `mapview`, or bring in some additional raster data layers with the `FedData` package and load in `mapview`
+
+Sync, lattice, swipe - first we'll sync two maps of our gage stations and NHD flowlines - try adding a third or fourth sync layer if you want:
+```{r sync, message=FALSE, warning=FALSE, error=FALSE}
+NHD <- st_read('data/NHD_ThirdFork.shp')
+m1 <- mapview(stations_sf, map.types = "Esri.WorldImagery")
+m2 <- mapview(NHD)
+sync(m1, m2)
+```
+
+`latticeView` will render small multiples without synchronizing the views:
+```{r latticeView, message=FALSE, warning=FALSE, error=FALSE}
+latticeView(m1, m2)
+```
+
+`slideView` is same functionality as map slider in ArcGIS, seamlessly integrated into R - here we'll try with two of the raster layers pulled down using `FedData`:
+```{r sliderView, message=FALSE, warning=FALSE, error=FALSE}
+# load the NLCD and NED rasters masked to ThirdFork watershed
+NLCD <- raster('data/NLCD.tif')
+NED <- projectRaster(NED, crs=projection(NLCD))
+slideView(NED, NLCD)
 ```

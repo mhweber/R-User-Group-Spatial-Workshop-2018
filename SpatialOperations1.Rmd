@@ -170,12 +170,12 @@ ggplot(ThirdFork) + geom_sf() + ggtitle("Third Fork Watershed") +
 
 FedData still uses sp rather than `sf` objects, so we could have loaded our shapefile template in with `readOGR` from `rgdal`, but we'll just convert from `sf` to `sp`
 ```{r ned, message=FALSE, warning=FALSE, error=FALSE}
-ThirdFork <- as(ThirdFork,'Spatial')
+ThirdFork_sp <- as(ThirdFork,'Spatial')
 # We can pull in elevation data for this template watershed with FedData
-NED <- get_ned(template = ThirdFork,
+NED <- get_ned(template = ThirdFork_sp,
                label = "ThirdFork")
 raster::plot(NED)
-plot(ThirdFork, add=T)
+plot(ThirdFork_sp, add=T)
 ```
 
 The `get_ned` function from `FedData` grabs a corresponding online tile of NED (National Elevation Data) from Amazon - you can simply type get_ned at console to examine the function and see how it works.  
@@ -183,8 +183,8 @@ The `get_ned` function from `FedData` grabs a corresponding online tile of NED (
 We saw the `getData` function in the `raster` package in the *SpatialObjects* section. Is `get_ned` from `FedData` any differet?  We can mask to the watershed as we did earlier - notice we don't need to use `crop` then `mask`...why?
 ```{r mask_wat, message=FALSE, warning=FALSE, error=FALSE}
 library(raster)
-NED <- mask(NED, ThirdFork)
-plot(ThirdFork, main="Elevation (m) in Third Fork Watershed", axes=T)
+NED <- mask(NED, ThirdFork_sp)
+plot(ThirdFork_sp, main="Elevation (m) in Third Fork Watershed", axes=T)
 plot(NED, add=TRUE)
 ```
 
@@ -194,7 +194,7 @@ library(rasterVis)
 histogram(NED, main="Elevation In ThirdFork")
 densityplot(NED, main="Elevation In ThirdFork")
 p <- levelplot(NED, layers=1, margin = list(FUN = median))
-p + layer(sp.polygons(ThirdFork, lwd=2, col='black'))
+p + layer(sp.polygons(ThirdFork_sp, lwd=2, col='black'))
 ```
 
 We can easily do some terrain analysis with `raster` as well:
