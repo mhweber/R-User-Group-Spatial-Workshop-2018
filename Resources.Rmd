@@ -8,6 +8,8 @@ title: "Resources"
 * [**Geocomputation with R**](https://geocompr.robinlovelace.net/)
 * [**R Spatial Task View**](https://cran.r-project.org/web/views/Spatial.html)
 * [**Introduction to Mapping and Spatial Analysis with R**](https://cengel.github.io/rspatial/)
+* [**Google's R Style Guide**](https://google.github.io/styleguide/Rguide.xml)
+* [**Advanced R by Hadley Wickham**](http://adv-r.had.co.nz/)
 
 ### R sp Resources
 
