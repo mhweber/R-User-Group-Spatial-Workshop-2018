@@ -83,7 +83,7 @@ install.packages("osmdata")
 install.packages('FedData')
 install.packages("mapview")
 # From GitHub
-# devtools::install_github("r-spatial/mapview@develop")
+devtools::install_github("r-spatial/mapview@develop")
 ```
 
 Installing `rgdal` will install the foundation spatial package, `sp`, as a dependency, and installing `tidyverse` will install both `ggplot2` and `dplyr`.
