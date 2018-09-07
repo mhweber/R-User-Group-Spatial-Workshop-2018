@@ -107,15 +107,22 @@ m2 <- mapview(NHD)
 sync(m1, m2)
 ```
 
+<br>
+
 `latticeView` will render small multiples without synchronizing the views:
+
 ```{r latticeView, message=FALSE, warning=FALSE, error=FALSE}
 latticeView(m1, m2)
 ```
 
-`slideView` is same functionality as map slider in ArcGIS, seamlessly integrated into R - here we'll try with two of the raster layers pulled down using `FedData`:
-```{r sliderView, message=FALSE, warning=FALSE, error=FALSE, echo = T, eval=T}
+<br>
+
+`slideView` is same functionality as map slider in ArcGIS, seamlessly integrated into R - here we'll try with two of the raster layers pulled down using `FedData` -  this code should work for you, however the slider does not show properly on GitHub pages so I'm not showing the result below:
+
+```{r sliderView, message=FALSE, warning=FALSE, error=FALSE, echo = T, eval=F}
 # load the NLCD and NED rasters masked to ThirdFork watershed
+
 NLCD <- raster('data/NLCD.tif')
 NED <- projectRaster(NED, crs=projection(NLCD))
-slideView(NED, NLCD)
+slideView(NED, NLCD,label1 = "Elevation", label2 = "Landcover")
 ```
