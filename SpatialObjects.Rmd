@@ -137,7 +137,7 @@ plot(pts, axes=T)
 pointLabel(coordinates(pts),labels=pts$cities)
 ```
 
-Pop quiz - why doesn't this initial map look quite right?
+If we tried to map any other data with our cities now it would fail - see if you can figure out why.
 
 Hint - run summary on pts:
 ```{r summary, message=FALSE, warning=FALSE, error=FALSE}
@@ -553,13 +553,14 @@ There is a weatlh of open spatial data accessible online now via static URLs or 
 
 From static URLs, we can simply use `download.file()` as in this example from [Geocomputation with R](https://geocompr.robinlovelace.net/read-write.html) using data from the [National Park data catalog](https://catalog.data.gov/dataset/national-parks):
 ```{r, eval=FALSE}
-download.file(url = "http://nrdata.nps.gov/programs/lands/nps_boundary.zip",
-              destfile = "nps_boundary.zip")
-unzip(zipfile = "nps_boundary.zip")
-f = "temp/Current_Shapes/Data_Store/06-06-12_Posting/nps_boundary.shp"
+# download.file(url = "http://nrdata.nps.gov/programs/lands/nps_boundary.zip",
+#               destfile = "nps_boundary.zip")
+# unzip(zipfile = "nps_boundary.zip")
+f = "data/nps_boundary.shp"
 usa_parks <- st_read(dsn = f)
 ca_parks <- subset(usa_parks, STATE =='CA')
-plot(ca_parks$geometry, axes=T)
+plot(ca_parks$geometry, axes=T, main = 'National Parks in CA', col='green')
+plot(US[US$NAME_1=='California',], add=T)
 ```
 
 There are also a number of R packages written specifically to provide access to geospatial data - below are a few and we'll step through some examples of pulling in data using some of these packages.
