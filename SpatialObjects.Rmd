@@ -581,7 +581,7 @@ datapackages = tibble::tribble(
 knitr::kable(datapackages, caption = "Example R packages for spatial data retrieval.")
 ```
 
-Below is an example of pulling in US states using the `rnaturalearth` package - note that the default is to pull in data as `sp` objects and we coerce to `sf`.  Also take a look at the chained operation using dplyr and see if this makes sense to you - we'll eplore more in following section.  Try changing the filter or a parameter in ggplot.
+Below is an example of pulling in US states using the `rnaturalearth` package - note that the default is to pull in data as `sp` objects and we coerce to `sf`.  Also take a look at the chained operation using dplyr and see if this makes sense to you - we'll explore more in following section.  Try changing the filter or a parameter in ggplot.
 ```{r naturalearth, , message=FALSE, warning=FALSE, error=FALSE}
 library(rnaturalearth)
 library(dplyr)
