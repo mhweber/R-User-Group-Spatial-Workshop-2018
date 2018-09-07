@@ -2,7 +2,7 @@
 title: "Resources"
 ---
 
-### General R Spatial Resources
+### General R / R Spatial Resources
 
 * [**R Spatial**](http://rspatial.org/spatial/)
 * [**Geocomputation with R**](https://geocompr.robinlovelace.net/)
@@ -10,6 +10,7 @@ title: "Resources"
 * [**Introduction to Mapping and Spatial Analysis with R**](https://cengel.github.io/rspatial/)
 * [**Google's R Style Guide**](https://google.github.io/styleguide/Rguide.xml)
 * [**Advanced R by Hadley Wickham**](http://adv-r.had.co.nz/)
+* [**Data Camp Spatial Data with R Track**](https://www.datacamp.com/tracks/spatial-data-with-r)
 
 ### R sp Resources
 

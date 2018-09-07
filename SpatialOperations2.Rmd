@@ -65,31 +65,68 @@ ThirdForkFlow$DOWY <- yday(ThirdForkFlow$dateTime) + ifelse(month(ThirdForkFlow$
 Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn't have data in that date range.
 
 ### Summarize NHD in watershed
-```{r nhd, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+The next couple exercises we'll look at summarizing and extracting data by polygons and points.  First let's review summarizing (aggregating) point or line data with polygon data using `sf` and `dplyr`.  We'll use our practice watershed and get the total stream length in the watershed using a shapefile of National Hydrography Data (NHD) flowlines.  Note that I read in this NHD data using the`FedData` package, but it takes a while so I've put the downloaded data clipped to our watershed in the workshop 'data' folder. 
 
+```{r nhd, message=FALSE, warning=FALSE, error=FALSE}
+library(dplyr)
+NHD <- st_read('data/NHD_ThirdFork.shp')
+plot(ThirdFork$geometry, axes=T)
+plot(NHD$geometry, add=T, col='blue')
 ```
 
+
+**Quick Exercise**
+Try generating a spatial summary using the same type of chained `dplyr` operation we used in SpatialOperations1 with schools and EnviroAtlas on your own - check the code if you get stuck.
+```{r nhd2, message=FALSE, warning=FALSE, error=FALSE}
+stream_length = ThirdFork %>%
+  st_join(NHD) %>%
+  summarize(StreamLength = sum(LngthKM, na.rm = TRUE))
+```
+
+This example is a bit contrived since we already know that all the stream lines are within the watershed, so we don't really need to do a spatial join, we can just sum our 'LngthKM' variable in the 'NHD' object - you can do this to verify the result.
+
+
+### Raster Extract
+It's easy using the `raster` package to extract raster data for a set of points. Here we use our 'stations_sf' data our our elevation raster (we can read in with raster('data/NED.tif')).  The operation is simply 'extract' - if you feel advenurous see if you can figure out on your own (hint - data must be in same crs), or simply try to follow what code is doing.
+```{r extract, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+library(raster)
+stations_sf <-st_read('data/stations.shp')
+elev <- raster('data/NED.tif')
+st_crs(stations_sf)$proj4string == projection(elev)
+stations_sf <- st_transform(stations_sf, crs=(projection(elev)))
+stations_sf$elevation <- extract(elev, stations_sf)
+# What am I doing on this next line?
+stations_sf[!is.na(stations_sf$elevation),]
+```
 ### Zonal Stats
 ```{r zonal, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 
 ```
 ### Summarize Categorical Raster
-```{r nlcd, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
-library(FedData)
+```{r nlcd, message=FALSE, warning=FALSE, error=FALSE}
+# library(FedData)
 library(raster)
-NLCD <- get_nlcd(template = as(ThirdFork,'Spatial'),
-                 year = 2011,
-                 dataset = "landcover",
-                 label = "ThirdFork")
+# NLCD <- get_nlcd(template = as(ThirdFork,'Spatial'),
+#                  year = 2011,
+#                  dataset = "landcover",
+#                  label = "ThirdFork")
+NLCD <- raster('data/NLCD.tif')
 proj4string(NLCD)
 # we'll project to albers
 ThirdFork_alb <- st_transform(ThirdFork, crs=projection(NLCD))
-NLCD <- mask(NLCD, as(ThirdFork_alb,'Spatial'))
+# NLCD <- mask(NLCD, as(ThirdFork_alb,'Spatial'))
 plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
 plot(NLCD, add=TRUE)
 ```
 
-```{r nlcd2, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+Why is it all black around my NLCD raster outside the watershed?  Something about how `raster` is setting NA values for our raster?
+```{r nlcd2, message=FALSE, warning=FALSE, error=FALSE}
+NLCD <- reclassify(NLCD, cbind(0, NA))
+plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
+plot(NLCD, add=TRUE)
+```
+
+```{r nlcd3, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 NAvalue(NLCD) <-0 
 plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
 plot(NLCD, add=TRUE)

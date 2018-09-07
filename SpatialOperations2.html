@@ -125,6 +125,9 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -384,15 +387,15 @@ siteInfo &lt;-<span class="st"> </span><span class="kw">attr</span>(Durham_Stati
 stations_sf =<span class="st"> </span><span class="kw">st_as_sf</span>(siteInfo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;dec_lon_va&quot;</span>, <span class="st">&quot;dec_lat_va&quot;</span>), <span class="dt">crs =</span> <span class="dv">4269</span>,<span class="dt">agr =</span> <span class="st">&quot;constant&quot;</span>)
 
 ThirdFork &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_Fork.shp&#39;</span>)</code></pre></div>
-<pre><code>## Reading layer `Third_Fork&#39; from data source `/home/marc/GitProjects/R-User-Group-Spatial-Workshop-2018/data/Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
+<pre><code>## Reading layer `Third_Fork&#39; from data source `F:\Git Projects\R-User-Group-Spatial-Workshop-2018\data\Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 1 feature and 21 fields
 ## geometry type:  POLYGON
 ## dimension:      XY
 ## bbox:           xmin: -78.96945 ymin: 35.90316 xmax: -78.86583 ymax: 35.99798
 ## epsg (SRID):    4269
 ## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ThirdFork$geometry, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(stations_sf$geometry, <span class="dt">add=</span>T)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ThirdFork<span class="op">$</span>geometry, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(stations_sf<span class="op">$</span>geometry, <span class="dt">add=</span>T)
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;NWIS Stations and </span><span class="ch">\n</span><span class="st">Third Fork Watershed&#39;</span>)</code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/NWIS-1.png" width="672" /></p>
 <p>We could clip our sites to our watershed, and create plots of hourly discharge for the three sites in our watershed - first we use spatial indexing to clip our stations:</p>
@@ -408,7 +411,7 @@ start.date &lt;-<span class="st"> &quot;2015-10-01&quot;</span>
 end.date &lt;-<span class="st"> &quot;2018-03-30&quot;</span>
 
 <span class="co"># get NWIS data  - I&#39;m passing all three station numbers to readNWISuv</span>
-ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">readNWISuv</span>(<span class="dt">siteNumbers =</span> ThirdForkSites$site_no,
+ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">readNWISuv</span>(<span class="dt">siteNumbers =</span> ThirdForkSites<span class="op">$</span>site_no,
                      <span class="dt">parameterCd =</span> pCode,
                      <span class="dt">startDate =</span> start.date,
                      <span class="dt">endDate =</span> end.date)
@@ -420,37 +423,75 @@ ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">addWaterYear</span>
 ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">renameNWISColumns</span>(ThirdForkFlow)
 
 <span class="co"># here we&#39;ll calculate and add approximate day of the WATER YEAR (doesn&#39;t take leap year into account)</span>
-ThirdForkFlow$DOWY &lt;-<span class="st"> </span><span class="kw">yday</span>(ThirdForkFlow$dateTime) +<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">month</span>(ThirdForkFlow$dateTime) &gt;<span class="st"> </span><span class="dv">9</span>, -<span class="dv">273</span>, <span class="dv">92</span>)
+ThirdForkFlow<span class="op">$</span>DOWY &lt;-<span class="st"> </span><span class="kw">yday</span>(ThirdForkFlow<span class="op">$</span>dateTime) <span class="op">+</span><span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">month</span>(ThirdForkFlow<span class="op">$</span>dateTime) <span class="op">&gt;</span><span class="st"> </span><span class="dv">9</span>, <span class="op">-</span><span class="dv">273</span>, <span class="dv">92</span>)
 
 <span class="co"># plot flow</span>
-(plot1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>() +<span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">data=</span>ThirdForkFlow, <span class="kw">aes</span>(<span class="dt">x=</span>DOWY, <span class="dt">y=</span>Flow_Inst), <span class="dt">color=</span><span class="st">&quot;dodgerblue&quot;</span>) +<span class="st"> </span>
-<span class="st">    </span><span class="kw">facet_grid</span>(waterYear~., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>) +
+(plot1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">data=</span>ThirdForkFlow, <span class="kw">aes</span>(<span class="dt">x=</span>DOWY, <span class="dt">y=</span>Flow_Inst), <span class="dt">color=</span><span class="st">&quot;dodgerblue&quot;</span>) <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">facet_grid</span>(waterYear<span class="op">~</span>., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="op">+</span>
 <span class="st">    </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Hourly Flow (cfs)&quot;</span>, <span class="dt">x=</span> <span class="st">&quot;Day of Water Year&quot;</span>, <span class="dt">title=</span><span class="st">&quot;Hourly Discharge USGS Stations in Third Fork Watershed&quot;</span>))</code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/flow2-1.png" width="672" /></p>
 <p>Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn’t have data in that date range.</p>
 </div>
 <div id="summarize-nhd-in-watershed" class="section level3">
 <h3>Summarize NHD in watershed</h3>
+<p>The next couple exercises we’ll look at summarizing and extracting data by polygons and points. First let’s review summarizing (aggregating) point or line data with polygon data using <code>sf</code> and <code>dplyr</code>. We’ll use our practice watershed and get the total stream length in the watershed using a shapefile of National Hydrography Data (NHD) flowlines. Note that I read in this NHD data using the<code>FedData</code> package, but it takes a while so I’ve put the downloaded data clipped to our watershed in the workshop ‘data’ folder.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
+NHD &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/NHD_ThirdFork.shp&#39;</span>)</code></pre></div>
+<pre><code>## Reading layer `NHD_ThirdFork&#39; from data source `F:\Git Projects\R-User-Group-Spatial-Workshop-2018\data\NHD_ThirdFork.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 134 features and 16 fields
+## geometry type:  LINESTRING
+## dimension:      XY
+## bbox:           xmin: -78.9694 ymin: 35.90328 xmax: -78.87323 ymax: 35.99151
+## epsg (SRID):    4269
+## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ThirdFork<span class="op">$</span>geometry, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(NHD<span class="op">$</span>geometry, <span class="dt">add=</span>T, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>)</code></pre></div>
+<p><img src="SpatialOperations2_files/figure-html/nhd-1.png" width="672" /></p>
+<p><strong>Quick Exercise</strong> Try generating a spatial summary using the same type of chained <code>dplyr</code> operation we used in SpatialOperations1 with schools and EnviroAtlas on your own - check the code if you get stuck.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stream_length =<span class="st"> </span>ThirdFork <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">st_join</span>(NHD) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">StreamLength =</span> <span class="kw">sum</span>(LngthKM, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</code></pre></div>
+<p>This example is a bit contrived since we already know that all the stream lines are within the watershed, so we don’t really need to do a spatial join, we can just sum our ‘LngthKM’ variable in the ‘NHD’ object - you can do this to verify the result.</p>
+</div>
+<div id="raster-extract" class="section level3">
+<h3>Raster Extract</h3>
+<p>It’s easy using the <code>raster</code> package to extract raster data for a set of points. Here we use our ‘stations_sf’ data our our elevation raster (we can read in with raster(‘data/NED.tif’)). The operation is simply ‘extract’ - if you feel advenurous see if you can figure out on your own (hint - data must be in same crs), or simply try to follow what code is doing.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(raster)
+stations_sf &lt;-<span class="kw">st_read</span>(<span class="st">&#39;data/stations.shp&#39;</span>)
+elev &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="st">&#39;data/NED.tif&#39;</span>)
+<span class="kw">st_crs</span>(stations_sf)<span class="op">$</span>proj4string <span class="op">==</span><span class="st"> </span><span class="kw">projection</span>(elev)
+stations_sf &lt;-<span class="st"> </span><span class="kw">st_transform</span>(stations_sf, <span class="dt">crs=</span>(<span class="kw">projection</span>(elev)))
+stations_sf<span class="op">$</span>elevation &lt;-<span class="st"> </span><span class="kw">extract</span>(elev, stations_sf)
+<span class="co"># What am I doing on this next line?</span>
+stations_sf[<span class="op">!</span><span class="kw">is.na</span>(stations_sf<span class="op">$</span>elevation),]</code></pre></div>
 </div>
 <div id="zonal-stats" class="section level3">
 <h3>Zonal Stats</h3>
 </div>
 <div id="summarize-categorical-raster" class="section level3">
 <h3>Summarize Categorical Raster</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FedData)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># library(FedData)</span>
 <span class="kw">library</span>(raster)
-NLCD &lt;-<span class="st"> </span><span class="kw">get_nlcd</span>(<span class="dt">template =</span> <span class="kw">as</span>(ThirdFork,<span class="st">&#39;Spatial&#39;</span>),
-                 <span class="dt">year =</span> <span class="dv">2011</span>,
-                 <span class="dt">dataset =</span> <span class="st">&quot;landcover&quot;</span>,
-                 <span class="dt">label =</span> <span class="st">&quot;ThirdFork&quot;</span>)
-<span class="kw">proj4string</span>(NLCD)
-<span class="co"># we&#39;ll project to albers</span>
+<span class="co"># NLCD &lt;- get_nlcd(template = as(ThirdFork,&#39;Spatial&#39;),</span>
+<span class="co">#                  year = 2011,</span>
+<span class="co">#                  dataset = &quot;landcover&quot;,</span>
+<span class="co">#                  label = &quot;ThirdFork&quot;)</span>
+NLCD &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="st">&#39;data/NLCD.tif&#39;</span>)
+<span class="kw">proj4string</span>(NLCD)</code></pre></div>
+<pre><code>## [1] &quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># we&#39;ll project to albers</span>
 ThirdFork_alb &lt;-<span class="st"> </span><span class="kw">st_transform</span>(ThirdFork, <span class="dt">crs=</span><span class="kw">projection</span>(NLCD))
-NLCD &lt;-<span class="st"> </span><span class="kw">mask</span>(NLCD, <span class="kw">as</span>(ThirdFork_alb,<span class="st">&#39;Spatial&#39;</span>))
-<span class="kw">plot</span>(ThirdFork_alb$geometry, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
+<span class="co"># NLCD &lt;- mask(NLCD, as(ThirdFork_alb,&#39;Spatial&#39;))</span>
+<span class="kw">plot</span>(ThirdFork_alb<span class="op">$</span>geometry, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
 <span class="kw">plot</span>(NLCD, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p><img src="SpatialOperations2_files/figure-html/nlcd-1.png" width="672" /></p>
+<p>Why is it all black around my NLCD raster outside the watershed? Something about how <code>raster</code> is setting NA values for our raster?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">NLCD &lt;-<span class="st"> </span><span class="kw">reclassify</span>(NLCD, <span class="kw">cbind</span>(<span class="dv">0</span>, <span class="ot">NA</span>))
+<span class="kw">plot</span>(ThirdFork_alb<span class="op">$</span>geometry, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(NLCD, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p><img src="SpatialOperations2_files/figure-html/nlcd2-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NAvalue</span>(NLCD) &lt;-<span class="dv">0</span> 
-<span class="kw">plot</span>(ThirdFork_alb$geometry, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
+<span class="kw">plot</span>(ThirdFork_alb<span class="op">$</span>geometry, <span class="dt">main=</span><span class="st">&quot;Elevation (m) in Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
 <span class="kw">plot</span>(NLCD, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
 </div>
 </div>
