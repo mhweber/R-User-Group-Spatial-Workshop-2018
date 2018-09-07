@@ -98,11 +98,31 @@ stations_sf$elevation <- extract(elev, stations_sf)
 # What am I doing on this next line?
 stations_sf[!is.na(stations_sf$elevation),]
 ```
-### Zonal Stats
-```{r zonal, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 
+### Zonal Stats
+Here we look at one of the most classic GIS exercises - summarizing landscape information within a watershed.  We can again use the `extract` function from the `raster` package to get watershed statistics:
+```{r zonal, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+meanelev <- extract(elev, ThirdFork, fun = mean, na.rm = T, small = T)
+meanelev
 ```
+
+I added a few extra parameters here, explore by using `help(extract)`. Note also I passed an `sf` object to the y parameter in the `extract` function, but in help it describes options for y as being `sp` objects....yet it worked.  I was surprised by this!
+
+If you feel like exploring more, see a [neat example put together by Ryan Hill and Marcus Beck](https://ryan-hill.github.io/sfs-r-gis-2018/modules/rasters/extract-raster-data-r/) of doing a multi-watershed delineation and metric calculation by leveraging the StreamStat Service API in R.
+
+We could also run extract for our watershed on a raster stack or raster brick.  
+
+**Quick Exercise**
+Use `terrain` function in `raster` package to generate a terrain raster for our watershed just as we did in Spatial Operations 1 and generate metrics for the terrain `raster brick` - try on your own, answer below.
+```{r zonal2, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
+wat_terrain <- terrain(elev, opt = c("slope","aspect", "tri",
+                                          "tpi","roughness","flowdir"))
+metrics <- extract(wat_terrain, ThirdFork, fun = mean, na.rm = T, small = T)
+print(metrics)
+```
+
 ### Summarize Categorical Raster
+Let's load NLCD (National Land Cover Data) to look at a categorical raster - note in code below I've commented out downloading using FedData - it takes a while so I've loaded it into the workshop data folder.
 ```{r nlcd, message=FALSE, warning=FALSE, error=FALSE}
 # library(FedData)
 library(raster)
@@ -114,20 +134,56 @@ NLCD <- raster('data/NLCD.tif')
 proj4string(NLCD)
 # we'll project to albers
 ThirdFork_alb <- st_transform(ThirdFork, crs=projection(NLCD))
-# NLCD <- mask(NLCD, as(ThirdFork_alb,'Spatial'))
-plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
+NLCD <- mask(NLCD, as(ThirdFork_alb,'Spatial'))
+NLCD <- reclassify(NLCD, cbind(0, NA)) # A little trick to use since raster is using 0 as NA and plotting the value
+plot(ThirdFork_alb$geometry, main="Land Cover in \nThird Fork Watershed", axes=T)
 plot(NLCD, add=TRUE)
 ```
 
-Why is it all black around my NLCD raster outside the watershed?  Something about how `raster` is setting NA values for our raster?
-```{r nlcd2, message=FALSE, warning=FALSE, error=FALSE}
-NLCD <- reclassify(NLCD, cbind(0, NA))
-plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
-plot(NLCD, add=TRUE)
+So how do I get actual names of land cover values into my raster? There are a few ways we can explore our raster values, create factor levels and a 'raster attribute table' for the raster:
+```{r nlcd3, message=FALSE, warning=FALSE, error=FALSE}
+library(rasterVis)
+hist(NLCD)
+NLCD <- ratify(NLCD)
+rat <- levels(NLCD)[[1]]
+rat$legend <- c("Water","Dev OS","Dev LI","Dev MI","Dev HI","Barren","Dec For","Ev For","Mix For","Shrub","Grass","Pasture","Wd Wet","Herb Wet")
+levels(NLCD) <- rat
+
+## Plot
+levelplot(NLCD, col.regions=rev(terrain.colors(15)))
 ```
 
-```{r nlcd3, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
-NAvalue(NLCD) <-0 
-plot(ThirdFork_alb$geometry, main="Elevation (m) in Third Fork Watershed", axes=T)
-plot(NLCD, add=TRUE)
+This is just one way to do it, and colors aren't ideal - feel free to experiment.
+
+OK, now let's try summarizing our categorical raster - in order to make it more realistic, we'll read in a set of NHDPlus catchments within our ThirdFork watershed (so we'll have more than one feature to summarize over).
+```{r tabulate, message=FALSE, warning=FALSE, error=FALSE}
+Catchments <- st_read('data/Third_ForkCats.shp')
+# Need to use projected CRS
+Catchments <- st_transform(Catchments, crs=projection(NLCD))
+plot(NLCD, axes=T, main="NHDPlus Catchments in \nThird Fork Watershed with NLCD")
+plot(Catchments, add=T, col = NA, bord='black')
+```
+
+Here is how I've put together code to do categorical raster summarization by polygon features - notice older functions I'm using that could be moved to chained `dplyr` operations and improved - see if you follow steps and we can talk through, and see if this triggers ideas for ways to improve this code.  Additionally, [here is a synopsis of doing same thing put together by Zev Ross](http://zevross.com/blog/2015/03/30/map-and-analyze-raster-data-in-r/) - notice he includes a nice comparison of his results with ArdGIS Tabulate Area tool.  
+```{r tabulate2, message=FALSE, warning=FALSE, error=FALSE}
+e = extract(NLCD,Catchments)
+et = lapply(e,table)
+library(reshape)
+t <- melt(et)
+t.cast <- cast(t, L1 ~ Var.1, sum)
+head(t.cast)
+names(t.cast)[1] <- 'FeatureID'
+nlcd_stats <- data.frame(t.cast)
+names(nlcd_stats)[2:15] <- c("Water","Dev OS","Dev LI","Dev MI","Dev HI","Barren","Dec For","Ev For","Mix For","Shrub","Grass","Pasture","Wd Wet","Herb Wet")
+head(nlcd_stats)
+
+# Convert raw sums of categories to percent:
+nlcd_stats$Total <- rowSums(nlcd_stats[,2:15])
+head(nlcd_stats)
+#calculate %s for each nlcd category
+for (i in 2:15){
+nlcd_stats[,i] = 100.0 * nlcd_stats[,i]/nlcd_stats[,16] 
+}
+nlcd_stats[,1] <- Catchments$FEATUREID[match(nlcd_stats$FeatureID, row.names(Catchments))]
+head(nlcd_stats)
 ```
