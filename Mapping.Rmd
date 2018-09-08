@@ -31,13 +31,13 @@ ggplot(states) +
 ```
 
 ### Plotly and ggplotly
-We created a pretty nice static map of a mocked-up variable for CONUS using `ggplot2`. Using the development version of `plotly`, we can make an interactive map directly with our `sf` states object - take a minute to explore the interactive map created and tools in the menu bar (click the zoom button or view in browser button in your viewer pane in RStudio):
+Now that we've shown a nice static map of a mocked-up variable for CONUS using `ggplot2`, we'll use the development version of `plotly` and make an interactive map directly with our `sf` states object - take a minute to explore the interactive map created and tools in the menu bar (click the zoom button or view in browser button in your viewer pane in RStudio):
 ```{r ggplotly, message=FALSE, warning=FALSE, error=FALSE}
 library(plotly)
 plot_ly(states)
 ```
 
-This makes a a nice basic interactive map, next we'll add a few arguments:
+This makes a basic interactive map; next we'll add a few arguments:
 
 * `split` defines a grouping variable using a column in the input data, without this the color wan’t map to anything and it also defines what we see on mouse-over
 * `color` identifies the column in the data to map
@@ -126,3 +126,59 @@ NLCD <- raster('data/NLCD.tif')
 NED <- projectRaster(NED, crs=projection(NLCD))
 slideView(NED, NLCD,label1 = "Elevation", label2 = "Landcover")
 ```
+
+### micromap and tmap
+If time allows, let's take a quick look at a couple packages for exploratory spatial data analysis, the `micromap` package and the `tmap` package. 
+
+`tmap` is a newer R package for creating thematic maps based on the grammar of graphics (gg) approach used with `ggplot2`. An [article](https://www.jstatsoft.org/article/view/v084i06) was recently published in the Journal of Statistical Software that describes the package in detail, the the [GitHub repository](https://github.com/mtennekes/tmap) has a wealth of vignettes, tutorials, resources, and links to examples from the JSS article.
+
+So let's take our NLCD data summarized to NHDPLus catchments for the Third Fork watershed and generate a simple choropleth map - we'll need to join our results from NLCD summarization to the catchments, and then we can aggregate a NLCD categories for display:
+```{r tmap, message=FALSE, warning=FALSE, error=FALSE, echo = T}
+library(tmap)
+library(dplyr)
+# First we need to tie our results of summarizing 
+# land cover for catchments to our catchment shapefile
+# make our 'join' attribute names match - you can use 'rename' for this, I prefer indexing names of data frame
+# if nlcd_stats file and Catchments files not still in memory:
+nlcd_stats <- read.csv('data/nlcd_stats.csv')
+Catchments <- st_read('data/Third_ForkCats.shp')
+names(nlcd_stats)[1] <- 'FEATUREID'
+Catchments <- left_join(Catchments, nlcd_stats, by='FEATUREID')
+Cat_NLCD<- Catchments %>%
+  mutate(Urban = (Dev.OS + Dev.LI + Dev.MI + Dev.HI),
+            Forested = (Dec.For + Ev.For +Mix.For))
+# Cat_NLCD<- Catchments %>%
+#   mutate(Urban = (`Dev OS` + `Dev LI` +`Dev MI` +`Dev HI`),
+#             Forested = (`Dec For` +`Ev For` +`Mix For`))
+qtm(shp = Cat_NLCD, fill = c("Urban", "Forested"), fill.palette = c("Blues"), ncol = 2)
+```
+
+That a nice informative map with just a couple lines of code!
+
+We can do even more with a linked micromap using the `micromap` package that Mike and I helped write.  A linked micromap is a graphic that simultaneously summarizes and displays statistical and geographic distributions by a color-coded link between statistical summaries of polygons to a series of small maps. The package is described in full in an [article](https://www.jstatsoft.org/article/view/v063i02) published in the Journal of Statistical Software. This figure shows the four elements of a linked micromap.
+
+![Linked Micromap Elements](/R-User-Group-Spatial-Workshop-2018/img/Linked Micromap Elements.png)
+
+A recent study by [McManus et al. (2016)](https://onlinelibrary.wiley.com/doi/full/10.1111/1752-1688.12399) used linked micromaps to summarize water quality data collected from a spatially balanced, probabilistic stream survey of 25 watersheds done by West Virginia Department of Environmental Protection. That visualization led to a multivariate spatial analysis based on the contiguity of the watersheds, which was based on work done in R by [Dray and Jombart (2011)](https://www.jstor.org/stable/23069330?seq=1#page_scan_tab_contents) and [Dray et al. (2012)](https://esajournals.onlinelibrary.wiley.com/doi/abs/10.1890/11-1183.1.
+
+The dataset was created by summarizing watershed land use from NLCD data and appending the information to a shapefile of waterbody IDs. We'll do the same thing with our sample data. `micromap` currently does not work with `sf` objects, though I have a development branch I've almost finished updating to use `sf`, so we’ll convert our data to a `SpatialPolygonsDataFrame` object using the `as(, Spatial)` function from the `sf` package.
+
+The minimal requirements to create a micromap are defined using these arguments for the `mmplot` function:
+
+* `map.data` The input data object.
+* `panel.types` The types of panels to include in the micromap.
+* `panel.data` The data (columns) in `map.data` to use for each panel type.
+The rest of the arguments below are optional. These define which variable the plot is sorted by (`ord.by`), if the axes are flipped (`rev.ord`), how many observations are in each perceptual group (`grouping`), and whether or not to include a median row (`median.row`).
+```{r micromap, message=FALSE, warning=FALSE, error=FALSE, echo = T}
+library(micromap)
+Cat_NLCD_sp <- as(Cat_NLCD,'Spatial')
+mmplot(map.data = Cat_NLCD_sp,
+  panel.types = c('dot_legend', 'labels', 'dot', 'dot', 'map'),
+  panel.data=list(NA,'FEATUREID','Urban', 'Forested',NA),
+  ord.by = 'Urban',
+  rev.ord = TRUE,
+  grouping = 6,
+  median.row = FALSE)
+```
+
+We see a similar story but with much denser information content in our linked micromap.  There are numerous options for linked micromaps worth exploring - see example using Mike McManus' data in [R Spatial Course by Ryan Hill and Marcus Beck at SFS](https://ryan-hill.github.io/sfs-r-gis-2018/modules/mapping/micromap-and-tmap/).
