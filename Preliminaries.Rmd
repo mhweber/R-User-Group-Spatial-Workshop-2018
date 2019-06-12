@@ -53,7 +53,7 @@ install.packages("raster")
 # From CRAN:
 install.packages("sf")
 # From GitHub:
-library(devtools)
+# library(devtools)
 # devtools::install_github("r-spatial/sf")
 # if you are running 3.5.1 on windows and have trouble with devtools install, try:
 # assignInNamespace("version_info", c(devtools:::version_info, list("3.5" = list(version_min = "3.3.0", version_max = "99.99.99", path = "bin"))), "devtools")
@@ -62,10 +62,11 @@ install.packages("spdep")
 install.packages("maptools")
 install.packages("stringr")
 install.packages("reshape")
+install.packages("tidyverse")
 # From CRAN:
 # install.packages("tidyverse")
 # From GitHub:
-devtools::install_github("hadley/tidyverse")
+# devtools::install_github("hadley/tidyverse")
 install.packages("micromap")
 install.packages("tmap")
 install.packages("RCurl")
@@ -83,7 +84,8 @@ install.packages("osmdata")
 install.packages('FedData')
 install.packages("mapview")
 # From GitHub
-devtools::install_github("r-spatial/mapview@develop")
+# devtools::install_github("r-spatial/mapview@develop")
+install.packages("mapview")
 install.packages("cranlogs")
 ```
 

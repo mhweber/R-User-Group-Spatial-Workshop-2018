@@ -1,5 +1,5 @@
 ---
-pagetitle: "R User Group Spatial Workshop 2018"
+pagetitle: "R User Group Spatial Workshop 2019"
 title: "R Spatial Workshop"
 date: "Updated: `r format(Sys.Date())`"
 ---
