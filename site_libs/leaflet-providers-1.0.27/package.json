@@ -14,9 +14,6 @@
     "min": "uglifyjs leaflet-providers.js -mc -o leaflet-providers.min.js",
     "release": "mversion patch -m"
   },
-  "dependencies": {
-  "eslint": ">=4.18.2"
-  },
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/leaflet-extras/leaflet-providers/issues"
@@ -29,7 +26,7 @@
   ],
   "devDependencies": {
     "chai": "^2.3.0",
-    "eslint": "^2.7.0",
+    "eslint": ">=4.18.2",
     "eslint-plugin-html": "^1.4.0",
     "mocha": "^2.2.4",
     "mocha-phantomjs": "^3.5.3",
