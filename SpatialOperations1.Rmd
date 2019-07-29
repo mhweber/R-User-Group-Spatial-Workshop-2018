@@ -11,8 +11,8 @@ title: Spatial Operations 1
 Let's return to the Durham Open Data we grabbed in the previous section - the parks and trails layers in particular.  A typical spatial question we might ask of the data is 'what trails go through parks in town?' You should already have loaded but code below loads again, and shows the simplest of all methods to perform this spatial subset using `sf`:
 ```{r subset, message=FALSE, warning=FALSE, error=FALSE}
 library(sf)
-trails <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson")
-parks <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson")
+trails <- read_sf("https://opendata.arcgis.com/datasets/ef3715bf76b54acead5c566bcf34db78_6.geojson")
+parks <- read_sf("https://opendata.arcgis.com/datasets/0cbc4dced5a944458f634619dad8356f_8.geojson")
 plot(trails$geometry, col='green', axes=T)
 plot(parks$geometry, col='blue', add=T)
 trails_in_parks <- trails[parks,]
@@ -30,7 +30,7 @@ Here's a gist I have of a function I've used based on `gDistance` in `geos` pack
 Let's grab a geojson of bike parking locations from [Durham Open Data](https://opendurham.nc.gov/explore/?sort=modified), and then let's try to find and map all the bike parking that is within a half-mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, we'll talk through, ask questions and we can discuss:
 ```{r bike_parking, message=FALSE, warning=FALSE, error=FALSE, eval = FALSE}
 library(dplyr)
-bike_parking <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson")
+bike_parking <- read_sf("https://opendata.arcgis.com/datasets/5353852efa6e4b4cb7177f9060b46168_0.geojson")
 bike_parking <- st_transform(bike_parking, crs=26917)
 parks <- st_transform(parks, crs=26917)
 sel <- st_is_within_distance(bike_parking, parks, dist = 804) # conversion of miles to meters - why am I using meters here?
@@ -93,30 +93,25 @@ ggplot() +
 ```
 
 ### Spatial Joining and Aggregating
-Let's grab a couple more sample data sets from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified). Let's use [EnviroAtlas](https://www.epa.gov/enviroatlas) data and schools, and we'll join schols to EnviroAtlas to determine percent population below poverty for the block group each school lands in using a spatial join.  
+Let's grab a couple more sample data sets from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified). Let's use [EnviroAtlas](https://www.epa.gov/enviroatlas) data and schools, and we'll join schools to EnviroAtlas to determine percent population below poverty for the block group each school lands in using a spatial join.  
 ```{r schools_envatlas, message=FALSE, warning=FALSE, error=FALSE}
 library(dplyr)
 library(ggplot2)
-enviroatlas <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/enviroatlas/exports/geojson")
-public_schools <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/public-schools/exports/geojson")
-# We want non-public schools too, but this is only available as tabular files, not geojson or shapefile:
-non_public_schools <- read.csv("https://opendurham.nc.gov/api/v2/catalog/datasets/non-public-schools-in-durham-county-by-type/exports/csv", sep=';')
-# Review - how do we promote to spaitial data? NOTE: the csv we read in they recorded latitude and longitude backwards, we fix below
-non_public_schools  <- st_as_sf(non_public_schools , coords = c("lat", "long"), crs = 4326) # The order should be long then lat, but they recorded it wrong!
-# what is crs of public_schools?
-st_crs(public_schools)
-# verify both are equal:
-st_crs(public_schools) == st_crs(non_public_schools)
-# We want to combine these two schools data frmaes and preserve school type-
-public_schools$Type <- 'Public'
-public_schools <- public_schools[c(14,13)]
-non_public_schools$Type <- 'Non-Public'
-non_public_schools <- non_public_schools[c(17,16)]
-schools <- rbind(public_schools, non_public_schools)
+library(tidycensus)
+options(tigris_use_cache = TRUE)
+durham_tracts <- get_acs(state = "NC", county = "Durham", geography = "tract", 
+                  variables = "B19013_001", geometry = TRUE)
+
+durham_survey <- read_sf("https://opendata.arcgis.com/datasets/b38dd29e5a774dcba28d30c93141bce9_0.geojson")
+
+# project both datasets:
+durham_tracts <- st_transform(durham_tracts, 26917)
+durham_survey <- st_transform(durham_survey, 26917)
+
 ggplot() + 
-  geom_sf(data=schools, aes(col=Type)) +
-  geom_sf(data=enviroatlas , fill = NA, show.legend = F, color="black") +
-  labs(title="Schools in Durham and \nCensus Block Groups") +
+  geom_sf(data=durham_survey, aes(col=Q3f_Quality_of_your_neighborhood)) +
+  geom_sf(data=durham_tracts , fill = NA, show.legend = F, color="black") +
+  labs(title="Durham Survey Results Neighborhood \nSatisfaction by Census Tract") +
   theme_bw()
 # Spatial Join-
 schools_env <- st_join(enviroatlas, schools) # st_intersects is the default

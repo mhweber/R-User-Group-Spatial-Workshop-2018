@@ -538,11 +538,11 @@ plot(state_poly$SHAPE, axes=TRUE)
 
 #### Downloading Open Data and Geographic Data Packages
 
-With `sf`, you can read geojson files online directly.  I'm a visitor, so I want to learn a bit more about Durham.  Below we load some spatial data (geojson files) directly in `sf` objects from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified):
+With `sf`, you can read geojson files online directly.  I'm a visitor, so I want to learn a bit more about Durham.  Below we load some spatial data (geojson files) directly in `sf` objects from [Open Data Durham](https://live-durhamnc.opendata.arcgis.com/):
 ```{r open_data, message=FALSE, warning=FALSE, error=FALSE}
-city_limits <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/city-limits0/exports/geojson")
-trails <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/existing-trails/exports/geojson")
-parks <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/city-parks/exports/geojson")
+city_limits <- read_sf("https://opendata.arcgis.com/datasets/01b3cb54b5a64105a742d5c5b4217599_0.geojson")
+trails <- read_sf("https://opendata.arcgis.com/datasets/ef3715bf76b54acead5c566bcf34db78_6.geojson")
+parks <- read_sf("https://opendata.arcgis.com/datasets/0cbc4dced5a944458f634619dad8356f_8.geojson")
 plot(city_limits$geometry, axes=T)
 plot(trails$geometry, col='blue', add=T)
 plot(parks$geometry, col='green', add=T)
