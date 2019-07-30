@@ -23,11 +23,10 @@ title(main='Parks and Trails in Durham')
 Notice the warning we got about planar coordinates - should we be concerned about that?
 
 ### Proximity calculation
-
 Here's a gist I have of a function I've used based on `gDistance` in `geos` package working with `sp` points and polygons - we'll try to implement something similar in `sf`:
 <script src="https://gist.github.com/mhweber/d87c3fdf9f71ac4f9e69565086ece74f.js"></script> 
 
-Let's grab a geojson of bike parking locations from [Durham Open Data](https://opendurham.nc.gov/explore/?sort=modified), and then let's try to find and map all the bike parking that is within a half-mile of a park - in code below I test and try and few things and use some techniques you may have questions about. See if this all makes sense, we'll talk through, ask questions and we can discuss:
+Let's grab a geojson of bike parking locations from [Open Data Durham](https://live-durhamnc.opendata.arcgis.com/), and then let's try to find and map all the bike parking that is within a half-mile of a park:
 ```{r bike_parking, message=FALSE, warning=FALSE, error=FALSE, eval = FALSE}
 library(dplyr)
 bike_parking <- read_sf("https://opendata.arcgis.com/datasets/5353852efa6e4b4cb7177f9060b46168_0.geojson")
@@ -35,38 +34,11 @@ bike_parking <- st_transform(bike_parking, crs=26917)
 parks <- st_transform(parks, crs=26917)
 sel <- st_is_within_distance(bike_parking, parks, dist = 804) # conversion of miles to meters - why am I using meters here?
 summary(lengths(sel) > 0) 
-# This is obviously not correct if we were to look at the features in ArcMap - there are numerous bike parking stations more than a mile from parks - something is wrong here....
-
-# Let's try a different approach...perhaps I'm not understanding using the built in approach above, but here's how I got it to work
-dist_mat <- st_distance(bike_parking, parks) # this creates a distance matrix of distances between each bike parking station and each park
-dist_mat <- as.data.frame(dist_mat) # make it a data frame for manipulation 
-# run the head statement below - why do I have 'as.data.frame' in here?
-head(as.data.frame(bike_parking))
-# Do you notice something strance about all the distance values in the matrix we produced?
-dist_mat <- mutate_all(dist_mat, function(x) as.numeric(x)) # we use mutate_all from dplyr to convert everything in data frame to actual numeric values
-dist_mat$min <- apply(X=dist_mat, MARGIN=1, FUN=min) # use apply function to generate new minimum distance column
-
-any(dist_mat$min >0) # Still showing me there are no bike parking stations more than a half-mile from parks, which I know is not true from mapping the data
-# solution is that there is a park record with corrupt geometry - park with 'objectid' 28 - it's distance is zero to every bike station!
-# once we remove this record, the simple solution works just fine
-```
-
-The code chunk above identified a problem in the data - below we deal with it and use the simplest method in `sf` to plot our proximity results:
-```{r bike_parking2, message=FALSE, warning=FALSE, error=FALSE}
-library(ggplot2)
-bike_parking <- read_sf("https://opendurham.nc.gov/api/v2/catalog/datasets/durham-bike-parking/exports/geojson")
-bike_parking <- st_transform(bike_parking, crs=26917)
-parks <- st_transform(parks, crs=26917)
-parks <- parks[!parks$objectid==28,]
-sel <- st_is_within_distance(bike_parking, parks, dist = 804) # just generating a distance matrix again to double-check
-summary(lengths(sel) > 0) 
-# That looks more like it! And I verified in desktop GIS that this is the correct answer
-# Now it's simple to pull out what we want...
 bike_parking_near_parks <- bike_parking[parks, ,op = st_is_within_distance, dist = 804]
 ggplot() + 
-  # geom_sf(data=parks, fill = "green", color="green") +
+  geom_sf(data=parks, fill = "green", color="green") +
   geom_sf(data=bike_parking_near_parks, fill = "red", show.legend = F, color="red") +
-  labs(title="Bike Parking Near Parks in Durham") +
+  labs(title="Bike Parking Near \nParks in Durham") +
   theme_bw()
 ```
 
@@ -93,13 +65,13 @@ ggplot() +
 ```
 
 ### Spatial Joining and Aggregating
-Let's grab a couple more sample data sets from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified). Let's use [EnviroAtlas](https://www.epa.gov/enviroatlas) data and schools, and we'll join schools to EnviroAtlas to determine percent population below poverty for the block group each school lands in using a spatial join.  
+Let's grab a couple more sample data sets from [Open Data Durham](https://live-durhamnc.opendata.arcgis.com/). We'll's use [tidycensus](https://walkerke.github.io/tidycensus/index.html) census tracts as we did in previous module, and we'll join this to survey data by block group from [Open Data Durham](https://live-durhamnc.opendata.arcgis.com/) to evaluate survey point data at the block group level by census tract.  
 ```{r schools_envatlas, message=FALSE, warning=FALSE, error=FALSE}
 library(dplyr)
 library(ggplot2)
 library(tidycensus)
 options(tigris_use_cache = TRUE)
-durham_tracts <- get_acs(state = "NC", county = "Durham", geography = "tract", 
+durham_tracts <- get_acs(state = "NC", county = "Durham", geography = "block group", 
                   variables = "B19013_001", geometry = TRUE)
 
 durham_survey <- read_sf("https://opendata.arcgis.com/datasets/b38dd29e5a774dcba28d30c93141bce9_0.geojson")
@@ -111,47 +83,41 @@ durham_survey <- st_transform(durham_survey, 26917)
 ggplot() + 
   geom_sf(data=durham_survey, aes(col=Q3f_Quality_of_your_neighborhood)) +
   geom_sf(data=durham_tracts , fill = NA, show.legend = F, color="black") +
-  labs(title="Durham Survey Results Neighborhood \nSatisfaction by Census Tract") +
+  labs(title="Durham Survey Results - \n Neighborhood Satisfaction \n by Census Block Group") +
   theme_bw()
-# Spatial Join-
-schools_env <- st_join(enviroatlas, schools) # st_intersects is the default
 
-schools_env %>%
-  group_by(block_group_id, Type) %>%
-  filter(!is.na(Type)) %>%
-  dplyr::summarize(PercTwicePov = mean(percent_population_with_income_below_twice_the_poverty_level, na.rm = TRUE)) %>%
-  ggplot() + geom_sf(aes(fill=(PercTwicePov))) +
-  scale_fill_distiller("Percent Twice Poverty Level", palette = "Greens",  direction = 1) +
-  ggtitle("Percent Living at Twice the Poverty Level by School Type") + 
-  theme_bw() +
-  facet_wrap(~Type)
+# Let's restrict survey data, which has numerous fields, to just field of interest - note how dplyr retains geometry without us explicitly having to select it. Also we can rename as part of our dplyr select statement.
+survey <- durham_survey %>%
+  dplyr::select(ID, Year, Neighb_Qual = Q3f_Quality_of_your_neighborhood)
+
+# Spatial Join
+survey_blkgrps <- st_join(durham_tracts, survey) # st_intersects is the default
+
+# Aggregation
+
+survey_blkgrps %>%
+  group_by(GEOID) %>%
+  dplr::summarize(NQual = names(which.max(table(Neighb_Qual, exclude=NULL)))) %>%
+  ggplot() + geom_sf(aes(fill=(NQual))) +
+  ggtitle("Neighborhood Quality Perception \nby Census Block Groups") + 
+  theme_bw()
 ```
-
 
 ### Dissolve
 We can take a quick look at using a spatial dissolve and then re-aggregate our result to see if there is a difference at another spatial level by dissolving to the tract level - we do this dissolve simply by using `dplyr` `group_by` and `summarize` functions with an `sf` object!
+Note that we could pull down `tidycensus` at tract level, but instead we want to look at running a dissolve to get from block group to tract level
 ```{r dissolve, message=FALSE, warning=FALSE, error=FALSE}
-# We can see we have 78 census tracts - 
-levels(as.factor(enviroatlas$tract_fips))
-tracts <- schools_env %>% 
-  group_by(tract_fips) %>%
-  dplyr::summarize() 
-
-# Pull back in school type and poverty
-tracts$TwicePercPov <- schools_env$percent_population_with_income_below_twice_the_poverty_level[match(tracts$tract_fips, schools_env$tract_fips)]
-tracts$Type <- schools_env$Type[match(tracts$tract_fips, schools_env$tract_fips)]
-tracts <- tracts %>%
-  filter(!is.na(Type))
-# And same routine as before to look at our data aggregated to tract level
-ggplot(data = tracts) + geom_sf(aes(fill=(TwicePercPov))) +
-  scale_fill_distiller("Percent Twice Poverty Level", palette = "Greens",  direction = 1) +
-  ggtitle("Percent Living at Twice the Poverty Level by School Type") + 
-  theme_bw() +
-  facet_wrap(~Type)
+survey_blkgrps %>% 
+  mutate(Tract = substr(GEOID, 1,9)) %>%
+  group_by(Tract) %>%
+  dplyr::summarize(NQual = names(which.max(table(NQual, exclude=NULL)))) %>%
+  ggplot() + geom_sf(aes(fill=(NQual))) +
+  ggtitle("Neighborhood Quality Perception \nby Census Tracts") + 
+  theme_bw()  
 ```
 
 **Exercise**
-If we have time, try exploring another data set from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified), or use existing data to put together another spatial subset, join, or aggregation.
+Try exploring another data set from [Open Data Durham](https://opendurham.nc.gov/explore/?sort=modified), or use existing data, to put together another spatial subset, join, or aggregation - try aggregating with different data, use a different aggregation method, or perhaps try other types of joins (st_intersects is the default, but check ?st_join for other options.
 
 ### Raster - Raster-Vector Processing
 Now let's look at an example of some raster processing.  First, we'll load the Third Fork watershed shapefile I have in our course GitHub repository:

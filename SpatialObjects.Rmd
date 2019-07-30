@@ -594,7 +594,7 @@ states_sf %>%
   ggplot + geom_sf()
 ```
 
-Part of the fun (or consternation) of R, and spatial work in R, is the pace of development of new packages.  I enjoy scanning for new spatial packages and trying to incorporate into my workflow - [tidycensus](https://walkerke.github.io/tidycensus/index.html) is a brand new and very handy package - note that you'll have to [request](http://api.census.gov/data/key_signup.html) a Census Data API key to run this code - so just you can just examine code below for now.
+Part of the fun (or consternation) of R, and spatial work in R, is the pace of development of new packages.  I enjoy scanning for new spatial packages and trying to incorporate into my workflow - [tidycensus](https://walkerke.github.io/tidycensus/index.html) is a brand new and very handy package - note that you'll have to [request](http://api.census.gov/data/key_signup.html) a Census Data API key to run this code - so you can just examine code below for now.
 ```{r tidycensus, , message=FALSE, warning=FALSE, error=FALSE}
 library(tidycensus)
 library(tidyverse)
