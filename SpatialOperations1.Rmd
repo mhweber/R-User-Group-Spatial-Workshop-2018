@@ -63,10 +63,18 @@ ggplot() +
   geom_sf(data=covered_bike_parking_near_parks_and_trails, fill = "red", show.legend = F, color="red") +
   geom_sf(data=trails, color="blue") +
   geom_sf(data=parks, fill = "green", color="green") +
-  labs(title="Covered Bike Parking Near Parks \nAlong Trails in Durham") +
+  labs(title="Covered Bike Parking \nNear Parks \nAlong Trails in Durham") +
   coord_sf(xlim = st_bbox(parks)[c(1,3)],
            ylim = st_bbox(parks)[c(2,4)])+
   theme_bw()
+
+# Jumping ahead to visualization, we could take a quick look at a leaflet map using the package mapview to see where our covered bike parking is clustering around - my guess is campus:
+library(mapview)
+mapview(covered_bike_parking_near_parks_and_trails, col.regions = "red",
+        map.types = "OpenStreetMap") + 
+  mapview(trails, col.regions = "blue") + 
+  mapview(parks, col.regions = "green")
+
 ```
 
 ### Spatial Joining and Aggregating
