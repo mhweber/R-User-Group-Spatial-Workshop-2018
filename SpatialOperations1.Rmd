@@ -71,7 +71,7 @@ ggplot() +
 
 ### Spatial Joining and Aggregating
 Let's grab a couple more sample data sets from [Open Data Durham](https://live-durhamnc.opendata.arcgis.com/). We'll's use [tidycensus](https://walkerke.github.io/tidycensus/index.html) census tracts as we did in previous module, and we'll join this to survey data by block group from [Open Data Durham](https://live-durhamnc.opendata.arcgis.com/) to evaluate survey point data at the block group level by census tract.  
-```{r schools_envatlas, message=FALSE, warning=FALSE, error=FALSE}
+```{r tracts_blockgroup, message=FALSE, warning=FALSE, error=FALSE}
 library(dplyr)
 library(ggplot2)
 library(tidycensus)

@@ -613,7 +613,7 @@ Here’s a gist I have of a function I’ve used based on <code>gDistance</code>
 <a class="sourceLine" id="cb6-16" title="16"><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data=</span>durham_tracts , <span class="dt">fill =</span> <span class="ot">NA</span>, <span class="dt">show.legend =</span> F, <span class="dt">color=</span><span class="st">&quot;black&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb6-17" title="17"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;Durham Survey Results - </span><span class="ch">\n</span><span class="st"> Neighborhood Satisfaction </span><span class="ch">\n</span><span class="st"> by Census Block Group&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb6-18" title="18"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
-<p><img src="SpatialOperations1_files/figure-html/schools_envatlas-1.png" width="672" /></p>
+<p><img src="SpatialOperations1_files/figure-html/tracts_blockgroup-1.png" width="672" /></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># Let&#39;s restrict survey data, which has numerous fields, to just field of interest - note how dplyr retains geometry without us explicitly having to select it. Also we can rename as part of our dplyr select statement.</span></a>
 <a class="sourceLine" id="cb7-2" title="2">survey &lt;-<span class="st"> </span>durham_survey <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb7-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(ID, Year, <span class="dt">Neighb_Qual =</span> Q3f_Quality_of_your_neighborhood)</a>
@@ -629,7 +629,7 @@ Here’s a gist I have of a function I’ve used based on <code>gDistance</code>
 <a class="sourceLine" id="cb7-13" title="13"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>(NQual))) <span class="op">+</span></a>
 <a class="sourceLine" id="cb7-14" title="14"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Neighborhood Quality Perception </span><span class="ch">\n</span><span class="st">by Census Block Groups&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-15" title="15"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
-<p><img src="SpatialOperations1_files/figure-html/schools_envatlas-2.png" width="672" /></p>
+<p><img src="SpatialOperations1_files/figure-html/tracts_blockgroup-2.png" width="672" /></p>
 </div>
 <div id="dissolve" class="section level3">
 <h3>Dissolve</h3>
