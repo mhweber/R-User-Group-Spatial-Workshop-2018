@@ -8,7 +8,7 @@ title: Spatial Operations 2
 * Explore working with water data using `dataRetrieval` 
 
 ### Data Retrieval package
-Let's explore the [DataRetrieval](https://github.com/USGS-R/dataRetrieval) package a bit and download some sample data.  This is a phenomenal package for retrieving and working with USGS and EPA hydrology and water quality data. There is a lot to this package - I'm still learning, and we'll just scratch the surface.  For more info look at the [USGS site](https://owi.usgs.gov/R/training-curriculum/usgs-packages/dataRetrieval-readNWIS/) and [online tutorial](https://owi.usgs.gov/R/dataRetrieval.html#1).
+We'll explore the [DataRetrieval](https://github.com/USGS-R/dataRetrieval) package a bit and download some sample data.  This is a great package for retrieving and working with hydrology and water quality data. There is a lot to this package - I'm still learning, and we'll just scratch the surface.  For more info look at the [USGS site](https://owi.usgs.gov/R/training-curriculum/usgs-packages/dataRetrieval-readNWIS/) and [online tutorial](https://owi.usgs.gov/R/dataRetrieval.html#1).
 ```{r NWIS, message=FALSE, warning=FALSE, error=FALSE}
 library(dataRetrieval)
 library(sf)
@@ -23,7 +23,7 @@ plot(stations_sf$geometry, add=T)
 title(main='NWIS Stations and \nThird Fork Watershed')
 ```
 
-We could clip our sites to our watershed, and create plots of hourly discharge for the three sites in our watershed - first we use spatial indexing to clip our stations:
+We can clip our sites to our watershed, and create plots of hourly discharge for the three sites in our watershed - first we use spatial indexing to clip our stations:
 ```{r flow, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 ThirdForkSites <- stations_sf[ThirdFork,]
 ```
@@ -39,7 +39,7 @@ library(lubridate)
 ThirdForkSites <- stations_sf[ThirdFork,]
 pCode <- "00060" # 00060 is flow
 start.date <- "2015-10-01"
-end.date <- "2018-03-30"
+end.date <- "2019-06-30"
 
 # get NWIS data  - I'm passing all three station numbers to readNWISuv
 ThirdForkFlow <- readNWISuv(siteNumbers = ThirdForkSites$site_no,
@@ -50,7 +50,7 @@ ThirdForkFlow <- readNWISuv(siteNumbers = ThirdForkSites$site_no,
 # add the water year - this function in DataRetrieval knows the data range we have comprises one water year...
 ThirdForkFlow <- addWaterYear(ThirdForkFlow)
 
-# We can rename the columns to something easier to understand (i.e., not X00060_00000)
+# We can rename the columns to something easier to understand (i.e., not X00060_00000) - take a minute to look at help("renameNWISColumns)
 ThirdForkFlow <- renameNWISColumns(ThirdForkFlow)
 
 # here we'll calculate and add approximate day of the WATER YEAR (doesn't take leap year into account)
@@ -62,7 +62,7 @@ ThirdForkFlow$DOWY <- yday(ThirdForkFlow$dateTime) + ifelse(month(ThirdForkFlow$
     labs(y="Hourly Flow (cfs)", x= "Day of Water Year", title="Hourly Discharge USGS Stations in Third Fork Watershed"))
 ```
 
-Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn't have data in that date range.
+Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn't have data in the date range.
 
 ### Summarize NHD in watershed
 The next couple exercises we'll look at summarizing and extracting data by polygons and points.  First let's review summarizing (aggregating) point or line data with polygon data using `sf` and `dplyr`.  We'll use our practice watershed and get the total stream length in the watershed using a shapefile of National Hydrography Data (NHD) flowlines.  Note that I read in this NHD data using the`FedData` package, but it takes a while so I've put the downloaded data clipped to our watershed in the workshop 'data' folder. 
@@ -76,18 +76,18 @@ plot(NHD$geometry, add=T, col='blue')
 
 
 **Quick Exercise**
-Try generating a spatial summary using the same type of chained `dplyr` operation we used in SpatialOperations1 with schools and EnviroAtlas on your own - check the code if you get stuck.
-```{r nhd2, message=FALSE, warning=FALSE, error=FALSE}
+Try generating a spatial summary with this Third Fork data using the same type of chained `dplyr` operation we used in SpatialOperations1 with census blocks / tracts and Durham survey data on your own - check the code if you get stuck.
+```{r nhd2, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 stream_length = ThirdFork %>%
   st_join(NHD) %>%
   summarize(StreamLength = sum(LngthKM, na.rm = TRUE))
 ```
 
-This example is a bit contrived since we already know that all the stream lines are within the watershed, so we don't really need to do a spatial join, we can just sum our 'LngthKM' variable in the 'NHD' object - you can do this to verify the result.
+The example I show is a bit contrived since we already know that all the stream lines are within the watershed, so we don't really need to do a spatial join, we can just sum our 'LngthKM' variable in the 'NHD' object - you can do this to verify the result.
 
 
 ### Raster Extract
-It's easy using the `raster` package to extract raster data for a set of points. Here we use our 'stations_sf' data our our elevation raster (we can read in with raster('data/NED.tif')).  The operation is simply 'extract' - if you feel advenurous see if you can figure out on your own (hint - data must be in same crs), or simply try to follow what code is doing.
+It's easy using the `raster` package to extract raster data for a set of points. Here we'll use our 'stations_sf' data and an elevation raster (we can read in with raster('data/NED.tif')).  The operation is simply 'extract' - if you feel adventurous see if you can figure out on your own (hint - data must be in same crs), or simply try to follow what code is doing.
 ```{r extract, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 library(raster)
 stations_sf <-st_read('data/stations.shp')
@@ -106,7 +106,7 @@ meanelev <- extract(elev, ThirdFork, fun = mean, na.rm = T, small = T)
 meanelev
 ```
 
-I added a few extra parameters here, explore by using `help(extract)`. Note also I passed an `sf` object to the y parameter in the `extract` function, but in help it describes options for y as being `sp` objects....yet it worked.  I was surprised by this!
+I added a few extra parameters above, explore by using `help(extract)`. Note also I passed an `sf` object to the y parameter in the `extract` function, but in help it describes options for y as being `sp` objects....yet it worked.  I was surprised by this!
 
 If you feel like exploring more, see a [neat example put together by Ryan Hill and Marcus Beck](https://ryan-hill.github.io/sfs-r-gis-2018/modules/rasters/extract-raster-data-r/) of doing a multi-watershed delineation and metric calculation by leveraging the StreamStat Service API in R.
 
@@ -169,7 +169,7 @@ Here is how I've put together code to do categorical raster summarization by pol
 e = extract(NLCD,Catchments)
 et = lapply(e,table)
 library(reshape)
-t <- melt(et)
+t <- reshape::melt(et)
 t.cast <- cast(t, L1 ~ Var.1, sum)
 head(t.cast)
 names(t.cast)[1] <- 'FeatureID'

@@ -28,46 +28,100 @@
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-div.sourceCode {
-  overflow-x: visible;
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
 }
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -104,9 +158,7 @@ h6 {
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -131,6 +183,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -145,7 +200,6 @@ body {
   padding-top: 65px;
   margin-top: -65px;
 }
-
 .section h2 {
   padding-top: 65px;
   margin-top: -65px;
@@ -165,6 +219,43 @@ body {
 .section h6 {
   padding-top: 65px;
   margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -186,13 +277,71 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
@@ -205,7 +354,6 @@ $(document).ready(function () {
   window.initializeCodeFolding("hide" === "show");
 });
 </script>
-
 
 
 
@@ -283,8 +431,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -299,6 +445,16 @@ div.tocify {
 }
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -378,160 +534,160 @@ div.tocify {
 </ul>
 <div id="data-retrieval-package" class="section level3">
 <h3>Data Retrieval package</h3>
-<p>Let’s explore the <a href="https://github.com/USGS-R/dataRetrieval">DataRetrieval</a> package a bit and download some sample data. This is a phenomenal package for retrieving and working with USGS and EPA hydrology and water quality data. There is a lot to this package - I’m still learning, and we’ll just scratch the surface. For more info look at the <a href="https://owi.usgs.gov/R/training-curriculum/usgs-packages/dataRetrieval-readNWIS/">USGS site</a> and <a href="https://owi.usgs.gov/R/dataRetrieval.html#1">online tutorial</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dataRetrieval)
-<span class="kw">library</span>(sf)
-Durham_Stations &lt;-<span class="st"> </span><span class="kw">readNWISdata</span>(<span class="dt">stateCd=</span><span class="st">&quot;North Carolina&quot;</span>, <span class="dt">countyCd=</span><span class="st">&quot;Durham&quot;</span>)
-<span class="co"># DataRetrival returns objects as &#39;attributes&#39; - things like the url used, site metadata, site info, etc - just use attributes(Durham_Stations) to examine</span>
-siteInfo &lt;-<span class="st"> </span><span class="kw">attr</span>(Durham_Stations , <span class="st">&quot;siteInfo&quot;</span>) 
-stations_sf =<span class="st"> </span><span class="kw">st_as_sf</span>(siteInfo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;dec_lon_va&quot;</span>, <span class="st">&quot;dec_lat_va&quot;</span>), <span class="dt">crs =</span> <span class="dv">4269</span>,<span class="dt">agr =</span> <span class="st">&quot;constant&quot;</span>)
-
-ThirdFork &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_Fork.shp&#39;</span>)</code></pre></div>
-<pre><code>## Reading layer `Third_Fork&#39; from data source `F:\Git Projects\R-User-Group-Spatial-Workshop-2018\data\Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
+<p>We’ll explore the <a href="https://github.com/USGS-R/dataRetrieval">DataRetrieval</a> package a bit and download some sample data. This is a great package for retrieving and working with hydrology and water quality data. There is a lot to this package - I’m still learning, and we’ll just scratch the surface. For more info look at the <a href="https://owi.usgs.gov/R/training-curriculum/usgs-packages/dataRetrieval-readNWIS/">USGS site</a> and <a href="https://owi.usgs.gov/R/dataRetrieval.html#1">online tutorial</a>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dataRetrieval)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(sf)</a>
+<a class="sourceLine" id="cb1-3" title="3">Durham_Stations &lt;-<span class="st"> </span><span class="kw">readNWISdata</span>(<span class="dt">stateCd=</span><span class="st">&quot;North Carolina&quot;</span>, <span class="dt">countyCd=</span><span class="st">&quot;Durham&quot;</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co"># DataRetrival returns objects as &#39;attributes&#39; - things like the url used, site metadata, site info, etc - just use attributes(Durham_Stations) to examine</span></a>
+<a class="sourceLine" id="cb1-5" title="5">siteInfo &lt;-<span class="st"> </span><span class="kw">attr</span>(Durham_Stations , <span class="st">&quot;siteInfo&quot;</span>) </a>
+<a class="sourceLine" id="cb1-6" title="6">stations_sf =<span class="st"> </span><span class="kw">st_as_sf</span>(siteInfo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;dec_lon_va&quot;</span>, <span class="st">&quot;dec_lat_va&quot;</span>), <span class="dt">crs =</span> <span class="dv">4269</span>,<span class="dt">agr =</span> <span class="st">&quot;constant&quot;</span>)</a>
+<a class="sourceLine" id="cb1-7" title="7"></a>
+<a class="sourceLine" id="cb1-8" title="8">ThirdFork &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_Fork.shp&#39;</span>)</a></code></pre></div>
+<pre><code>## Reading layer `Third_Fork&#39; from data source `F:\GitProjects\R-User-Group-Spatial-Workshop-2018\data\Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 1 feature and 21 fields
 ## geometry type:  POLYGON
 ## dimension:      XY
 ## bbox:           xmin: -78.96945 ymin: 35.90316 xmax: -78.86583 ymax: 35.99798
 ## epsg (SRID):    4269
 ## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ThirdFork<span class="op">$</span>geometry, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(stations_sf<span class="op">$</span>geometry, <span class="dt">add=</span>T)
-<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;NWIS Stations and </span><span class="ch">\n</span><span class="st">Third Fork Watershed&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">plot</span>(ThirdFork<span class="op">$</span>geometry, <span class="dt">axes=</span>T)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">plot</span>(stations_sf<span class="op">$</span>geometry, <span class="dt">add=</span>T)</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="kw">title</span>(<span class="dt">main=</span><span class="st">&#39;NWIS Stations and </span><span class="ch">\n</span><span class="st">Third Fork Watershed&#39;</span>)</a></code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/NWIS-1.png" width="672" /></p>
-<p>We could clip our sites to our watershed, and create plots of hourly discharge for the three sites in our watershed - first we use spatial indexing to clip our stations:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ThirdForkSites &lt;-<span class="st"> </span>stations_sf[ThirdFork,]</code></pre></div>
+<p>We can clip our sites to our watershed, and create plots of hourly discharge for the three sites in our watershed - first we use spatial indexing to clip our stations:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">ThirdForkSites &lt;-<span class="st"> </span>stations_sf[ThirdFork,]</a></code></pre></div>
 <p><strong>Quick Exercise</strong> Fix the error we get in code above then continue on with next code chunk to clip and plot discharge</p>
 <p>Ideas for leveraging <code>DataRetrieval</code> to plot hourly discharge from <a href="https://ryanpeek.github.io/2018_river-rally-Rmapping-workshop/get_water_quality.html#read_shapefiles">Ryan Peek</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
-stations_sf &lt;-<span class="st"> </span><span class="kw">st_transform</span>(stations_sf, <span class="kw">st_crs</span>(ThirdFork))
-<span class="kw">library</span>(lubridate)
-ThirdForkSites &lt;-<span class="st"> </span>stations_sf[ThirdFork,]
-pCode &lt;-<span class="st"> &quot;00060&quot;</span> <span class="co"># 00060 is flow</span>
-start.date &lt;-<span class="st"> &quot;2015-10-01&quot;</span>
-end.date &lt;-<span class="st"> &quot;2018-03-30&quot;</span>
-
-<span class="co"># get NWIS data  - I&#39;m passing all three station numbers to readNWISuv</span>
-ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">readNWISuv</span>(<span class="dt">siteNumbers =</span> ThirdForkSites<span class="op">$</span>site_no,
-                     <span class="dt">parameterCd =</span> pCode,
-                     <span class="dt">startDate =</span> start.date,
-                     <span class="dt">endDate =</span> end.date)
-
-<span class="co"># add the water year - this function in DataRetrieval knows the data range we have comprises one water year...</span>
-ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">addWaterYear</span>(ThirdForkFlow)
-
-<span class="co"># We can rename the columns to something easier to understand (i.e., not X00060_00000)</span>
-ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">renameNWISColumns</span>(ThirdForkFlow)
-
-<span class="co"># here we&#39;ll calculate and add approximate day of the WATER YEAR (doesn&#39;t take leap year into account)</span>
-ThirdForkFlow<span class="op">$</span>DOWY &lt;-<span class="st"> </span><span class="kw">yday</span>(ThirdForkFlow<span class="op">$</span>dateTime) <span class="op">+</span><span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">month</span>(ThirdForkFlow<span class="op">$</span>dateTime) <span class="op">&gt;</span><span class="st"> </span><span class="dv">9</span>, <span class="op">-</span><span class="dv">273</span>, <span class="dv">92</span>)
-
-<span class="co"># plot flow</span>
-(plot1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">data=</span>ThirdForkFlow, <span class="kw">aes</span>(<span class="dt">x=</span>DOWY, <span class="dt">y=</span>Flow_Inst), <span class="dt">color=</span><span class="st">&quot;dodgerblue&quot;</span>) <span class="op">+</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">facet_grid</span>(waterYear<span class="op">~</span>., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Hourly Flow (cfs)&quot;</span>, <span class="dt">x=</span> <span class="st">&quot;Day of Water Year&quot;</span>, <span class="dt">title=</span><span class="st">&quot;Hourly Discharge USGS Stations in Third Fork Watershed&quot;</span>))</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb5-2" title="2">stations_sf &lt;-<span class="st"> </span><span class="kw">st_transform</span>(stations_sf, <span class="kw">st_crs</span>(ThirdFork))</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="kw">library</span>(lubridate)</a>
+<a class="sourceLine" id="cb5-4" title="4">ThirdForkSites &lt;-<span class="st"> </span>stations_sf[ThirdFork,]</a>
+<a class="sourceLine" id="cb5-5" title="5">pCode &lt;-<span class="st"> &quot;00060&quot;</span> <span class="co"># 00060 is flow</span></a>
+<a class="sourceLine" id="cb5-6" title="6">start.date &lt;-<span class="st"> &quot;2015-10-01&quot;</span></a>
+<a class="sourceLine" id="cb5-7" title="7">end.date &lt;-<span class="st"> &quot;2019-06-30&quot;</span></a>
+<a class="sourceLine" id="cb5-8" title="8"></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="co"># get NWIS data  - I&#39;m passing all three station numbers to readNWISuv</span></a>
+<a class="sourceLine" id="cb5-10" title="10">ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">readNWISuv</span>(<span class="dt">siteNumbers =</span> ThirdForkSites<span class="op">$</span>site_no,</a>
+<a class="sourceLine" id="cb5-11" title="11">                     <span class="dt">parameterCd =</span> pCode,</a>
+<a class="sourceLine" id="cb5-12" title="12">                     <span class="dt">startDate =</span> start.date,</a>
+<a class="sourceLine" id="cb5-13" title="13">                     <span class="dt">endDate =</span> end.date)</a>
+<a class="sourceLine" id="cb5-14" title="14"></a>
+<a class="sourceLine" id="cb5-15" title="15"><span class="co"># add the water year - this function in DataRetrieval knows the data range we have comprises one water year...</span></a>
+<a class="sourceLine" id="cb5-16" title="16">ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">addWaterYear</span>(ThirdForkFlow)</a>
+<a class="sourceLine" id="cb5-17" title="17"></a>
+<a class="sourceLine" id="cb5-18" title="18"><span class="co"># We can rename the columns to something easier to understand (i.e., not X00060_00000) - take a minute to look at help(&quot;renameNWISColumns)</span></a>
+<a class="sourceLine" id="cb5-19" title="19">ThirdForkFlow &lt;-<span class="st"> </span><span class="kw">renameNWISColumns</span>(ThirdForkFlow)</a>
+<a class="sourceLine" id="cb5-20" title="20"></a>
+<a class="sourceLine" id="cb5-21" title="21"><span class="co"># here we&#39;ll calculate and add approximate day of the WATER YEAR (doesn&#39;t take leap year into account)</span></a>
+<a class="sourceLine" id="cb5-22" title="22">ThirdForkFlow<span class="op">$</span>DOWY &lt;-<span class="st"> </span><span class="kw">yday</span>(ThirdForkFlow<span class="op">$</span>dateTime) <span class="op">+</span><span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">month</span>(ThirdForkFlow<span class="op">$</span>dateTime) <span class="op">&gt;</span><span class="st"> </span><span class="dv">9</span>, <span class="dv">-273</span>, <span class="dv">92</span>)</a>
+<a class="sourceLine" id="cb5-23" title="23"></a>
+<a class="sourceLine" id="cb5-24" title="24"><span class="co"># plot flow</span></a>
+<a class="sourceLine" id="cb5-25" title="25">(plot1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">data=</span>ThirdForkFlow, <span class="kw">aes</span>(<span class="dt">x=</span>DOWY, <span class="dt">y=</span>Flow_Inst), <span class="dt">color=</span><span class="st">&quot;dodgerblue&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-26" title="26"><span class="st">    </span><span class="kw">facet_grid</span>(waterYear<span class="op">~</span>., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb5-27" title="27"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;Hourly Flow (cfs)&quot;</span>, <span class="dt">x=</span> <span class="st">&quot;Day of Water Year&quot;</span>, <span class="dt">title=</span><span class="st">&quot;Hourly Discharge USGS Stations in Third Fork Watershed&quot;</span>))</a></code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/flow2-1.png" width="672" /></p>
-<p>Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn’t have data in that date range.</p>
+<p>Notice I had all three stations in the function to retrive data, but only 1 was returned - apparently other two didn’t have data in the date range.</p>
 </div>
 <div id="summarize-nhd-in-watershed" class="section level3">
 <h3>Summarize NHD in watershed</h3>
 <p>The next couple exercises we’ll look at summarizing and extracting data by polygons and points. First let’s review summarizing (aggregating) point or line data with polygon data using <code>sf</code> and <code>dplyr</code>. We’ll use our practice watershed and get the total stream length in the watershed using a shapefile of National Hydrography Data (NHD) flowlines. Note that I read in this NHD data using the<code>FedData</code> package, but it takes a while so I’ve put the downloaded data clipped to our watershed in the workshop ‘data’ folder.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
-NHD &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/NHD_ThirdFork.shp&#39;</span>)</code></pre></div>
-<pre><code>## Reading layer `NHD_ThirdFork&#39; from data source `F:\Git Projects\R-User-Group-Spatial-Workshop-2018\data\NHD_ThirdFork.shp&#39; using driver `ESRI Shapefile&#39;
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb6-2" title="2">NHD &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/NHD_ThirdFork.shp&#39;</span>)</a></code></pre></div>
+<pre><code>## Reading layer `NHD_ThirdFork&#39; from data source `F:\GitProjects\R-User-Group-Spatial-Workshop-2018\data\NHD_ThirdFork.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 134 features and 16 fields
 ## geometry type:  LINESTRING
 ## dimension:      XY
 ## bbox:           xmin: -78.9694 ymin: 35.90328 xmax: -78.87323 ymax: 35.99151
 ## epsg (SRID):    4269
 ## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ThirdFork<span class="op">$</span>geometry, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(NHD<span class="op">$</span>geometry, <span class="dt">add=</span>T, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">plot</span>(ThirdFork<span class="op">$</span>geometry, <span class="dt">axes=</span>T)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw">plot</span>(NHD<span class="op">$</span>geometry, <span class="dt">add=</span>T, <span class="dt">col=</span><span class="st">&#39;blue&#39;</span>)</a></code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/nhd-1.png" width="672" /></p>
-<p><strong>Quick Exercise</strong> Try generating a spatial summary using the same type of chained <code>dplyr</code> operation we used in SpatialOperations1 with schools and EnviroAtlas on your own - check the code if you get stuck.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stream_length =<span class="st"> </span>ThirdFork <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">st_join</span>(NHD) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">StreamLength =</span> <span class="kw">sum</span>(LngthKM, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</code></pre></div>
-<p>This example is a bit contrived since we already know that all the stream lines are within the watershed, so we don’t really need to do a spatial join, we can just sum our ‘LngthKM’ variable in the ‘NHD’ object - you can do this to verify the result.</p>
+<p><strong>Quick Exercise</strong> Try generating a spatial summary with this Third Fork data using the same type of chained <code>dplyr</code> operation we used in SpatialOperations1 with census blocks / tracts and Durham survey data on your own - check the code if you get stuck.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">stream_length =<span class="st"> </span>ThirdFork <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="st">  </span><span class="kw">st_join</span>(NHD) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">StreamLength =</span> <span class="kw">sum</span>(LngthKM, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<p>The example I show is a bit contrived since we already know that all the stream lines are within the watershed, so we don’t really need to do a spatial join, we can just sum our ‘LngthKM’ variable in the ‘NHD’ object - you can do this to verify the result.</p>
 </div>
 <div id="raster-extract" class="section level3">
 <h3>Raster Extract</h3>
-<p>It’s easy using the <code>raster</code> package to extract raster data for a set of points. Here we use our ‘stations_sf’ data our our elevation raster (we can read in with raster(‘data/NED.tif’)). The operation is simply ‘extract’ - if you feel advenurous see if you can figure out on your own (hint - data must be in same crs), or simply try to follow what code is doing.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(raster)
-stations_sf &lt;-<span class="kw">st_read</span>(<span class="st">&#39;data/stations.shp&#39;</span>)
-elev &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="st">&#39;data/NED.tif&#39;</span>)
-<span class="kw">st_crs</span>(stations_sf)<span class="op">$</span>proj4string <span class="op">==</span><span class="st"> </span><span class="kw">projection</span>(elev)
-stations_sf &lt;-<span class="st"> </span><span class="kw">st_transform</span>(stations_sf, <span class="dt">crs=</span>(<span class="kw">projection</span>(elev)))
-stations_sf<span class="op">$</span>elevation &lt;-<span class="st"> </span><span class="kw">extract</span>(elev, stations_sf)
-<span class="co"># What am I doing on this next line?</span>
-stations_sf[<span class="op">!</span><span class="kw">is.na</span>(stations_sf<span class="op">$</span>elevation),]</code></pre></div>
+<p>It’s easy using the <code>raster</code> package to extract raster data for a set of points. Here we’ll use our ‘stations_sf’ data and an elevation raster (we can read in with raster(‘data/NED.tif’)). The operation is simply ‘extract’ - if you feel adventurous see if you can figure out on your own (hint - data must be in same crs), or simply try to follow what code is doing.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">library</span>(raster)</a>
+<a class="sourceLine" id="cb10-2" title="2">stations_sf &lt;-<span class="kw">st_read</span>(<span class="st">&#39;data/stations.shp&#39;</span>)</a>
+<a class="sourceLine" id="cb10-3" title="3">elev &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="st">&#39;data/NED.tif&#39;</span>)</a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="kw">st_crs</span>(stations_sf)<span class="op">$</span>proj4string <span class="op">==</span><span class="st"> </span><span class="kw">projection</span>(elev)</a>
+<a class="sourceLine" id="cb10-5" title="5">stations_sf &lt;-<span class="st"> </span><span class="kw">st_transform</span>(stations_sf, <span class="dt">crs=</span>(<span class="kw">projection</span>(elev)))</a>
+<a class="sourceLine" id="cb10-6" title="6">stations_sf<span class="op">$</span>elevation &lt;-<span class="st"> </span><span class="kw">extract</span>(elev, stations_sf)</a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="co"># What am I doing on this next line?</span></a>
+<a class="sourceLine" id="cb10-8" title="8">stations_sf[<span class="op">!</span><span class="kw">is.na</span>(stations_sf<span class="op">$</span>elevation),]</a></code></pre></div>
 </div>
 <div id="zonal-stats" class="section level3">
 <h3>Zonal Stats</h3>
 <p>Here we look at one of the most classic GIS exercises - summarizing landscape information within a watershed. We can again use the <code>extract</code> function from the <code>raster</code> package to get watershed statistics:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">meanelev &lt;-<span class="st"> </span><span class="kw">extract</span>(elev, ThirdFork, <span class="dt">fun =</span> mean, <span class="dt">na.rm =</span> T, <span class="dt">small =</span> T)
-meanelev</code></pre></div>
-<p>I added a few extra parameters here, explore by using <code>help(extract)</code>. Note also I passed an <code>sf</code> object to the y parameter in the <code>extract</code> function, but in help it describes options for y as being <code>sp</code> objects….yet it worked. I was surprised by this!</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">meanelev &lt;-<span class="st"> </span><span class="kw">extract</span>(elev, ThirdFork, <span class="dt">fun =</span> mean, <span class="dt">na.rm =</span> T, <span class="dt">small =</span> T)</a>
+<a class="sourceLine" id="cb11-2" title="2">meanelev</a></code></pre></div>
+<p>I added a few extra parameters above, explore by using <code>help(extract)</code>. Note also I passed an <code>sf</code> object to the y parameter in the <code>extract</code> function, but in help it describes options for y as being <code>sp</code> objects….yet it worked. I was surprised by this!</p>
 <p>If you feel like exploring more, see a <a href="https://ryan-hill.github.io/sfs-r-gis-2018/modules/rasters/extract-raster-data-r/">neat example put together by Ryan Hill and Marcus Beck</a> of doing a multi-watershed delineation and metric calculation by leveraging the StreamStat Service API in R.</p>
 <p>We could also run extract for our watershed on a raster stack or raster brick.</p>
 <p><strong>Quick Exercise</strong> Use <code>terrain</code> function in <code>raster</code> package to generate a terrain raster for our watershed just as we did in Spatial Operations 1 and generate metrics for the terrain <code>raster brick</code> - try on your own, answer below.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wat_terrain &lt;-<span class="st"> </span><span class="kw">terrain</span>(elev, <span class="dt">opt =</span> <span class="kw">c</span>(<span class="st">&quot;slope&quot;</span>,<span class="st">&quot;aspect&quot;</span>, <span class="st">&quot;tri&quot;</span>,
-                                          <span class="st">&quot;tpi&quot;</span>,<span class="st">&quot;roughness&quot;</span>,<span class="st">&quot;flowdir&quot;</span>))
-metrics &lt;-<span class="st"> </span><span class="kw">extract</span>(wat_terrain, ThirdFork, <span class="dt">fun =</span> mean, <span class="dt">na.rm =</span> T, <span class="dt">small =</span> T)
-<span class="kw">print</span>(metrics)</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">wat_terrain &lt;-<span class="st"> </span><span class="kw">terrain</span>(elev, <span class="dt">opt =</span> <span class="kw">c</span>(<span class="st">&quot;slope&quot;</span>,<span class="st">&quot;aspect&quot;</span>, <span class="st">&quot;tri&quot;</span>,</a>
+<a class="sourceLine" id="cb12-2" title="2">                                          <span class="st">&quot;tpi&quot;</span>,<span class="st">&quot;roughness&quot;</span>,<span class="st">&quot;flowdir&quot;</span>))</a>
+<a class="sourceLine" id="cb12-3" title="3">metrics &lt;-<span class="st"> </span><span class="kw">extract</span>(wat_terrain, ThirdFork, <span class="dt">fun =</span> mean, <span class="dt">na.rm =</span> T, <span class="dt">small =</span> T)</a>
+<a class="sourceLine" id="cb12-4" title="4"><span class="kw">print</span>(metrics)</a></code></pre></div>
 </div>
 <div id="summarize-categorical-raster" class="section level3">
 <h3>Summarize Categorical Raster</h3>
 <p>Let’s load NLCD (National Land Cover Data) to look at a categorical raster - note in code below I’ve commented out downloading using FedData - it takes a while so I’ve loaded it into the workshop data folder.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># library(FedData)</span>
-<span class="kw">library</span>(raster)
-<span class="co"># NLCD &lt;- get_nlcd(template = as(ThirdFork,&#39;Spatial&#39;),</span>
-<span class="co">#                  year = 2011,</span>
-<span class="co">#                  dataset = &quot;landcover&quot;,</span>
-<span class="co">#                  label = &quot;ThirdFork&quot;)</span>
-NLCD &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="st">&#39;data/NLCD.tif&#39;</span>)
-<span class="kw">proj4string</span>(NLCD)</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="co"># library(FedData)</span></a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="kw">library</span>(raster)</a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co"># NLCD &lt;- get_nlcd(template = as(ThirdFork,&#39;Spatial&#39;),</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">#                  year = 2011,</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co">#                  dataset = &quot;landcover&quot;,</span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co">#                  label = &quot;ThirdFork&quot;)</span></a>
+<a class="sourceLine" id="cb13-7" title="7">NLCD &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="st">&#39;data/NLCD.tif&#39;</span>)</a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="kw">proj4string</span>(NLCD)</a></code></pre></div>
 <pre><code>## [1] &quot;+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># we&#39;ll project to albers</span>
-ThirdFork_alb &lt;-<span class="st"> </span><span class="kw">st_transform</span>(ThirdFork, <span class="dt">crs=</span><span class="kw">projection</span>(NLCD))
-NLCD &lt;-<span class="st"> </span><span class="kw">mask</span>(NLCD, <span class="kw">as</span>(ThirdFork_alb,<span class="st">&#39;Spatial&#39;</span>))
-NLCD &lt;-<span class="st"> </span><span class="kw">reclassify</span>(NLCD, <span class="kw">cbind</span>(<span class="dv">0</span>, <span class="ot">NA</span>)) <span class="co"># A little trick to use since raster is using 0 as NA and plotting the value</span>
-<span class="kw">plot</span>(ThirdFork_alb<span class="op">$</span>geometry, <span class="dt">main=</span><span class="st">&quot;Land Cover in </span><span class="ch">\n</span><span class="st">Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)
-<span class="kw">plot</span>(NLCD, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="co"># we&#39;ll project to albers</span></a>
+<a class="sourceLine" id="cb15-2" title="2">ThirdFork_alb &lt;-<span class="st"> </span><span class="kw">st_transform</span>(ThirdFork, <span class="dt">crs=</span><span class="kw">projection</span>(NLCD))</a>
+<a class="sourceLine" id="cb15-3" title="3">NLCD &lt;-<span class="st"> </span><span class="kw">mask</span>(NLCD, <span class="kw">as</span>(ThirdFork_alb,<span class="st">&#39;Spatial&#39;</span>))</a>
+<a class="sourceLine" id="cb15-4" title="4">NLCD &lt;-<span class="st"> </span><span class="kw">reclassify</span>(NLCD, <span class="kw">cbind</span>(<span class="dv">0</span>, <span class="ot">NA</span>)) <span class="co"># A little trick to use since raster is using 0 as NA and plotting the value</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="kw">plot</span>(ThirdFork_alb<span class="op">$</span>geometry, <span class="dt">main=</span><span class="st">&quot;Land Cover in </span><span class="ch">\n</span><span class="st">Third Fork Watershed&quot;</span>, <span class="dt">axes=</span>T)</a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="kw">plot</span>(NLCD, <span class="dt">add=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/nlcd-1.png" width="672" /></p>
 <p>So how do I get actual names of land cover values into my raster? There are a few ways we can explore our raster values, create factor levels and a ‘raster attribute table’ for the raster:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rasterVis)
-<span class="kw">hist</span>(NLCD)</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw">library</span>(rasterVis)</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="kw">hist</span>(NLCD)</a></code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/nlcd3-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">NLCD &lt;-<span class="st"> </span><span class="kw">ratify</span>(NLCD)
-rat &lt;-<span class="st"> </span><span class="kw">levels</span>(NLCD)[[<span class="dv">1</span>]]
-rat<span class="op">$</span>legend &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Water&quot;</span>,<span class="st">&quot;Dev OS&quot;</span>,<span class="st">&quot;Dev LI&quot;</span>,<span class="st">&quot;Dev MI&quot;</span>,<span class="st">&quot;Dev HI&quot;</span>,<span class="st">&quot;Barren&quot;</span>,<span class="st">&quot;Dec For&quot;</span>,<span class="st">&quot;Ev For&quot;</span>,<span class="st">&quot;Mix For&quot;</span>,<span class="st">&quot;Shrub&quot;</span>,<span class="st">&quot;Grass&quot;</span>,<span class="st">&quot;Pasture&quot;</span>,<span class="st">&quot;Wd Wet&quot;</span>,<span class="st">&quot;Herb Wet&quot;</span>)
-<span class="kw">levels</span>(NLCD) &lt;-<span class="st"> </span>rat
-
-## Plot
-<span class="kw">levelplot</span>(NLCD, <span class="dt">col.regions=</span><span class="kw">rev</span>(<span class="kw">terrain.colors</span>(<span class="dv">15</span>)))</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">NLCD &lt;-<span class="st"> </span><span class="kw">ratify</span>(NLCD)</a>
+<a class="sourceLine" id="cb17-2" title="2">rat &lt;-<span class="st"> </span><span class="kw">levels</span>(NLCD)[[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb17-3" title="3">rat<span class="op">$</span>legend &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Water&quot;</span>,<span class="st">&quot;Dev OS&quot;</span>,<span class="st">&quot;Dev LI&quot;</span>,<span class="st">&quot;Dev MI&quot;</span>,<span class="st">&quot;Dev HI&quot;</span>,<span class="st">&quot;Barren&quot;</span>,<span class="st">&quot;Dec For&quot;</span>,<span class="st">&quot;Ev For&quot;</span>,<span class="st">&quot;Mix For&quot;</span>,<span class="st">&quot;Shrub&quot;</span>,<span class="st">&quot;Grass&quot;</span>,<span class="st">&quot;Pasture&quot;</span>,<span class="st">&quot;Wd Wet&quot;</span>,<span class="st">&quot;Herb Wet&quot;</span>)</a>
+<a class="sourceLine" id="cb17-4" title="4"><span class="kw">levels</span>(NLCD) &lt;-<span class="st"> </span>rat</a>
+<a class="sourceLine" id="cb17-5" title="5"></a>
+<a class="sourceLine" id="cb17-6" title="6"><span class="co">## Plot</span></a>
+<a class="sourceLine" id="cb17-7" title="7"><span class="kw">levelplot</span>(NLCD, <span class="dt">col.regions=</span><span class="kw">rev</span>(<span class="kw">terrain.colors</span>(<span class="dv">15</span>)))</a></code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/nlcd3-2.png" width="672" /></p>
 <p>This is just one way to do it, and colors aren’t ideal - feel free to experiment.</p>
 <p>OK, now let’s try summarizing our categorical raster - in order to make it more realistic, we’ll read in a set of NHDPlus catchments within our ThirdFork watershed (so we’ll have more than one feature to summarize over).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Catchments &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_ForkCats.shp&#39;</span>)</code></pre></div>
-<pre><code>## Reading layer `Third_ForkCats&#39; from data source `F:\Git Projects\R-User-Group-Spatial-Workshop-2018\data\Third_ForkCats.shp&#39; using driver `ESRI Shapefile&#39;
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">Catchments &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_ForkCats.shp&#39;</span>)</a></code></pre></div>
+<pre><code>## Reading layer `Third_ForkCats&#39; from data source `F:\GitProjects\R-User-Group-Spatial-Workshop-2018\data\Third_ForkCats.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 28 features and 4 fields
 ## geometry type:  MULTIPOLYGON
 ## dimension:      XY
 ## bbox:           xmin: -78.96955 ymin: 35.90293 xmax: -78.86599 ymax: 35.99817
 ## epsg (SRID):    4269
 ## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Need to use projected CRS</span>
-Catchments &lt;-<span class="st"> </span><span class="kw">st_transform</span>(Catchments, <span class="dt">crs=</span><span class="kw">projection</span>(NLCD))
-<span class="kw">plot</span>(NLCD, <span class="dt">axes=</span>T, <span class="dt">main=</span><span class="st">&quot;NHDPlus Catchments in </span><span class="ch">\n</span><span class="st">Third Fork Watershed with NLCD&quot;</span>)
-<span class="kw">plot</span>(Catchments, <span class="dt">add=</span>T, <span class="dt">col =</span> <span class="ot">NA</span>, <span class="dt">bord=</span><span class="st">&#39;black&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="co"># Need to use projected CRS</span></a>
+<a class="sourceLine" id="cb20-2" title="2">Catchments &lt;-<span class="st"> </span><span class="kw">st_transform</span>(Catchments, <span class="dt">crs=</span><span class="kw">projection</span>(NLCD))</a>
+<a class="sourceLine" id="cb20-3" title="3"><span class="kw">plot</span>(NLCD, <span class="dt">axes=</span>T, <span class="dt">main=</span><span class="st">&quot;NHDPlus Catchments in </span><span class="ch">\n</span><span class="st">Third Fork Watershed with NLCD&quot;</span>)</a>
+<a class="sourceLine" id="cb20-4" title="4"><span class="kw">plot</span>(Catchments, <span class="dt">add=</span>T, <span class="dt">col =</span> <span class="ot">NA</span>, <span class="dt">bord=</span><span class="st">&#39;black&#39;</span>)</a></code></pre></div>
 <p><img src="SpatialOperations2_files/figure-html/tabulate-1.png" width="672" /></p>
 <p>Here is how I’ve put together code to do categorical raster summarization by polygon features - notice older functions I’m using that could be moved to chained <code>dplyr</code> operations and improved - see if you follow steps and we can talk through, and see if this triggers ideas for ways to improve this code. Additionally, <a href="http://zevross.com/blog/2015/03/30/map-and-analyze-raster-data-in-r/">here is a synopsis of doing same thing put together by Zev Ross</a> - notice he includes a nice comparison of his results with ArdGIS Tabulate Area tool.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">e =<span class="st"> </span><span class="kw">extract</span>(NLCD,Catchments)
-et =<span class="st"> </span><span class="kw">lapply</span>(e,table)
-<span class="kw">library</span>(reshape)
-t &lt;-<span class="st"> </span><span class="kw">melt</span>(et)
-t.cast &lt;-<span class="st"> </span><span class="kw">cast</span>(t, L1 <span class="op">~</span><span class="st"> </span>Var.<span class="dv">1</span>, sum)
-<span class="kw">head</span>(t.cast)</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">e =<span class="st"> </span><span class="kw">extract</span>(NLCD,Catchments)</a>
+<a class="sourceLine" id="cb21-2" title="2">et =<span class="st"> </span><span class="kw">lapply</span>(e,table)</a>
+<a class="sourceLine" id="cb21-3" title="3"><span class="kw">library</span>(reshape)</a>
+<a class="sourceLine" id="cb21-4" title="4">t &lt;-<span class="st"> </span>reshape<span class="op">::</span><span class="kw">melt</span>(et)</a>
+<a class="sourceLine" id="cb21-5" title="5">t.cast &lt;-<span class="st"> </span><span class="kw">cast</span>(t, L1 <span class="op">~</span><span class="st"> </span>Var<span class="fl">.1</span>, sum)</a>
+<a class="sourceLine" id="cb21-6" title="6"><span class="kw">head</span>(t.cast)</a></code></pre></div>
 <pre><code>##   L1 11   21   22   23  24 31  41  42  43 52 71 81  90 95
 ## 1  1  8 3744 3258 1608 420  0 645 124 104  0 68 52 113  0
 ## 2  2  7 1362  628  237   7  0 184 139  50  0 27  0 568  0
@@ -539,10 +695,10 @@ t.cast &lt;-<span class="st"> </span><span class="kw">cast</span>(t, L1 <span cl
 ## 4  4  0  688  236  135  32  0  31 104   5 14  5 23 291  0
 ## 5  5  0  338  198  156 102  9 475 103  43  6  6  6 789 22
 ## 6  6  0  267  234  290 100  0  41  38   0  0  0  0   0  0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(t.cast)[<span class="dv">1</span>] &lt;-<span class="st"> &#39;FeatureID&#39;</span>
-nlcd_stats &lt;-<span class="st"> </span><span class="kw">data.frame</span>(t.cast)
-<span class="kw">names</span>(nlcd_stats)[<span class="dv">2</span><span class="op">:</span><span class="dv">15</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Water&quot;</span>,<span class="st">&quot;Dev OS&quot;</span>,<span class="st">&quot;Dev LI&quot;</span>,<span class="st">&quot;Dev MI&quot;</span>,<span class="st">&quot;Dev HI&quot;</span>,<span class="st">&quot;Barren&quot;</span>,<span class="st">&quot;Dec For&quot;</span>,<span class="st">&quot;Ev For&quot;</span>,<span class="st">&quot;Mix For&quot;</span>,<span class="st">&quot;Shrub&quot;</span>,<span class="st">&quot;Grass&quot;</span>,<span class="st">&quot;Pasture&quot;</span>,<span class="st">&quot;Wd Wet&quot;</span>,<span class="st">&quot;Herb Wet&quot;</span>)
-<span class="kw">head</span>(nlcd_stats)</code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">names</span>(t.cast)[<span class="dv">1</span>] &lt;-<span class="st"> &#39;FeatureID&#39;</span></a>
+<a class="sourceLine" id="cb23-2" title="2">nlcd_stats &lt;-<span class="st"> </span><span class="kw">data.frame</span>(t.cast)</a>
+<a class="sourceLine" id="cb23-3" title="3"><span class="kw">names</span>(nlcd_stats)[<span class="dv">2</span><span class="op">:</span><span class="dv">15</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Water&quot;</span>,<span class="st">&quot;Dev OS&quot;</span>,<span class="st">&quot;Dev LI&quot;</span>,<span class="st">&quot;Dev MI&quot;</span>,<span class="st">&quot;Dev HI&quot;</span>,<span class="st">&quot;Barren&quot;</span>,<span class="st">&quot;Dec For&quot;</span>,<span class="st">&quot;Ev For&quot;</span>,<span class="st">&quot;Mix For&quot;</span>,<span class="st">&quot;Shrub&quot;</span>,<span class="st">&quot;Grass&quot;</span>,<span class="st">&quot;Pasture&quot;</span>,<span class="st">&quot;Wd Wet&quot;</span>,<span class="st">&quot;Herb Wet&quot;</span>)</a>
+<a class="sourceLine" id="cb23-4" title="4"><span class="kw">head</span>(nlcd_stats)</a></code></pre></div>
 <pre><code>##   FeatureID Water Dev OS Dev LI Dev MI Dev HI Barren Dec For Ev For
 ## 1         1     8   3744   3258   1608    420      0     645    124
 ## 2         2     7   1362    628    237      7      0     184    139
@@ -557,9 +713,9 @@ nlcd_stats &lt;-<span class="st"> </span><span class="kw">data.frame</span>(t.ca
 ## 4       5    14     5      23    291        0
 ## 5      43     6     6       6    789       22
 ## 6       0     0     0       0      0        0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Convert raw sums of categories to percent:</span>
-nlcd_stats<span class="op">$</span>Total &lt;-<span class="st"> </span><span class="kw">rowSums</span>(nlcd_stats[,<span class="dv">2</span><span class="op">:</span><span class="dv">15</span>])
-<span class="kw">head</span>(nlcd_stats)</code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="co"># Convert raw sums of categories to percent:</span></a>
+<a class="sourceLine" id="cb25-2" title="2">nlcd_stats<span class="op">$</span>Total &lt;-<span class="st"> </span><span class="kw">rowSums</span>(nlcd_stats[,<span class="dv">2</span><span class="op">:</span><span class="dv">15</span>])</a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="kw">head</span>(nlcd_stats)</a></code></pre></div>
 <pre><code>##   FeatureID Water Dev OS Dev LI Dev MI Dev HI Barren Dec For Ev For
 ## 1         1     8   3744   3258   1608    420      0     645    124
 ## 2         2     7   1362    628    237      7      0     184    139
@@ -574,12 +730,12 @@ nlcd_stats<span class="op">$</span>Total &lt;-<span class="st"> </span><span cla
 ## 4       5    14     5      23    291        0  1564
 ## 5      43     6     6       6    789       22  2253
 ## 6       0     0     0       0      0        0   970</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#calculate %s for each nlcd category</span>
-<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="dv">15</span>){
-nlcd_stats[,i] =<span class="st"> </span><span class="fl">100.0</span> <span class="op">*</span><span class="st"> </span>nlcd_stats[,i]<span class="op">/</span>nlcd_stats[,<span class="dv">16</span>] 
-}
-nlcd_stats[,<span class="dv">1</span>] &lt;-<span class="st"> </span>Catchments<span class="op">$</span>FEATUREID[<span class="kw">match</span>(nlcd_stats<span class="op">$</span>FeatureID, <span class="kw">row.names</span>(Catchments))]
-<span class="kw">head</span>(nlcd_stats)</code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="co">#calculate %s for each nlcd category</span></a>
+<a class="sourceLine" id="cb27-2" title="2"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="dv">15</span>){</a>
+<a class="sourceLine" id="cb27-3" title="3">nlcd_stats[,i] =<span class="st"> </span><span class="fl">100.0</span> <span class="op">*</span><span class="st"> </span>nlcd_stats[,i]<span class="op">/</span>nlcd_stats[,<span class="dv">16</span>] </a>
+<a class="sourceLine" id="cb27-4" title="4">}</a>
+<a class="sourceLine" id="cb27-5" title="5">nlcd_stats[,<span class="dv">1</span>] &lt;-<span class="st"> </span>Catchments<span class="op">$</span>FEATUREID[<span class="kw">match</span>(nlcd_stats<span class="op">$</span>FeatureID, <span class="kw">row.names</span>(Catchments))]</a>
+<a class="sourceLine" id="cb27-6" title="6"><span class="kw">head</span>(nlcd_stats)</a></code></pre></div>
 <pre><code>##   FeatureID      Water   Dev OS    Dev LI    Dev MI     Dev HI    Barren
 ## 1   8893204 0.07886435 36.90852 32.117508 15.851735  4.1403785 0.0000000
 ## 2   8893336 0.21813649 42.44313 19.569959  7.385478  0.2181365 0.0000000
