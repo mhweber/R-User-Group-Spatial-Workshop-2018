@@ -31,7 +31,7 @@ ThirdForkSites <- stations_sf[ThirdFork,]
 **Quick Exercise**
 Fix the error we get in code above then continue on with next code chunk to clip and plot discharge
 
-Ideas for leveraging `DataRetrieval` to plot hourly discharge from [Ryan Peek](https://ryanpeek.github.io/2018_river-rally-Rmapping-workshop/get_water_quality.html#read_shapefiles).
+Ideas for leveraging `DataRetrieval` to plot hourly discharge from [Ryan Peek](https://ryanpeek.github.io/mapping-in-R-workshop/vig_dataRetrieval_for_waterdata.html).
 ```{r flow2, message=FALSE, warning=FALSE, error=FALSE}
 library(ggplot2)
 stations_sf <- st_transform(stations_sf, st_crs(ThirdFork))
