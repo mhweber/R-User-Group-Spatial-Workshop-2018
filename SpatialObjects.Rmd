@@ -91,7 +91,7 @@ library(cranlogs)
 library(ggplot2)
 library(lubridate)
 library(dplyr)
-stats <- cran_downloads(from = "2013-01-01", to = "2018-08-22",packages = c("sp", "sf", "raster", "ggmap", "mapview"))
+stats <- cran_downloads(from = "2013-01-01", to = "2019-05-01",packages = c("sp", "sf", "raster", "ggmap", "mapview"))
 
 monthly_stats <- stats %>% 
   group_by(month=floor_date(date, "month"), package) %>%
@@ -388,6 +388,14 @@ Each polygon and its holes are held together by a set of parentheses, so:
 Generic plotting works on `sf` objects as well - take a minute to play with plot our gages - why do we specify `$geometry` in our plot call?
 ```{r sf_plot, message=FALSE, warning=FALSE, error=FALSE}
 plot(gages_sf$geometry, axes=T)
+```
+
+We can convert foriegn objects (regular data frames with coordinates, `sp` objects, `maps` package objects) to `sf` objects quite easily.
+```{r sf_plot_2, message=FALSE, warning=FALSE, error=FALSE}
+states <- sf::st_as_sf(maps::map("state",  region = c('oregon', 'washington', 'idaho'), plot = FALSE, fill = TRUE))
+plot(states$geometry, axes=TRUE)
+plot(gages_sf$geometry, add=TRUE, col='blue')
+title(main='StreamGages and PNW \n State Boundaries')
 ```
 
 ### Raster Data
