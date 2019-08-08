@@ -4,7 +4,7 @@ title: "Resources"
 
 ### General R / R Spatial Resources
 
-* [**R Spatial**](http://rspatial.org/spatial/)
+* [R Spatial - **Spatial Data Science with R**](http://rspatial.org/spatial/)
 * [**Geocomputation with R**](https://geocompr.robinlovelace.net/)
 * [**R Spatial Task View**](https://cran.r-project.org/web/views/Spatial.html)
 * [**Spatial Data Science - Pebesma and Bivand**](https://keen-swartz-3146c4.netlify.com/)
@@ -44,3 +44,4 @@ title: "Resources"
 * [**tmap**](https://github.com/mtennekes/tmap)
 * [Zev Ross **Creating beautiful demographic maps in R with the `tidycensus` and `tmap` packages**](http://zevross.com/blog/2018/10/02/creating-beautiful-demographic-maps-in-r-with-the-tidycensus-and-tmap-packages/)
 * [Geocomputation with R: **Making maps with R**](https://geocompr.robinlovelace.net/adv-map.html)
+* [Ryan Peek: **Mapping in R**](https://ryanpeek.github.io/mapping-in-R-workshop/index.html)
