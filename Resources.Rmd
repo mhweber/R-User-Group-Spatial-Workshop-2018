@@ -42,5 +42,5 @@ title: "Resources"
 * [**mapview**](https://r-spatial.github.io/mapview/)
 * [**Leaflet for R**](https://rstudio.github.io/leaflet/)
 * [**tmap**](https://github.com/mtennekes/tmap)
-* [Zev Ross **Creating beautiful demographic maps in R with the `tidycensus` and `tmap` packages](http://zevross.com/blog/2018/10/02/creating-beautiful-demographic-maps-in-r-with-the-tidycensus-and-tmap-packages/)
+* [Zev Ross **Creating beautiful demographic maps in R with the `tidycensus` and `tmap` packages**](http://zevross.com/blog/2018/10/02/creating-beautiful-demographic-maps-in-r-with-the-tidycensus-and-tmap-packages/)
 * [Geocomputation with R: **Making maps with R**](https://geocompr.robinlovelace.net/adv-map.html)
