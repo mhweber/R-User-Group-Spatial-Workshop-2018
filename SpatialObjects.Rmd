@@ -525,9 +525,12 @@ Both `rgdal` and `sf` support about every vector format you would need.  Typical
 ```{r shapefile_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 download.file("ftp://ftp.gis.oregon.gov/adminbound/citylim_2017.zip","citylim_2017.zip")
 unzip("citylim_2017.zip", exdir = ".") 
-citylims <- st_read("citylim_2017.shp") 
+citylims <- st_read("citylim_2017.shp", quiet=TRUE, stringsAsFactors=FALSE) 
 plot(citylims$geometry, axes=T, main='Oregon City Limits') # plot it!
 ```
+
+Above, I used the parameters `quiet=TRUE` and `stringsAsFactors=FALSE` - why would this be a good practice in general?
+
 
 We use `st_read` similarly for reading in an ESRI file geodatabase feature:
 ```{r geodatabase_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
