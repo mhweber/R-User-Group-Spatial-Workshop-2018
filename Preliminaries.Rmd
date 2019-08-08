@@ -44,7 +44,7 @@ First we need to install several R packages.  Note the use of the terms `package
 ![RStudio Console](/R-User-Group-Spatial-Workshop-2018/img/packages.png)
 
 Install all of the following packages in R:
-Install all of the following packages in R - ~~note that for both `sf` and `tidyverse` - and specificallly `ggplot2` in `tidyverse`, I've indicated the alternative install from GitHub rather than CRAN.  This is optional, as is installing devtools, and you will be fine with the CRAN version of packages, except that you will not be able to reproduce one of the example plots in the `sf` section that uses `sf_geom` funtion from the development version of `ggplot2`.~~ **UPDATE**: You can simply use the current CRAN release of `ggplot2` without using the devtools install of `github` - you'll just want to ensure you are using ggplot2 3.0.0 by running library(ggplot2) and sessionInfo() at your R console - within info returned you should see 'ggplot2_3.0.0'. Note that `tidyverse` is a 'meta-package' that includes several specific packages such as `ggplot2`, `dplyr`, and `tidyr`.
+~~note that for both `sf` and `tidyverse` - and specificallly `ggplot2` in `tidyverse`, I've indicated the alternative install from GitHub rather than CRAN.  This is optional, as is installing devtools, and you will be fine with the CRAN version of packages, except that you will not be able to reproduce one of the example plots in the `sf` section that uses `sf_geom` funtion from the development version of `ggplot2`.~~ **UPDATE**: You can simply use the current CRAN release of `ggplot2` without using the devtools install of `github` - you'll just want to ensure you are using ggplot2 >= 3.0.0 by running library(ggplot2) and sessionInfo() at your R console - within info returned you should see 'ggplot2_3.0.0' or higher. Note that `tidyverse` is a 'meta-package' that includes several specific packages such as `ggplot2`, `dplyr`, and `tidyr`.
 ```{r eval = F}
 install.packages("devtools") # optional but needed for using install_github
 install.packages("rgdal")
@@ -57,8 +57,6 @@ install.packages("sf")
 # devtools::install_github("r-spatial/sf")
 # if you are running 3.5.1 on windows and have trouble with devtools install, try:
 # assignInNamespace("version_info", c(devtools:::version_info, list("3.5" = list(version_min = "3.3.0", version_max = "99.99.99", path = "bin"))), "devtools")
-install.packages("gstat")
-install.packages("spdep")
 install.packages("maptools")
 install.packages("stringr")
 install.packages("reshape")
@@ -83,11 +81,10 @@ install.packages('FedData')
 install.packages("mapview")
 # From GitHub
 # devtools::install_github("r-spatial/mapview@develop")
-install.packages("mapview")
 install.packages("cranlogs")
 ```
 
-If EPA folks have any trouble with installing the CRAN version of `mapview` with the agency current version of R (3.4.3) you can try using `devtools` to install the prior CRAN binary package of `mapview` described [here](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages) and using prior binary of `mapview` (2.4.0) describe [here](https://cran.r-project.org/web/packages/mapview/).
+If EPA folks have any trouble with installing the CRAN version of `mapview` with the agency current version of R you can try using `devtools` to install the prior CRAN binary package of `mapview` described [here](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages) and using prior binary of `mapview` (2.4.0) describe [here](https://cran.r-project.org/web/packages/mapview/).
 
 Installing `rgdal` will install the foundation spatial package, `sp`, as a dependency, and installing `tidyverse` will install both `ggplot2` and `dplyr`.
 
