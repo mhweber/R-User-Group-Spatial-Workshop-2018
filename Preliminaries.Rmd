@@ -84,7 +84,7 @@ install.packages("mapview")
 install.packages("cranlogs")
 ```
 
-If EPA folks have any trouble with installing the CRAN version of `mapview` with the agency current version of R you can try using `devtools` to install the prior CRAN binary package of `mapview` described [here](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages) and using prior binary of `mapview` (2.4.0) describe [here](https://cran.r-project.org/web/packages/mapview/).
+If EPA folks have any trouble with installing the CRAN version of `mapview` with the agency current version of R you can try using `devtools` to install the prior CRAN binary package of `mapview` described [here](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages).
 
 Installing `rgdal` will install the foundation spatial package, `sp`, as a dependency, and installing `tidyverse` will install both `ggplot2` and `dplyr`.
 
