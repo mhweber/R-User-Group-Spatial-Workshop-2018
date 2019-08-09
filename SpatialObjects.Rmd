@@ -1,5 +1,5 @@
 ---
-title: Spatial Objects
+title: "Spatial Objects"
 ---
 
 ## Lesson Goals
@@ -508,6 +508,32 @@ b <- brick(x=c(r, r * 50, sqrt(r * 5)))
 b
 ```
 
+#### stars package
+The [`stars` package](https://github.com/r-spatial/stars) is a new package for 'spatiotemporal arrays, raster and vector data cubes' that is meant to be an improvement on and replacement for the `raster` package.  We'll just demonstrate using it to read in, examine and plot some data.  It's worth reading the [package articles](https://r-spatial.github.io/stars/) and discussion on raster and vector datacubes in [Spatial Data Science](https://keen-swartz-3146c4.netlify.com/raster.html).  The big advantages to `stars` are: integration with `sf`, can scale beyond local disk size (which is limit for `raster`), and it handles array data with additional dimensions for time, spectral band and sensor dimensions.
+```{r stars, message=FALSE, warning=FALSE, error=FALSE}
+library(stars)
+# landsat
+tif = system.file("tif/L7_ETMs.tif", package = "stars")
+x = read_stars(tif)
+x
+plot(x)
+
+# example from stars help to show more advance functionality reading and plotting netcdf:
+prec_file = system.file("nc/test_stageiv_xyt.nc", package = "stars")
+prec = read_ncdf(prec_file, curvilinear = c("lon", "lat"))
+
+##plot(prec) ## gives error about unique breaks
+## remove NAs, zeros, and give a large number
+## of breaks (used for validating in detail)
+qu_0_omit = function(x, ..., n = 22) {
+  x = na.omit(x)
+  c(0, quantile(x[x > 0], seq(0, 1, length.out = n)))
+}
+prec_slice = slice(prec, index = 17, along = "time")
+plot(prec_slice, border = NA, breaks = qu_0_omit(prec_slice[[1]]), reset = FALSE)
+nc = sf::read_sf(system.file("gpkg/nc.gpkg", package = "sf"), "nc.gpkg")
+plot(st_geometry(nc), add = TRUE, reset = FALSE, col = NA)
+```
 
 ### Geographic Data I/O
 For reading and writing vector and raster data in R, the three primary packages you'll use are:
