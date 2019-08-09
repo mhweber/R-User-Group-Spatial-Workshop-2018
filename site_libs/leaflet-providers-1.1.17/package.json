@@ -25,14 +25,14 @@
     "licence.md"
   ],
   "devDependencies": {
-    "chai": ">=4.18.2",
-    "eslint": ">=3.16.1",
-    "eslint-plugin-html": ">=2.0.1",
+    "chai": "^4.1.2",
+    "eslint": "^3.16.1",
+    "eslint-plugin-html": "^2.0.1",
     "mocha": "^3.2.0",
-    "mocha-phantomjs-core": ">=2.1.1",
-    "mversion": ">=1.10.1",
-    "phantomjs-prebuilt": ">=2.1.16",
-    "uglify-js": ">=2.4.15"
+    "mocha-phantomjs-core": "^2.1.1",
+    "mversion": "^1.10.1",
+    "phantomjs-prebuilt": "^2.1.16",
+    "uglify-js": "^2.4.15"
   },
   "autoupdate": {
     "source": "git",
