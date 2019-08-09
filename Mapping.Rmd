@@ -31,7 +31,7 @@ ggplot(states) +
 ```
 
 ### Plotly and ggplotly
-Now that we've shown a nice static map of a mocked-up variable for CONUS using `ggplot2`, we'll use the development version of `plotly` and make an interactive map directly with our `sf` states object - take a minute to explore the interactive map created and tools in the menu bar (click the zoom button or view in browser button in your viewer pane in RStudio):
+Now that we've shown a nice static map of a mocked-up variable for CONUS using `ggplot2`, we'll use`plotly` and make an interactive map directly with our `sf` states object - take a minute to explore the interactive map created and tools in the menu bar (click the zoom button or view in browser button in your viewer pane in RStudio):
 ```{r ggplotly, message=FALSE, warning=FALSE, error=FALSE}
 library(plotly)
 plot_ly(states)
@@ -94,7 +94,7 @@ NED <- raster('data/NED.tif')
 mapview(stations_sf) + mapview(ThirdFork, alpha.regions=0) + NED
 ```
 
-Notice how we controlled transparency in order to plot the elevation raster and watershed together - and notice how in map we can toggle our layers on and off, as well as change our base maps.
+Notice how we controlled transparency in order to plot the elevation raster and watershed together - and notice how in the map we can toggle our layers on and off, as well as change our base maps.
 
 **QuickExercise**
 Try plotting separately or together any other of the data we've looked at with `mapview`, or bring in some additional raster data layers with the `FedData` package and load in `mapview`
@@ -121,7 +121,6 @@ latticeView(m1, m2)
 
 ```{r sliderView, message=FALSE, warning=FALSE, error=FALSE, echo = T, eval=F}
 # load the NLCD and NED rasters masked to ThirdFork watershed
-
 NLCD <- raster('data/NLCD.tif')
 NED <- projectRaster(NED, crs=projection(NLCD))
 slideView(NED, NLCD,label1 = "Elevation", label2 = "Landcover")

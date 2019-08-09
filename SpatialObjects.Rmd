@@ -518,7 +518,7 @@ x = read_stars(tif)
 x
 plot(x)
 
-# example from stars help to show more advance functionality reading and plotting netcdf:
+# example from stars help to show more advanced functionality reading and plotting netcdf:
 prec_file = system.file("nc/test_stageiv_xyt.nc", package = "stars")
 prec = read_ncdf(prec_file, curvilinear = c("lon", "lat"))
 
