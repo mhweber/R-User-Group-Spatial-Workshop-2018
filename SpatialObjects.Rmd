@@ -528,6 +528,8 @@ st_drivers()
 Both `rgdal` and `sf` support about every vector format you would need.  Typically working with vector GIS data we work with ESRI shapefiles or geodatabases - here we have an example of how one would read in either format using `sf`:
 ```{r shapefile_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 download.file("ftp://ftp.gis.oregon.gov/adminbound/citylim_2017.zip","citylim_2017.zip")
+# If link above isn't working just grab from my data folder on GitHub:
+download.file("https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018/blob/gh-pages/data/citylim_2017.zip","citylim_2017.zip")
 unzip("citylim_2017.zip", exdir = ".") 
 citylims <- st_read("citylim_2017.shp", quiet=TRUE, stringsAsFactors=FALSE) 
 plot(citylims$geometry, axes=T, main='Oregon City Limits') # plot it!
@@ -535,10 +537,11 @@ plot(citylims$geometry, axes=T, main='Oregon City Limits') # plot it!
 
 Above, I used the parameters `quiet=TRUE` and `stringsAsFactors=FALSE` - why would this be a good practice in general?
 
-
 We use `st_read` similarly for reading in an ESRI file geodatabase feature:
 ```{r geodatabase_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 download.file("https://www.blm.gov/or/gis/files/web_corp/state_county_boundary.zip","state_county_boundary.zip")
+# If above site not working, download from my GitHub data folder
+download.file("https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018/blob/gh-pages/data/state_county_boundary.zip","state_county_boundary.zip")
 unzip("state_county_boundary.zip", exdir = ".")
 fgdb = "state_county_boundary.gdb"
 
@@ -564,7 +567,7 @@ plot(parks$geometry, col='green', add=T)
 title(main='Parks and Trails in Durham')
 ```
 
-There is a weatlh of open spatial data accessible online now via static URLs or APIs - a few examples include [Data.gov](https://catalog.data.gov/dataset?metadata_type=geospatial), NASA [SECAC Portal](http://sedac.ciesin.columbia.edu/), [Natural Earth](http://www.naturalearthdata.com/), [UNEP GEOdata](http://geodata.grid.unep.ch/), and countless others listed here at [Free GIS Data](https://freegisdata.rtwilson.com/).
+There is a wealth of open spatial data accessible online now via static URLs or APIs - a few examples include [Data.gov](https://catalog.data.gov/dataset?metadata_type=geospatial), NASA [SECAC Portal](http://sedac.ciesin.columbia.edu/), [Natural Earth](http://www.naturalearthdata.com/), [UNEP GEOdata](http://geodata.grid.unep.ch/), and countless others listed here at [Free GIS Data](https://freegisdata.rtwilson.com/).
 
 From static URLs, we can simply use `download.file()` as in this example from [Geocomputation with R](https://geocompr.robinlovelace.net/read-write.html) using data from the [National Park data catalog](https://catalog.data.gov/dataset/national-parks):
 ```{r, eval=FALSE}
