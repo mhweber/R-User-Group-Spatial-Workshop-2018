@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -114,7 +115,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -333,56 +334,12 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = false;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -543,7 +500,7 @@ div.tocify {
 <a class="sourceLine" id="cb1-6" title="6">stations_sf =<span class="st"> </span><span class="kw">st_as_sf</span>(siteInfo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">&quot;dec_lon_va&quot;</span>, <span class="st">&quot;dec_lat_va&quot;</span>), <span class="dt">crs =</span> <span class="dv">4269</span>,<span class="dt">agr =</span> <span class="st">&quot;constant&quot;</span>)</a>
 <a class="sourceLine" id="cb1-7" title="7"></a>
 <a class="sourceLine" id="cb1-8" title="8">ThirdFork &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_Fork.shp&#39;</span>)</a></code></pre></div>
-<pre><code>## Reading layer `Third_Fork&#39; from data source `F:\GitProjects\R-User-Group-Spatial-Workshop-2018\data\Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
+<pre><code>## Reading layer `Third_Fork&#39; from data source `C:\Users\mweber\GitProjects\R-User-Group-Spatial-Workshop-2018\data\Third_Fork.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 1 feature and 21 fields
 ## geometry type:  POLYGON
 ## dimension:      XY
@@ -557,7 +514,7 @@ div.tocify {
 <p>We can clip our sites to our watershed, and create plots of hourly discharge for the three sites in our watershed - first we use spatial indexing to clip our stations:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">ThirdForkSites &lt;-<span class="st"> </span>stations_sf[ThirdFork,]</a></code></pre></div>
 <p><strong>Quick Exercise</strong> Fix the error we get in code above then continue on with next code chunk to clip and plot discharge</p>
-<p>Ideas for leveraging <code>DataRetrieval</code> to plot hourly discharge from <a href="https://ryanpeek.github.io/2018_river-rally-Rmapping-workshop/get_water_quality.html#read_shapefiles">Ryan Peek</a>.</p>
+<p>Ideas for leveraging <code>DataRetrieval</code> to plot hourly discharge from <a href="https://ryanpeek.github.io/mapping-in-R-workshop/vig_dataRetrieval_for_waterdata.html">Ryan Peek</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">library</span>(ggplot2)</a>
 <a class="sourceLine" id="cb5-2" title="2">stations_sf &lt;-<span class="st"> </span><span class="kw">st_transform</span>(stations_sf, <span class="kw">st_crs</span>(ThirdFork))</a>
 <a class="sourceLine" id="cb5-3" title="3"><span class="kw">library</span>(lubridate)</a>
@@ -593,7 +550,7 @@ div.tocify {
 <p>The next couple exercises we’ll look at summarizing and extracting data by polygons and points. First let’s review summarizing (aggregating) point or line data with polygon data using <code>sf</code> and <code>dplyr</code>. We’ll use our practice watershed and get the total stream length in the watershed using a shapefile of National Hydrography Data (NHD) flowlines. Note that I read in this NHD data using the<code>FedData</code> package, but it takes a while so I’ve put the downloaded data clipped to our watershed in the workshop ‘data’ folder.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">library</span>(dplyr)</a>
 <a class="sourceLine" id="cb6-2" title="2">NHD &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/NHD_ThirdFork.shp&#39;</span>)</a></code></pre></div>
-<pre><code>## Reading layer `NHD_ThirdFork&#39; from data source `F:\GitProjects\R-User-Group-Spatial-Workshop-2018\data\NHD_ThirdFork.shp&#39; using driver `ESRI Shapefile&#39;
+<pre><code>## Reading layer `NHD_ThirdFork&#39; from data source `C:\Users\mweber\GitProjects\R-User-Group-Spatial-Workshop-2018\data\NHD_ThirdFork.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 134 features and 16 fields
 ## geometry type:  LINESTRING
 ## dimension:      XY
@@ -669,7 +626,7 @@ div.tocify {
 <p>This is just one way to do it, and colors aren’t ideal - feel free to experiment.</p>
 <p>OK, now let’s try summarizing our categorical raster - in order to make it more realistic, we’ll read in a set of NHDPlus catchments within our ThirdFork watershed (so we’ll have more than one feature to summarize over).</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">Catchments &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="st">&#39;data/Third_ForkCats.shp&#39;</span>)</a></code></pre></div>
-<pre><code>## Reading layer `Third_ForkCats&#39; from data source `F:\GitProjects\R-User-Group-Spatial-Workshop-2018\data\Third_ForkCats.shp&#39; using driver `ESRI Shapefile&#39;
+<pre><code>## Reading layer `Third_ForkCats&#39; from data source `C:\Users\mweber\GitProjects\R-User-Group-Spatial-Workshop-2018\data\Third_ForkCats.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 28 features and 4 fields
 ## geometry type:  MULTIPOLYGON
 ## dimension:      XY
@@ -778,6 +735,54 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

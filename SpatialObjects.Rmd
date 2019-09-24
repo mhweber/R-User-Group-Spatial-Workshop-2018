@@ -1,5 +1,5 @@
 ---
-title: "Spatial Objects"
+title: Spatial Objects
 ---
 
 ## Lesson Goals
@@ -443,6 +443,10 @@ r@crs
 crs(r)
 slotNames(r)
 r@extent[1]
+# there are slots w/in slots too
+slotNames(r@extent)
+r@extent@xmin
+# There's always a couple ways to do same thing in R..
 extent(r)[1]
 ```
 
@@ -486,7 +490,7 @@ m[1,2]
 r[1,2]
 ```
 
-`RasterBrick` and `RasterStack` are the two additional classes in `raster` and handle multiple raster layers.  They differ from each other in how they handle multiple layers, file formats they support, their representation and their processing speed.  A `RasterBrick` typicallly is a single multi-layer file such as a multispectral image. A `RasterStack` can virtually connect several `RasterLayer` objects in memory and allows pixel-based calculations on separate raster layers, while a `RasterBrick` has to refer to a single multi-layer file or multi-layer object.  Note that methods that operate on either a `RasterStack` or `RasterBrick` usually return a `RasterBrick`, and processing will be mor efficient on a `RasterBrick` object.  
+`RasterBrick` and `RasterStack` are the two additional classes in `raster` and handle multiple raster layers.  They differ from each other in how they handle multiple layers, file formats they support, their representation and their processing speed.  A `RasterBrick` typically is a single multi-layer file such as a multispectral image. A `RasterStack` can virtually connect several `RasterLayer` objects in memory and allows pixel-based calculations on separate raster layers, while a `RasterBrick` has to refer to a single multi-layer file or multi-layer object.  Note that methods that operate on either a `RasterStack` or `RasterBrick` usually return a `RasterBrick`, and processing will be mor efficient on a `RasterBrick` object.  
 
 It's easy to manipulate our `RasterLayer` to make a couple new layers, and then stack layers:
 
@@ -508,32 +512,6 @@ b <- brick(x=c(r, r * 50, sqrt(r * 5)))
 b
 ```
 
-#### stars package
-The [`stars` package](https://github.com/r-spatial/stars) is a new package for 'spatiotemporal arrays, raster and vector data cubes' that is meant to be an improvement on and replacement for the `raster` package.  We'll just demonstrate using it to read in, examine and plot some data.  It's worth reading the [package articles](https://r-spatial.github.io/stars/) and discussion on raster and vector datacubes in [Spatial Data Science](https://keen-swartz-3146c4.netlify.com/raster.html).  The big advantages to `stars` are: integration with `sf`, can scale beyond local disk size (which is limit for `raster`), and it handles array data with additional dimensions for time, spectral band and sensor dimensions.
-```{r stars, message=FALSE, warning=FALSE, error=FALSE}
-library(stars)
-# landsat
-tif = system.file("tif/L7_ETMs.tif", package = "stars")
-x = read_stars(tif)
-x
-plot(x)
-
-# example from stars help to show more advanced functionality reading and plotting netcdf:
-prec_file = system.file("nc/test_stageiv_xyt.nc", package = "stars")
-prec = read_ncdf(prec_file, curvilinear = c("lon", "lat"))
-
-##plot(prec) ## gives error about unique breaks
-## remove NAs, zeros, and give a large number
-## of breaks (used for validating in detail)
-qu_0_omit = function(x, ..., n = 22) {
-  x = na.omit(x)
-  c(0, quantile(x[x > 0], seq(0, 1, length.out = n)))
-}
-prec_slice = slice(prec, index = 17, along = "time")
-plot(prec_slice, border = NA, breaks = qu_0_omit(prec_slice[[1]]), reset = FALSE)
-nc = sf::read_sf(system.file("gpkg/nc.gpkg", package = "sf"), "nc.gpkg")
-plot(st_geometry(nc), add = TRUE, reset = FALSE, col = NA)
-```
 
 ### Geographic Data I/O
 For reading and writing vector and raster data in R, the three primary packages you'll use are:
@@ -541,7 +519,7 @@ For reading and writing vector and raster data in R, the three primary packages 
  * `rgdal` or `sf` for vector formats such as [ESRI Shapefiles](https://en.wikipedia.org/wiki/Shapefile),  [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON), and [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) - both packages use **OGR**, which is a library under the [GDAL](https://en.wikipedia.org/wiki/GDAL) source tree,under the hood
  * `raster` for raster formats such as [GeoTIFF](https://en.wikipedia.org/wiki/GeoTIFF) or [ESRI or ASCII grid](https://en.wikipedia.org/wiki/Esri_grid) using [GDAL](https://en.wikipedia.org/wiki/GDAL) under the hood
  
-We can quickly discover supported I/O vector formats either via `rgdal` or `sf`.  These both list drivers available for GDAL (geospatial data abstraction library).  GDAL is the engine for working with spatial data in R, as well as in Python, QGIS, PostGIS, and numerous other software applications and projects.
+We can quickly discover supported I/O vector formats either via `rgdal` or `sf`:
 ```{r vector_drivers, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 ogrDrivers()
 st_drivers()
@@ -550,18 +528,20 @@ st_drivers()
 Both `rgdal` and `sf` support about every vector format you would need.  Typically working with vector GIS data we work with ESRI shapefiles or geodatabases - here we have an example of how one would read in either format using `sf`:
 ```{r shapefile_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 download.file("ftp://ftp.gis.oregon.gov/adminbound/citylim_2017.zip","citylim_2017.zip")
+# If link above isn't working just grab from my data folder on GitHub:
+download.file("https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018/blob/gh-pages/data/citylim_2017.zip","citylim_2017.zip")
 unzip("citylim_2017.zip", exdir = ".") 
-citylims <- st_read("citylim_2017.shp") 
+citylims <- st_read("citylim_2017.shp", quiet=TRUE, stringsAsFactors=FALSE) 
 plot(citylims$geometry, axes=T, main='Oregon City Limits') # plot it!
 ```
 
-
-Above, I didn't pass any parameters to st_read - typically I would pass the parameters `quiet=TRUE` and `stringsAsFactors=FALSE` - why would this be a good practice in general?
-`read_sf` is an `sf` alternative to st_read (see [this](https://keen-swartz-3146c4.netlify.com/intro.html#read) section 1.2.2). Try reading in `citylims` data above using `read_sf` and notice difference, and check out `help(read_sf)`.  `read_sf` and `write`sf` are simply aliases for st_read and st_write with modified default arguments.  **EXTRA** - besides modified default arguments, what is the big difference between the two read functions?
+Above, I used the parameters `quiet=TRUE` and `stringsAsFactors=FALSE` - why would this be a good practice in general?
 
 We use `st_read` similarly for reading in an ESRI file geodatabase feature:
 ```{r geodatabase_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
 download.file("https://www.blm.gov/or/gis/files/web_corp/state_county_boundary.zip","state_county_boundary.zip")
+# If above site not working, download from my GitHub data folder
+download.file("https://github.com/mhweber/R-User-Group-Spatial-Workshop-2018/blob/gh-pages/data/state_county_boundary.zip","state_county_boundary.zip")
 unzip("state_county_boundary.zip", exdir = ".")
 fgdb = "state_county_boundary.gdb"
 
@@ -573,14 +553,6 @@ state_poly <- st_read(dsn=fgdb,layer="state_poly")
 plot(state_poly$SHAPE, axes=TRUE)
 ```
 
-Another useful (better? - yes, better) spatial file format is the geopackage. Let's try a quick read and write of geopackage data.  First we'll read in a geopackage using data that comes with `sf` using `dplyr` syntax just to show something a bit different and use `read_sf` as an alternative to `st_read`.  You may want to try writing the data back out as a `geopackage` as well. 
-
-Quick question: What are a couple advantages of `geopackages` over `shapefiles`?
-```{r geopackage_read, message=FALSE, warning=FALSE, error=FALSE, eval=FALSE}
-nc <- system.file("gpkg/nc.gpkg", package="sf") %>% read_sf() # reads in
-head(nc)
-
-```
 
 #### Downloading Open Data and Geographic Data Packages
 
@@ -595,7 +567,7 @@ plot(parks$geometry, col='green', add=T)
 title(main='Parks and Trails in Durham')
 ```
 
-There is a weatlh of open spatial data accessible online now via static URLs or APIs - a few examples include [Data.gov](https://catalog.data.gov/dataset?metadata_type=geospatial), NASA [SECAC Portal](http://sedac.ciesin.columbia.edu/), [Natural Earth](http://www.naturalearthdata.com/), [UNEP GEOdata](http://geodata.grid.unep.ch/), and countless others listed here at [Free GIS Data](https://freegisdata.rtwilson.com/).
+There is a wealth of open spatial data accessible online now via static URLs or APIs - a few examples include [Data.gov](https://catalog.data.gov/dataset?metadata_type=geospatial), NASA [SECAC Portal](http://sedac.ciesin.columbia.edu/), [Natural Earth](http://www.naturalearthdata.com/), [UNEP GEOdata](http://geodata.grid.unep.ch/), and countless others listed here at [Free GIS Data](https://freegisdata.rtwilson.com/).
 
 From static URLs, we can simply use `download.file()` as in this example from [Geocomputation with R](https://geocompr.robinlovelace.net/read-write.html) using data from the [National Park data catalog](https://catalog.data.gov/dataset/national-parks):
 ```{r, eval=FALSE}
