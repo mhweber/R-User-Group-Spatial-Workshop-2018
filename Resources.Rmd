@@ -13,6 +13,7 @@ title: "Resources"
 * [**Google's R Style Guide**](https://google.github.io/styleguide/Rguide.xml)
 * [**Advanced R by Hadley Wickham**](http://adv-r.had.co.nz/)
 * [**Data Camp Spatial Data with R Track**](https://www.datacamp.com/tracks/spatial-data-with-r)
+* [**FOSS4G2019 R for Geospatial Processing**](https://bakaniko.github.io/FOSS4G2019_Geoprocessing_with_R_workshop/)
 
 ### R sp Resources
 
